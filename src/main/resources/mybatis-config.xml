@@ -14,19 +14,7 @@
 
     <!-- environments 配置数据库连接环境信息，可以配置多个environment 可以通过default属性切换不同的environment-->
     <environments default="development">
-
         <environment id="development">
-            <transactionManager type="JDBC"/>
-            <dataSource type="POOLED">
-                <!--数据库连接信息-->
-                <property name="driver" value="com.mysql.jdbc.Driver"/>
-                <property name="url" value="jdbc:mysql:///mybatis?useSSL=false"/>
-                <property name="username" value="root"/>
-                <property name="password" value="1234"/>
-            </dataSource>
-        </environment>
-
-        <environment id="test">
             <transactionManager type="JDBC"/>
             <dataSource type="com.wyl.utils.DruidDataSourceFactory">
                 <!--数据库连接信息-->
