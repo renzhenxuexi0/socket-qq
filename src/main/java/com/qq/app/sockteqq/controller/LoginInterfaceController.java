@@ -3,21 +3,29 @@ package com.qq.app.sockteqq.controller;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextField;
 
 public class LoginInterfaceController {
     @FXML
-    private Button login;
+    private Button loginButton;
 
     @FXML
-    private Button register;
+    private TextField loginInput;
 
     @FXML
-    void login_event(ActionEvent event) {
+    private Button registerButton;
+
+    @FXML
+    private PasswordField registerInput;
+
+    @FXML
+    void loginButton_event(ActionEvent event) {
 
     }
 
     @FXML
-    void register_event(ActionEvent event) {
+    void registerButton_event(ActionEvent event) {
 
     }
 }
