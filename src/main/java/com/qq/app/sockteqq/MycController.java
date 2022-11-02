@@ -1,4 +1,4 @@
-package com.qq.app.socktqq;
+package com.qq.app.sockteqq;
 
 import java.net.URL;
 import java.util.ResourceBundle;
