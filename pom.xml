@@ -5,9 +5,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.qq.app</groupId>
-    <artifactId>sockt-qq</artifactId>
+    <artifactId>socket-qq</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <name>sockt-qq</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
