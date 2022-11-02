@@ -9,7 +9,7 @@
         自动在包下扫描Java Bean
     -->
     <typeAliases>
-        <package name="com.lean.pojo"/>
+        <package name="com.qq.pojo"/>
     </typeAliases>
 
     <!-- environments 配置数据库连接环境信息，可以配置多个environment 可以通过default属性切换不同的environment-->
