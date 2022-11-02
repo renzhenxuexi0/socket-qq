@@ -30,15 +30,6 @@
             <version>5.1.47</version>
         </dependency>
 
-
-        <!--简化pojo开发-->
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>1.18.24</version>
-            <scope>provided</scope>
-        </dependency>
-
         <!--druid 数据源-->
         <dependency>
             <groupId>com.alibaba</groupId>
