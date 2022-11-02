@@ -31,7 +31,7 @@
             <dataSource type="com.wyl.utils.DruidDataSourceFactory">
                 <!--数据库连接信息-->
                 <property name="driver" value="com.mysql.jdbc.Driver"/>
-                <property name="url" value="jdbc:mysql:///mybatis?useSSL=false"/>
+                <property name="url" value="jdbc:mysql://localhost:3306/socket_db?useSSL=false"/>
                 <property name="username" value="root"/>
                 <property name="password" value="1234"/>
             </dataSource>
