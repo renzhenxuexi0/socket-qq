@@ -4,4 +4,6 @@ module com.qq.app.socktqq {
 
     opens com.qq.app.sockteqq to javafx.fxml;
     exports com.qq.app.sockteqq;
+    exports com.qq;
+    opens com.qq to javafx.fxml;
 }

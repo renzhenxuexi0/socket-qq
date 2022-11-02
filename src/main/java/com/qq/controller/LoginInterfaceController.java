@@ -1,4 +1,4 @@
-package com.qq.app.sockteqq.controller;
+package com.qq.controller;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;

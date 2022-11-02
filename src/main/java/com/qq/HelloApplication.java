@@ -1,4 +1,4 @@
-package com.qq.app.sockteqq;
+package com.qq;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;

@@ -1,4 +1,4 @@
-package com.qq.app.sockteqq.pojo;
+package com.qq.pojo;
 
 public class User {
     private Integer id;
