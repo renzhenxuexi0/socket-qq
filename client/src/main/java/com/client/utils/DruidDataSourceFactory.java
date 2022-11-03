@@ -1,4 +1,4 @@
-package com.qq.utils;
+package com.client.utils;
 
 import com.alibaba.druid.pool.DruidDataSource;
 import org.apache.ibatis.datasource.pooled.PooledDataSourceFactory;

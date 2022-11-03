@@ -1,4 +1,4 @@
-package com.qq.pojo;
+package com.client.pojo;
 
 public class User {
     private Integer id;

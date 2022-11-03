@@ -1,4 +1,4 @@
-package com.qq.controller;
+package com.client.controller;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
