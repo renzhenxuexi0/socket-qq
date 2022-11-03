@@ -4,13 +4,6 @@
         "http://mybatis.org/dtd/mybatis-3-config.dtd">
 <!--里面的标签都要按顺序写 根据官方提供的顺序-->
 <configuration>
-    <!--
-        起别名是可以简化映射文件写返回类型的 有这个之后可以直接不分大小写 例如写user
-        自动在包下扫描Java Bean
-    -->
-    <typeAliases>
-        <package name="com.server.pojo"/>
-    </typeAliases>
 
     <!-- environments 配置数据库连接环境信息，可以配置多个environment 可以通过default属性切换不同的environment-->
     <environments default="development">
