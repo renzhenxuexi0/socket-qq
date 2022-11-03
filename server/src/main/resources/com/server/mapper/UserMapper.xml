@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.server.mapper.UserMapper">
+    <resultMap id="userResultMap" type="user">
+        <!--
+            id 是主键字段映射
+            result 用来写普通字段映射
+                column是表的列名   property是映射的对应的类的属性名
+        -->
+        <result column="account_number" property="accountNumber"/>
+    </resultMap>
+
+
+
+</mapper>

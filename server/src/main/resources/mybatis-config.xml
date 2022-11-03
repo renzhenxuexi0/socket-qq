@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<!--里面的标签都要按顺序写 根据官方提供的顺序-->
+<configuration>
+    <!--
+        起别名是可以简化映射文件写返回类型的 有这个之后可以直接不分大小写 例如写user
+        自动在包下扫描Java Bean
+    -->
+    <typeAliases>
+        <package name="com.server.pojo"/>
+    </typeAliases>
+
+    <!-- environments 配置数据库连接环境信息，可以配置多个environment 可以通过default属性切换不同的environment-->
+    <environments default="development">
+        <environment id="development">
+            <transactionManager type="JDBC"/>
+            <dataSource type="com.server.utils.DruidDataSourceFactory">
+                <!--数据库连接信息-->
+                <property name="driver" value="com.mysql.jdbc.Driver"/>
+                <property name="url" value="jdbc:mysql://localhost:3306/socket_db?useSSL=false"/>
+                <property name="username" value="root"/>
+                <property name="password" value="1234"/>
+            </dataSource>
+        </environment>
+    </environments>
+    <mappers>
+        <!--
+            加载sql的映射文件  maven项目编译完成后resources目录的文件和com目录在同一个文件夹
+            如果同路径那就直接写文件名
+            如果不是就加上目录名就行
+        -->
+        <!--<mapper resource="com/lean/mapper/UserMapper.xml"/>-->
+        <!--如果是Mapper代理的方式 可以写包 自动检索文件-->
+        <package name="com.server.mapper"/>
+
+    </mappers>
+</configuration>
