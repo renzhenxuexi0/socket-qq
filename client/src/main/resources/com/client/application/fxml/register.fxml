@@ -9,6 +9,9 @@
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.paint.Color?>
+<?import javafx.scene.paint.LinearGradient?>
+<?import javafx.scene.paint.Stop?>
 <?import javafx.scene.text.Font?>
 
 <AnchorPane style="-fx-background-color: whght;" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.client.controller.RegisterController">
@@ -19,26 +22,42 @@
           <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="459.0" minWidth="10.0" prefWidth="361.0" />
         </columnConstraints>
         <rowConstraints>
-            <RowConstraints maxHeight="141.0" minHeight="10.0" prefHeight="134.0" valignment="CENTER" vgrow="SOMETIMES" />
-            <RowConstraints maxHeight="141.0" minHeight="10.0" prefHeight="134.0" valignment="CENTER" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="141.0" minHeight="10.0" prefHeight="95.0" valignment="CENTER" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="141.0" minHeight="10.0" prefHeight="136.0" valignment="CENTER" vgrow="SOMETIMES" />
           <RowConstraints maxHeight="141.0" minHeight="10.0" prefHeight="134.0" vgrow="SOMETIMES" />
           <RowConstraints maxHeight="248.0" minHeight="10.0" prefHeight="122.0" vgrow="SOMETIMES" />
             <RowConstraints maxHeight="248.0" minHeight="10.0" prefHeight="68.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
             <Label text="用户名：" GridPane.rowIndex="2" />
-            <TextField GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <TextField maxWidth="300.0" minWidth="300.0" prefWidth="300.0" translateX="-30.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
             <Label text="账号：" GridPane.rowIndex="1" />
             <Label text="密码：" GridPane.rowIndex="3" />
-            <TextField GridPane.columnIndex="1" GridPane.rowIndex="1" />
-            <TextField GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            <TextField maxWidth="300.0" minWidth="300.0" prefHeight="23.0" prefWidth="300.0" translateX="-30.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <TextField maxWidth="300.0" minWidth="300.0" prefWidth="300.0" translateX="-30.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
             <Button defaultButton="true" mnemonicParsing="false" prefHeight="33.0" prefWidth="90.0" text="提交" GridPane.columnIndex="1" GridPane.rowIndex="4" />
             <Label prefHeight="105.0" prefWidth="120.0" text="注 册" textAlignment="CENTER" GridPane.columnIndex="1">
                <font>
                   <Font name="System Italic" size="46.0" />
                </font>
+               <textFill>
+                  <LinearGradient endY="1.0" startX="0.7393364928909951" startY="0.5450236966824645">
+                     <stops>
+                        <Stop>
+                           <color>
+                              <Color />
+                           </color>
+                        </Stop>
+                        <Stop offset="1.0">
+                           <color>
+                              <Color red="1.0" />
+                           </color>
+                        </Stop>
+                     </stops>
+                  </LinearGradient>
+               </textFill>
             </Label>
-            <ImageView cache="true" fitHeight="121.0" fitWidth="83.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView cache="true" fitHeight="96.0" fitWidth="97.0" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@../image/register_logo.gif" />
                </image>
