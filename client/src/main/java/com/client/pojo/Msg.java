@@ -1,6 +1,6 @@
 package com.client.pojo;
 
-public class msg {
+public class Msg {
     private Integer id;
     private String messageTime;
     private String content;

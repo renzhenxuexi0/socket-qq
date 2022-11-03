@@ -19,25 +19,25 @@ import java.util.Objects;
 public class StageManager {
     private static final Map<String, Stage> stageMap = new HashMap<>();//存放所有的Stage实例
 
-    public Stage getStage(String name){
+    public static Stage getStage(String name){
         return stageMap.get(name);
     }
 
-    public void closeStage(String name){
+    public static void closeStage(String name){
         stageMap.get(name).close();
     }
 
     //实现Stage的跳转，从currentStage跳转到targetStage
-    public void jump(String currentStageName, String targetStageName){
+    public static void jump(String currentStageName, String targetStageName){
         stageMap.get(currentStageName).close();
         stageMap.get(targetStageName).show();
     }
 
-    public void release(String name){
+    public static void release(String name){
         stageMap.remove(name);
     }
 
-    public void addStage(String title, Stage stage) throws IOException {
+    public static void addStage(String title, Stage stage) {
         stageMap.put(title, stage);
     }
 }
