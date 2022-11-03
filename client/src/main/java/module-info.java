@@ -1,9 +1,7 @@
 module com.qq.app.socktqq {
     requires javafx.controls;
     requires javafx.fxml;
-    requires druid;
-    requires org.mybatis;
 
-    exports com.qq;
-    opens com.qq to javafx.fxml;
+    exports com.client.application;
+    opens com.client.controller to javafx.fxml;
 }

@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.example</groupId>
-    <artifactId>client</artifactId>
+    <artifactId>server</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <properties>
@@ -16,6 +16,28 @@
         <javafx.version>19</javafx.version>
     </properties>
     <dependencies>
+
+        <!--mybatis 依赖-->
+        <dependency>
+            <groupId>org.mybatis</groupId>
+            <artifactId>mybatis</artifactId>
+            <version>3.5.6</version>
+        </dependency>
+
+        <!--mysql驱动 依赖-->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>5.1.47</version>
+        </dependency>
+
+        <!--druid 数据源-->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>druid</artifactId>
+            <version>1.2.14</version>
+        </dependency>
+
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
@@ -85,10 +107,10 @@
                         </goals>
                         <configuration>
                             <!-- mandatory -->
-                            <mainClass>com.client.application.LoginApplication</mainClass>
+                            <mainClass>com.example.demo.HelloApplication</mainClass>
                             <!-- optional -->
                             <bundleJre>true</bundleJre>
-                            <jrePath>E:\workspace_java\socket-qq\client\target\app</jrePath>
+                            <jrePath>E:\workspace_java\demo\target\app</jrePath>
                             <generateInstaller>false</generateInstaller>
                             <administratorRequired>false</administratorRequired>
                             <platform>windows</platform>
@@ -100,4 +122,5 @@
             </plugin>
         </plugins>
     </build>
+
 </project>
