@@ -1,7 +1,6 @@
 package com.client.service;
 
 import com.client.pojo.User;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.OutputStream;
