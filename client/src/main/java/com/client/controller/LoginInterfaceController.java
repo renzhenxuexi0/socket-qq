@@ -23,12 +23,12 @@ public class LoginInterfaceController {
     private PasswordField registerInput;
 
     @FXML
-    void loginButton_event(ActionEvent event) {
+    void loginButtonEvent(ActionEvent event) {
 
     }
 
     @FXML
-    void registerButton_event(ActionEvent event) throws Exception {
+    void registerButtonEvent(ActionEvent event) throws Exception {
         RegisterApplication registerApplication = new RegisterApplication();
         registerApplication.start(new Stage());
         StageManager.jump("登录界面", "注册界面");

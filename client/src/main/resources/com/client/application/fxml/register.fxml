@@ -32,7 +32,7 @@
                 <Label text="密码：" GridPane.rowIndex="3" />
                 <TextField fx:id="accountInput" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                 <TextField fx:id="passwordInput" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                <Button fx:id="submitButton" defaultButton="true" mnemonicParsing="false" prefHeight="33.0" prefWidth="90.0" text="提交" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                <Button fx:id="submitButton" defaultButton="true" mnemonicParsing="false" onAction="#submitButtonEvent" prefHeight="33.0" prefWidth="90.0" text="提交" GridPane.columnIndex="1" GridPane.rowIndex="4" />
                 <Label prefHeight="105.0" prefWidth="120.0" text="注 册" textAlignment="CENTER" GridPane.columnIndex="1">
                     <font>
                         <Font name="System Italic" size="46.0" />

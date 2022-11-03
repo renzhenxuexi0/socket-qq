@@ -94,8 +94,8 @@
                     </rowConstraints>
                     <children>
                         <Button fx:id="loginButton" defaultButton="true" mnemonicParsing="false"
-                                onAction="#loginButton_event" prefHeight="30.0" prefWidth="100.0" text="登录"/>
-                        <Button fx:id="registerButton" mnemonicParsing="false" onAction="#registerButton_event"
+                                onAction="#loginButtonEvent" prefHeight="30.0" prefWidth="100.0" text="登录"/>
+                        <Button fx:id="registerButton" mnemonicParsing="false" onAction="#registerButtonEvent"
                                 prefHeight="30.0" prefWidth="100.0" text="注册" GridPane.columnIndex="1"/>
                     </children>
                 </GridPane>
