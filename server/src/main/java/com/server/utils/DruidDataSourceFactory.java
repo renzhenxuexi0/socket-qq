@@ -1,4 +1,4 @@
-package com.server;
+package com.server.utils;
 
 import com.alibaba.druid.pool.DruidDataSource;
 import org.apache.ibatis.datasource.pooled.PooledDataSourceFactory;
