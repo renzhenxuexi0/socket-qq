@@ -26,7 +26,7 @@
             <children>
                 <ImageView fitHeight="160.0" fitWidth="350.0" pickOnBounds="true" preserveRatio="true">
                     <image>
-                        <Image url="@../image/login_background%20.gif"/>
+                        <Image url="@../image/login_background.gif"/>
                     </image>
                 </ImageView>
                 <Label prefHeight="49.0" prefWidth="133.0" text="信科QQ" textAlignment="CENTER">

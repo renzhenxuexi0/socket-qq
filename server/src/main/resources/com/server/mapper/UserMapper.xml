@@ -4,7 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.server.mapper.UserMapper">
-    <resultMap id="userResultMap" type="user">
+    <resultMap id="userResultMap" type="com.server.pojo.User">
         <!--
             id 是主键字段映射
             result 用来写普通字段映射
@@ -17,6 +17,4 @@
         insert into tbl_user (username, paasword, account_number)
         values (#{username}, #{password}, #{accountNumber});
     </insert>
-
-
 </mapper>
