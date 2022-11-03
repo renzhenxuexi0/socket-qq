@@ -1,10 +1,10 @@
-package com.server.service;
+package com.client.service;
 
-import com.server.pojo.User;
+import com.client.pojo.User;
 
 public class UserService {
     /**
-     * 服务端完成用户注册的操作
+     * 客户端完成用户注册的操作
      * @param user
      */
     public void userRegister(User user){
