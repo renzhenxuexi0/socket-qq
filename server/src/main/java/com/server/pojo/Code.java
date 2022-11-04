@@ -9,5 +9,5 @@ public class Code {
     // 注册成功
     public static final Integer REGISTER_SUCCESS = 1002;
     // 注册失败
-    public static final Integer REGISTER_fail = 1003;
+    public static final Integer REGISTER_FAIL = 1003;
 }

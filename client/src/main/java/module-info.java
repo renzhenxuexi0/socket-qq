@@ -1,8 +1,7 @@
 module com.client {
     requires javafx.controls;
     requires javafx.fxml;
-    requires com.fasterxml.jackson.databind;
-    requires com.fasterxml.jackson.annotation;
+    requires fastjson;
 
     exports com.client.application;
     exports com.client.pojo;

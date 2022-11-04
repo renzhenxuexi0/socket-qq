@@ -1,55 +1,47 @@
 package com.server.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.alibaba.fastjson.JSON;
+import com.server.mapper.UserMapper;
+import com.server.pojo.Data;
 import com.server.pojo.User;
+import com.server.utils.SqlSessionFactoryUtils;
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
 
-import java.io.*;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.Callable;
 
 public class UserService {
-    // 创建线程池
-    private static final ThreadPoolExecutor pool = new ThreadPoolExecutor(2, 4,
-            2, TimeUnit.SECONDS,
-            new ArrayBlockingQueue<>(2), Executors.defaultThreadFactory(),
-            new ThreadPoolExecutor.AbortPolicy());
+    // 创建数据库连接工厂
+    private static final SqlSessionFactory sqlSessionFactory = SqlSessionFactoryUtils.getSqlSessionFactory();
 
-    // json工具
-    private static final ObjectMapper objectMapper = new ObjectMapper();
+    private User user;
 
-    /**
-     * 服务端完成用户注册的操作
-     */
-    public void userRegister() {
-        try {
-            ServerSocket serverSocket = new ServerSocket(6666);
-            while (true) {
-                Socket socket = serverSocket.accept();
-                pool.execute(() -> {
-                    try {
-                        InputStream is = socket.getInputStream();
-                        Reader reader = new InputStreamReader(is);
-                        BufferedReader bfr = new BufferedReader(reader);
-                        String json =  bfr.readLine();
-                        User user = objectMapper.readValue(json, User.class);
-                        System.out.println(user);
-
-                    }catch (Exception e){
-                        e.printStackTrace();
-                    }
-                });
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+    public void setData(User user) {
+        this.user = user;
     }
 
-    public static void main(String[] args) {
-        UserService userService = new UserService();
-        userService.userRegister();
+    public Callable<Boolean> userRegister() {
+        return new Callable<Boolean>() {
+            @Override
+            public Boolean call() throws Exception {
+                try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+                    // 做数据校验 可以封装成工具类 如果有问题return false
+
+                    // 如果没用问题
+                    // 先把数据上传到数据库
+                    // 1.得到mapper对象
+                    UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
+                    userMapper.addUser(user);
+                    // 添加操作 需要提交事务
+                    sqlSession.commit();
+                    // 成功return true
+                    return true;
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    // 出错返回false
+                    return false;
+                }
+            }
+        };
     }
 }
