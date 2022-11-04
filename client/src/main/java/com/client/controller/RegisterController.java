@@ -1,6 +1,5 @@
 package com.client.controller;
 
-import com.client.application.RegisterApplication;
 import com.client.pojo.Code;
 import com.client.pojo.Data;
 import com.client.pojo.User;
@@ -11,7 +10,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
-import javafx.stage.Stage;
 
 public class RegisterController {
     private UserService userService = new UserService();

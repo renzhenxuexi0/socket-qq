@@ -3,7 +3,6 @@ package com.client.service;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.client.pojo.Data;
-import com.client.pojo.User;
 
 import java.io.*;
 import java.net.Socket;

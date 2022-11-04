@@ -1,7 +1,6 @@
 package com.client.controller;
 
 import com.client.application.RegisterApplication;
-import com.client.service.UserService;
 import com.client.utils.StageManager;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;

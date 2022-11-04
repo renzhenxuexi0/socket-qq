@@ -1,8 +1,6 @@
 package com.server.service;
 
-import com.alibaba.fastjson.JSON;
 import com.server.mapper.UserMapper;
-import com.server.pojo.Data;
 import com.server.pojo.User;
 import com.server.utils.SqlSessionFactoryUtils;
 import org.apache.ibatis.session.SqlSession;
