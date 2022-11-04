@@ -31,11 +31,11 @@
                 <RowConstraints maxHeight="248.0" minHeight="10.0" prefHeight="68.0" vgrow="SOMETIMES"/>
             </rowConstraints>
             <children>
-                <Label text="用户名：" GridPane.rowIndex="2"/>
-                <TextField fx:id="userNameInput" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
-                <Label text="账号：" GridPane.rowIndex="1"/>
+                <Label text="用户名：" GridPane.rowIndex="1"/>
+                <TextField fx:id="userNameInput" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                <Label text="账号：" GridPane.rowIndex="2"/>
                 <Label text="密码：" GridPane.rowIndex="3"/>
-                <TextField fx:id="accountInput" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                <TextField fx:id="accountInput" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
                 <TextField fx:id="passwordInput" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
                 <Button fx:id="submitButton" defaultButton="true" mnemonicParsing="false" onAction="#submitButtonEvent"
                         prefHeight="33.0" prefWidth="90.0" text="提交" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
