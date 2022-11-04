@@ -27,6 +27,7 @@ public class RegisterController {
         user.setAccountNumber(accountInput.getText());
         user.setPassword(passwordInput.getText());
         user.setUsername(userNameInput.getText());
+        user.setLogin(0);
         userService.userRegister(user);
     }
 }
