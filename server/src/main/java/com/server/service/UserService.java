@@ -22,7 +22,7 @@ public class UserService {
     public Callable<Boolean> userRegister() {
         return new Callable<Boolean>() {
             @Override
-            public Boolean call() throws Exception {
+            public Boolean call() {
                 try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
                     // 做数据校验 可以封装成工具类 如果有问题return false
 
