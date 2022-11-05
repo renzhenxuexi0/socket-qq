@@ -14,7 +14,7 @@
 <?import javafx.scene.text.Font?>
 
 <SplitPane dividerPositions="0.5" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-           prefHeight="500.0" prefWidth="800.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/19"
+           prefHeight="500.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1"
            fx:controller="com.server.controller.ServerController">
     <items>
         <GridPane maxWidth="200.0" minWidth="200.0" prefWidth="200.0">
@@ -72,7 +72,7 @@
                         <Font size="27.0"/>
                     </font>
                 </Label>
-                <TextArea prefHeight="365.0" prefWidth="600.0" translateY="100.0"/>
+                <TextArea fx:id="contentInput" prefHeight="365.0" prefWidth="600.0" translateY="100.0"/>
             </children>
         </VBox>
     </items>

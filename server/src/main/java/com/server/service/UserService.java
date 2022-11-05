@@ -15,7 +15,7 @@ public class UserService {
 
     private User user;
 
-    public void setData(User user) {
+    public void setUser(User user) {
         this.user = user;
     }
 

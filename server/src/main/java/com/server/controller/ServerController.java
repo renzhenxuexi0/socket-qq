@@ -9,6 +9,7 @@ import com.server.service.UserService;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.TextArea;
 
 import java.io.*;
 import java.net.ServerSocket;
@@ -24,7 +25,7 @@ public class ServerController {
             new ArrayBlockingQueue<>(2), Executors.defaultThreadFactory(),
             new ThreadPoolExecutor.AbortPolicy());
 
-    private static final Thread start = new Thread(new Runnable() {
+    private final Thread start = new Thread(new Runnable() {
         @Override
         public void run() {
             startServer();
@@ -37,13 +38,19 @@ public class ServerController {
     @FXML
     private Button viewAllUserButton;
 
+    @FXML
+    private TextArea contentInput;
+
+    private String content = "";
+
     /**
      * 创建线程启动服务
      */
     @FXML
     void startServerButtonEvent(ActionEvent event) {
         start.start();
-        System.out.println("服务器启动");
+        content += "服务器启动" + "\n";
+        contentInput.setText(content);
     }
 
     @FXML
@@ -52,14 +59,15 @@ public class ServerController {
         Future<List<User>> submit = pool.submit(listCallable);
         try {
             List<User> users = submit.get();
-            System.out.println(users);
+            content += users.toString() + "\n";
+            contentInput.setText(content);
         } catch (Exception e) {
-            System.out.println("未知错误");
-            ;
+            content += "未知错误" + "\n";
+            contentInput.setText(content);
         }
     }
 
-    static void startServer() {
+    void startServer() {
         try {
             ServerSocket serverSocket = new ServerSocket(6666);
             while (true) {
@@ -73,7 +81,8 @@ public class ServerController {
                 JSONObject jsonObject = JSON.parseObject(bfr.readLine());
                 System.out.println(jsonObject);
                 // 数据传给服务层
-                userService.setData(JSON.parseObject(jsonObject.get("object").toString(), User.class));
+                User user = JSON.parseObject(jsonObject.get("object").toString(), User.class);
+                userService.setUser(user);
 
                 if (Code.USER_REGISTER.equals(jsonObject.get("code"))) {
                     Future<Boolean> booleanFuture = pool.submit(userService.userRegister());
@@ -84,9 +93,13 @@ public class ServerController {
                         // 再返回数据给客户端
                         data2.setCode(Code.REGISTER_SUCCESS);
                         data2.setMsg("注册成功");
+                        content += user.getUsername() + "注册成功" + "\n";
+                        contentInput.setText(content);
                     } else {
                         data2.setCode(Code.REGISTER_FAIL);
                         data2.setMsg("注册失败");
+                        content += user.getUsername() + "注册失败" + "\n";
+                        contentInput.setText(content);
                     }
                     ps.println(JSON.toJSONString(data2));
                 }
