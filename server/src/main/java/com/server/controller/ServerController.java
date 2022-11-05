@@ -88,8 +88,8 @@ public class ServerController {
                     Data register = register(user);
                     ps.println(JSON.toJSONString(register));
                 }if (Code.USER_LOGIN.equals(jsonObject.get("code"))) {
-                    Data register =register(user);
-                    ps.println(JSON.toJSONString(register));
+                    Data login =login(user);
+                    ps.println(JSON.toJSONString(login));
                 } else {
                     Data data = new Data();
                     data.setMsg("未知错误");
