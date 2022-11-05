@@ -33,7 +33,7 @@ public class LoginInterfaceController {
         Data data = new Data();
         data.setCode(Code.USER_LOGIN);
         User user = new User();
-        user.setAccountNumber(accountInput.getText());
+        user.setAccount(accountInput.getText());
         user.setPassword(passwordInput.getText());
         data.setObject(user);
         Data data2 = userService.userRegister(data);
