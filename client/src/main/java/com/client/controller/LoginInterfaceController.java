@@ -36,11 +36,11 @@ public class LoginInterfaceController {
         user.setAccount(accountInput.getText());
         user.setPassword(passwordInput.getText());
         data.setObject(user);
-        Data data2 = userService.userRegister(data);
+        Data data2 = userService.userLogin(data);
         Alert alert;
         if (Code.LOGIN_SUCCESS.equals(data2.getCode())) {
-            // 注册成功弹窗 显示服务器返回的信息
             StageManager.jump("登录界面", "用户界面");
+            System.out.println("success！");
         } else {
             // 注册失败 弹出错误窗口
             alert = new Alert(Alert.AlertType.ERROR, data2.getMsg());
