@@ -18,5 +18,5 @@ public interface UserMapper {
     List<User> selectAll();
 
 
-    User selectbyAccountNumberAndPasswordUser(User user);
+    User selectByAccountNumberAndPasswordUser(User user);
 }

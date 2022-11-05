@@ -3,7 +3,7 @@ package com.client.pojo;
 public class User {
     private Integer id;
     private String username;
-    private String accountNumber;
+    private String account;
     private String password;
     private Integer login;
 
@@ -12,7 +12,7 @@ public class User {
         return "User{" +
                 "id=" + id +
                 ", username='" + username + '\'' +
-                ", accountNumber='" + accountNumber + '\'' +
+                ", account='" + account + '\'' +
                 ", password='" + password + '\'' +
                 ", login=" + login +
                 '}';
@@ -34,12 +34,12 @@ public class User {
         this.username = username;
     }
 
-    public String getAccountNumber() {
-        return accountNumber;
+    public String getAccount() {
+        return account;
     }
 
-    public void setAccountNumber(String accountNumber) {
-        this.accountNumber = accountNumber;
+    public void setAccount(String account) {
+        this.account = account;
     }
 
     public String getPassword() {

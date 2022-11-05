@@ -4,25 +4,17 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.server.mapper.UserMapper">
-    <resultMap id="userResultMap" type="com.server.pojo.User">
-        <!--
-            id 是主键字段映射
-            result 用来写普通字段映射
-                column是表的列名   property是映射的对应的类的属性名
-        -->
-        <result column="account_number" property="accountNumber"/>
-    </resultMap>
 
     <insert id="addUser">
-        insert into tbl_user (username, password, account_number)
+        insert into tbl_user (username, password, account)
         values (#{username}, #{password}, #{accountNumber});
     </insert>
-    <select id="selectAll" resultMap="userResultMap">
+    <select id="selectAll" resultType="com.server.pojo.User">
         select * from tbl_user;
     </select>
-    <select id="selectbyAccountNumberAndPasswordUser" resultMap="userResultMap">
+    <select id="selectByAccountNumberAndPasswordUser" resultType="com.server.pojo.User">
         select *
         from tbl_user
-        where account_number=#{accountNumber} and password=#{password};
+        where account=#{account} and password=#{password};
     </select>
 </mapper>
