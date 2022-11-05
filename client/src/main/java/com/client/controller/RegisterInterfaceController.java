@@ -11,7 +11,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 
-public class RegisterController {
+public class RegisterInterfaceController {
     private UserService userService = new UserService();
     @FXML
     private TextField accountInput;
@@ -27,6 +27,7 @@ public class RegisterController {
 
     /**
      * 提交按钮触发事件
+     *
      * @param event
      */
     @FXML
@@ -41,12 +42,12 @@ public class RegisterController {
         data.setObject(user);
         Data data2 = userService.userRegister(data);
         Alert alert;
-        if (Code.REGISTER_SUCCESS.equals(data2.getCode())){
+        if (Code.REGISTER_SUCCESS.equals(data2.getCode())) {
             // 注册成功弹窗 显示服务器返回的信息
             alert = new Alert(Alert.AlertType.INFORMATION, data2.getMsg());
             alert.showAndWait();
             StageManager.jump("注册界面", "登录界面");
-        }else {
+        } else {
             // 注册失败 弹出错误窗口
             alert = new Alert(Alert.AlertType.ERROR, data2.getMsg());
             alert.show();

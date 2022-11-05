@@ -5,8 +5,8 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
-<AnchorPane style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.client.controller.RegisterController">
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/19"
+            fx:controller="com.client.controller.RegisterInterfaceController">
     <children>
         <GridPane layoutX="-2.0" layoutY="16.0" prefHeight="536.0" prefWidth="447.0">
             <columnConstraints>

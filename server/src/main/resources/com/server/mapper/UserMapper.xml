@@ -10,11 +10,13 @@
         values (#{username}, #{password}, #{account});
     </insert>
     <select id="selectAll" resultType="com.server.pojo.User">
-        select * from tbl_user;
+        select *
+        from tbl_user;
     </select>
     <select id="selectByAccountNumberAndPasswordUser" resultType="com.server.pojo.User">
         select *
         from tbl_user
-        where account=#{account} and password=#{password};
+        where account = #{account}
+          and password = #{password};
     </select>
 </mapper>

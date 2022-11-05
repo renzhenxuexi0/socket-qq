@@ -12,44 +12,44 @@ public class Msg {
         return id;
     }
 
-    public String getMessageTime() {
-        return messageTime;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public String getContentType() {
-        return contentType;
-    }
-
-    public Integer getSenderId() {
-        return senderId;
-    }
-
-    public Integer getReceiveId() {
-        return receiveId;
-    }
-
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public String getMessageTime() {
+        return messageTime;
     }
 
     public void setMessageTime(String messageTime) {
         this.messageTime = messageTime;
     }
 
+    public String getContent() {
+        return content;
+    }
+
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public String getContentType() {
+        return contentType;
     }
 
     public void setContentType(String contentType) {
         this.contentType = contentType;
     }
 
+    public Integer getSenderId() {
+        return senderId;
+    }
+
     public void setSenderId(Integer senderId) {
         this.senderId = senderId;
+    }
+
+    public Integer getReceiveId() {
+        return receiveId;
     }
 
     public void setReceiveId(Integer receiveId) {

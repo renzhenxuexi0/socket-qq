@@ -24,24 +24,19 @@ public class ServerController {
             2, TimeUnit.SECONDS,
             new ArrayBlockingQueue<>(2), Executors.defaultThreadFactory(),
             new ThreadPoolExecutor.AbortPolicy());
-
+    @FXML
+    private Button startServerButton;
+    @FXML
+    private Button viewAllUserButton;
+    @FXML
+    private TextArea contentInput;
+    private String content = "";
     private final Thread start = new Thread(new Runnable() {
         @Override
         public void run() {
             startServer();
         }
     });
-
-    @FXML
-    private Button startServerButton;
-
-    @FXML
-    private Button viewAllUserButton;
-
-    @FXML
-    private TextArea contentInput;
-
-    private String content = "";
 
     /**
      * 创建线程启动服务

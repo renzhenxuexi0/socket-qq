@@ -8,6 +8,7 @@ public interface UserMapper {
 
     /**
      * 添加用户
+     *
      * @param user
      */
     void addUser(User user);

@@ -6,31 +6,34 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
 <?import javafx.scene.text.Font?>
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="350.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.client.controller.LoginInterfaceController">
+<VBox xmlns:fx="http://javafx.com/fxml/1" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+      prefHeight="300.0" prefWidth="350.0" xmlns="http://javafx.com/javafx/19"
+      fx:controller="com.client.controller.LoginInterfaceController">
 
     <children>
         <StackPane prefHeight="131.0" prefWidth="489.0">
             <children>
                 <ImageView fitHeight="160.0" fitWidth="350.0" pickOnBounds="true" preserveRatio="true">
                     <image>
-                        <Image url="@../image/login_background.gif" />
+                        <Image url="@../image/login_background.gif"/>
                     </image>
                 </ImageView>
                 <Label prefHeight="49.0" prefWidth="133.0" text="信科QQ" textAlignment="CENTER">
                     <font>
-                        <Font size="36.0" />
+                        <Font size="36.0"/>
                     </font>
                     <textFill>
                         <LinearGradient endX="1.0" endY="1.0">
                             <stops>
                                 <Stop>
                                     <color>
-                                        <Color red="0.05040000006556511" green="0.6299999952316284" blue="0.6134399771690369" />
+                                        <Color red="0.05040000006556511" green="0.6299999952316284"
+                                               blue="0.6134399771690369"/>
                                     </color>
                                 </Stop>
                                 <Stop offset="1.0">
                                     <color>
-                                        <Color red="1.0" green="1.0" blue="1.0" />
+                                        <Color red="1.0" green="1.0" blue="1.0"/>
                                     </color>
                                 </Stop>
                             </stops>
@@ -43,18 +46,24 @@
             <children>
                 <GridPane prefHeight="70.0" prefWidth="350.0">
                     <columnConstraints>
-                        <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="170.0" minWidth="10.0" prefWidth="75.0" />
-                        <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="275.0" minWidth="10.0" prefWidth="275.0" />
+                        <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="170.0" minWidth="10.0"
+                                           prefWidth="75.0"/>
+                        <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="275.0" minWidth="10.0"
+                                           prefWidth="275.0"/>
                     </columnConstraints>
                     <rowConstraints>
-                        <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" prefHeight="30.0"
+                                        valignment="CENTER" vgrow="SOMETIMES"/>
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES"/>
                     </rowConstraints>
                     <children>
-                        <Label text="账号:" />
-                        <TextField fx:id="accountInput" maxHeight="20.0" maxWidth="240.0" minHeight="20.0" minWidth="200.0" prefHeight="20.0" prefWidth="240.0" GridPane.columnIndex="1" />
-                        <Label text="密码：" GridPane.rowIndex="1" />
-                        <PasswordField fx:id="passwordInput" maxHeight="20.0" maxWidth="240.0" minHeight="20.0" minWidth="200.0" prefHeight="20.0" prefWidth="240.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <Label text="账号:"/>
+                        <TextField fx:id="accountInput" maxHeight="20.0" maxWidth="240.0" minHeight="20.0"
+                                   minWidth="200.0" prefHeight="20.0" prefWidth="240.0" GridPane.columnIndex="1"/>
+                        <Label text="密码：" GridPane.rowIndex="1"/>
+                        <PasswordField fx:id="passwordInput" maxHeight="20.0" maxWidth="240.0" minHeight="20.0"
+                                       minWidth="200.0" prefHeight="20.0" prefWidth="240.0" GridPane.columnIndex="1"
+                                       GridPane.rowIndex="1"/>
                     </children>
                 </GridPane>
             </children>
@@ -63,15 +72,20 @@
             <children>
                 <GridPane prefHeight="70.0" prefWidth="350.0">
                     <columnConstraints>
-                        <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="174.0" minWidth="10.0" prefWidth="174.0" />
-                        <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="275.0" minWidth="10.0" prefWidth="176.0" />
+                        <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="174.0" minWidth="10.0"
+                                           prefWidth="174.0"/>
+                        <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="275.0" minWidth="10.0"
+                                           prefWidth="176.0"/>
                     </columnConstraints>
                     <rowConstraints>
-                        <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" prefHeight="30.0"
+                                        valignment="CENTER" vgrow="SOMETIMES"/>
                     </rowConstraints>
                     <children>
-                        <Button fx:id="loginButton" defaultButton="true" mnemonicParsing="false" onAction="#loginButtonEvent" prefHeight="30.0" prefWidth="100.0" text="登录" />
-                        <Button fx:id="registerButton" mnemonicParsing="false" onAction="#registerButtonEvent" prefHeight="30.0" prefWidth="100.0" text="注册" GridPane.columnIndex="1" />
+                        <Button fx:id="loginButton" defaultButton="true" mnemonicParsing="false"
+                                onAction="#loginButtonEvent" prefHeight="30.0" prefWidth="100.0" text="登录"/>
+                        <Button fx:id="registerButton" mnemonicParsing="false" onAction="#registerButtonEvent"
+                                prefHeight="30.0" prefWidth="100.0" text="注册" GridPane.columnIndex="1"/>
                     </children>
                 </GridPane>
             </children>
