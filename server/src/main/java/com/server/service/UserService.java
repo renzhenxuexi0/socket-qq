@@ -71,7 +71,7 @@ public class UserService {
                     //得到mapper类
                     UserMapper userMapper= sqlSession.getMapper(UserMapper.class);
                     //获取输入的账号和密码
-                    User user2 = userMapper.selectbyAccountNumberAndPasswordUser(user);
+                    User user2 = userMapper.selectByAccountNumberAndPasswordUser(user);
                     return null != user2;
 
                 }catch (Exception e){
