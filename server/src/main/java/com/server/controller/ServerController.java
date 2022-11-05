@@ -15,6 +15,7 @@ import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.*;
 
 public class ServerController {
@@ -84,29 +85,34 @@ public class ServerController {
                 User user = JSON.parseObject(jsonObject.get("object").toString(), User.class);
                 userService.setUser(user);
 
-                if (Code.USER_REGISTER.equals(jsonObject.get("code"))) {
-                    Future<Boolean> booleanFuture = pool.submit(userService.userRegister());
-                    Boolean flag = booleanFuture.get();
-                    // 判断是否成功
-                    Data data2 = new Data();
-                    if (flag.equals(true)) {
-                        // 再返回数据给客户端
-                        data2.setCode(Code.REGISTER_SUCCESS);
-                        data2.setMsg("注册成功");
-                        content += user.getUsername() + "注册成功" + "\n";
-                        contentInput.setText(content);
-                    } else {
-                        data2.setCode(Code.REGISTER_FAIL);
-                        data2.setMsg("注册失败");
-                        content += user.getUsername() + "注册失败" + "\n";
-                        contentInput.setText(content);
-                    }
-                    ps.println(JSON.toJSONString(data2));
+                if (Objects.equals(Integer.getInteger(jsonObject.get("Code").toString()), Code.REGISTER_FAIL)) {
+                    Data register = register(user);
+                    ps.println(JSON.toJSONString(register));
                 }
             }
 
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    Data register(User user) throws ExecutionException, InterruptedException {
+        Future<Boolean> booleanFuture = pool.submit(userService.userRegister());
+        Boolean flag = booleanFuture.get();
+        // 判断是否成功
+        Data data = new Data();
+        if (flag.equals(true)) {
+            // 再返回数据给客户端
+            data.setCode(Code.REGISTER_SUCCESS);
+            data.setMsg("注册成功");
+            content += user.getUsername() + "注册成功" + "\n";
+            contentInput.setText(content);
+        } else {
+            data.setCode(Code.REGISTER_FAIL);
+            data.setMsg("注册失败");
+            content += user.getUsername() + "注册失败" + "\n";
+            contentInput.setText(content);
+        }
+        return data;
     }
 }
