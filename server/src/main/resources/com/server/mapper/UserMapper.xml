@@ -10,7 +10,7 @@
         values (#{username}, #{password}, #{account});
     </insert>
     <select id="selectAll" resultType="com.server.pojo.User">
-        select *
+        select id, username, account, login
         from tbl_user;
     </select>
     <select id="selectByAccountNumberAndPasswordUser" resultType="com.server.pojo.User">
