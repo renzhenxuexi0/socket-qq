@@ -17,7 +17,7 @@ public class UserService {
 
     public Data userRegister(Data data) {
         try {
-            Socket socket = new Socket("127.0.0.1", 6666);
+            Socket socket = new Socket("127.0.0.1", 8080);
             // 一些流的封装
             OutputStream os = socket.getOutputStream();
             PrintStream ps = new PrintStream(os);
