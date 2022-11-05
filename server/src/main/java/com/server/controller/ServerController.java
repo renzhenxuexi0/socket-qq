@@ -15,7 +15,6 @@ import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.*;
 
 public class ServerController {
@@ -88,7 +87,10 @@ public class ServerController {
                 if (Code.USER_REGISTER.equals(jsonObject.get("code"))) {
                     Data register = register(user);
                     ps.println(JSON.toJSONString(register));
-                }else {
+                }if (Code.USER_LOGIN.equals(jsonObject.get("code"))) {
+                    Data register =register(user);
+                    ps.println(JSON.toJSONString(register));
+                } else {
                     Data data = new Data();
                     data.setMsg("未知错误");
                     ps.println(JSON.toJSONString(data));
@@ -119,5 +121,25 @@ public class ServerController {
             contentInput.setText(content);
         }
         return data;
+    }
+    Data login(User user)throws Exception{
+        Future<Boolean> booleanFuture = pool.submit(userService.userLogin());
+        Boolean flag = booleanFuture.get();
+        //判断是否成功
+        Data data =new Data();
+        if (flag.equals(true)){
+            //返回数据给客户端
+            data.setCode(Code.REGISTER_SUCCESS);
+            data.setMsg("登录成功");
+            content +=user.getUsername()+"登录成功"+"\n";
+            contentInput.setText(content);
+        }else {
+            data.setCode(Code.REGISTER_FAIL);
+            data.setMsg("登录失败");
+            content +=user.getUsername()+"登录失败"+"\n";
+            contentInput.setText(content);
+        }
+        return data;
+
     }
 }
