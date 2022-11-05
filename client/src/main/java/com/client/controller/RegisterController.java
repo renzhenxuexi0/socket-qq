@@ -34,7 +34,7 @@ public class RegisterController {
         Data data = new Data();
         data.setCode(Code.USER_REGISTER);
         User user = new User();
-        user.setAccountNumber(accountInput.getText());
+        user.setAccount(accountInput.getText());
         user.setPassword(passwordInput.getText());
         user.setUsername(userNameInput.getText());
         user.setLogin(0);
