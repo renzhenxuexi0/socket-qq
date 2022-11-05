@@ -7,7 +7,7 @@
 
     <insert id="addUser">
         insert into tbl_user (username, password, account)
-        values (#{username}, #{password}, #{accountNumber});
+        values (#{username}, #{password}, #{account});
     </insert>
     <select id="selectAll" resultType="com.server.pojo.User">
         select * from tbl_user;
