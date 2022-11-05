@@ -1,12 +1,14 @@
 package com.server.service;
 
 import com.server.mapper.UserMapper;
+import com.server.pojo.Code;
 import com.server.pojo.User;
 import com.server.utils.SqlSessionFactoryUtils;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.Callable;
 
 public class UserService {
@@ -61,5 +63,25 @@ public class UserService {
                 return null;
             }
         };
+    }
+    public Callable<Boolean> userLogin(){
+        return new Callable<Boolean>(){
+            public Boolean call(){
+                try(SqlSession sqlSession = sqlSessionFactory.openSession()){
+                    //得到mapper类
+                    UserMapper userMapper= sqlSession.getMapper(UserMapper.class);
+                    //获取输入的账号和密码
+                    User user2 = userMapper.selectbyAccountNumberAndPasswordUser(user);
+                    return null != user2;
+
+                }catch (Exception e){
+                    e.printStackTrace();
+                    // 出错返回false
+                    return false;
+                 }
+            }
+
+        };
+
     }
 }

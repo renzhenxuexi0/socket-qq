@@ -74,11 +74,11 @@ public class ServerController {
             while (true) {
                 Socket socket = serverSocket.accept();
                 // 流的封装
-                OutputStream os = socket.getOutputStream();
+                OutputStream os = socket.getOutputStream();//字节输出流抽象类
                 PrintStream ps = new PrintStream(os);
-                InputStream is = socket.getInputStream();
-                Reader reader = new InputStreamReader(is);
-                BufferedReader bfr = new BufferedReader(reader);
+                InputStream is = socket.getInputStream();//面向字节的输入流抽象类
+                Reader reader = new InputStreamReader(is);//创建面向字节的字符流
+                BufferedReader bfr = new BufferedReader(reader);//从字符流中读取文本，缓存
                 JSONObject jsonObject = JSON.parseObject(bfr.readLine());
                 System.out.println(jsonObject);
                 // 数据传给服务层
@@ -89,6 +89,7 @@ public class ServerController {
                     Data register = register(user);
                     ps.println(JSON.toJSONString(register));
                 }
+                
             }
 
         } catch (Exception e) {

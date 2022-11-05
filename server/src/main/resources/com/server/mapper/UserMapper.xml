@@ -14,10 +14,15 @@
     </resultMap>
 
     <insert id="addUser">
-        insert into tbl_user (username, paasword, account_number)
+        insert into tbl_user (username, password, account_number)
         values (#{username}, #{password}, #{accountNumber});
     </insert>
     <select id="selectAll" resultMap="userResultMap">
         select * from tbl_user;
+    </select>
+    <select id="selectbyAccountNumberAndPasswordUser" resultMap="userResultMap">
+        select *
+        from table_user
+        where account_number=#{accountNumber} and password=#{password};
     </select>
 </mapper>
