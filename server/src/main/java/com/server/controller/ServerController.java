@@ -82,20 +82,20 @@ public class ServerController {
                 System.out.println(jsonObject);
                 // 数据传给服务层
                 User user = JSON.parseObject(jsonObject.get("object").toString(), User.class);
-                userService.setUser(user);
 
                 if (Code.USER_REGISTER.equals(jsonObject.get("code"))) {
                     Data register = register(user);
                     ps.println(JSON.toJSONString(register));
-                }if (Code.USER_LOGIN.equals(jsonObject.get("code"))) {
-                    Data login =login(user);
+                }
+                if (Code.USER_LOGIN.equals(jsonObject.get("code"))) {
+                    Data login = login(user);
                     ps.println(JSON.toJSONString(login));
                 } else {
                     Data data = new Data();
                     data.setMsg("未知错误");
                     ps.println(JSON.toJSONString(data));
                 }
-                
+
             }
 
         } catch (Exception e) {
@@ -104,7 +104,7 @@ public class ServerController {
     }
 
     Data register(User user) throws ExecutionException, InterruptedException {
-        Future<Boolean> booleanFuture = pool.submit(userService.userRegister());
+        Future<Boolean> booleanFuture = pool.submit(userService.userRegister(user));
         Boolean flag = booleanFuture.get();
         // 判断是否成功
         Data data = new Data();
@@ -122,21 +122,22 @@ public class ServerController {
         }
         return data;
     }
-    Data login(User user)throws Exception{
-        Future<Boolean> booleanFuture = pool.submit(userService.userLogin());
-        Boolean flag = booleanFuture.get();
+
+    Data login(User user) throws Exception {
+        Future<User> userFuture = pool.submit(userService.userLogin(user));
+        User user2 = userFuture.get();
         //判断是否成功
-        Data data =new Data();
-        if (flag.equals(true)){
+        Data data = new Data();
+        if (user2 != null) {
             //返回数据给客户端
-            data.setCode(Code.REGISTER_SUCCESS);
+            data.setCode(Code.LOGIN_SUCCESS);
             data.setMsg("登录成功");
-            content +=user.getUsername()+"登录成功"+"\n";
+            content += user2.getUsername() + "登录成功" + "\n";
             contentInput.setText(content);
-        }else {
-            data.setCode(Code.REGISTER_FAIL);
+        } else {
+            data.setCode(Code.LOGIN_FAIL);
             data.setMsg("登录失败");
-            content +=user.getUsername()+"登录失败"+"\n";
+            content += "登录失败" + "\n";
             contentInput.setText(content);
         }
         return data;

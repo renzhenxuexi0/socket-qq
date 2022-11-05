@@ -15,13 +15,7 @@ public class UserService {
     // 创建数据库连接工厂
     private static final SqlSessionFactory sqlSessionFactory = SqlSessionFactoryUtils.getSqlSessionFactory();
 
-    private User user;
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public Callable<Boolean> userRegister() {
+    public Callable<Boolean> userRegister(User user) {
         return new Callable<Boolean>() {
             @Override
             public Boolean call() {
@@ -64,20 +58,19 @@ public class UserService {
             }
         };
     }
-    public Callable<Boolean> userLogin(){
-        return new Callable<Boolean>(){
-            public Boolean call(){
+    public Callable<User> userLogin(User user){
+        return new Callable<User>(){
+            public User call(){
                 try(SqlSession sqlSession = sqlSessionFactory.openSession()){
-                    //得到mapper类
+                    // 得到mapper类
                     UserMapper userMapper= sqlSession.getMapper(UserMapper.class);
-                    //获取输入的账号和密码
-                    User user2 = userMapper.selectByAccountNumberAndPasswordUser(user);
-                    return null != user2;
+                    // 获取输入的账号和密码
+                    return userMapper.selectByAccountNumberAndPasswordUser(user);
 
                 }catch (Exception e){
                     e.printStackTrace();
-                    // 出错返回false
-                    return false;
+                    // 出错返回null
+                    return null;
                  }
             }
 
