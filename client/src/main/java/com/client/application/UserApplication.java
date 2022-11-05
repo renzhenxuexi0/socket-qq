@@ -16,7 +16,7 @@ public class UserApplication extends Application {
     public void start(Stage primaryStage) throws Exception {
         Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("fxml/user.fxml")));
         Scene scene = new Scene(root);
-        primaryStage.setTitle("登录界面");
+        primaryStage.setTitle("用户界面");
         primaryStage.setScene(scene);
         // 结束子线程
         primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
@@ -25,7 +25,7 @@ public class UserApplication extends Application {
                 System.exit(0);
             }
         });
-        StageManager.addStage("注册界面", primaryStage);
+        StageManager.addStage("用户界面", primaryStage);
     }
 
 }
