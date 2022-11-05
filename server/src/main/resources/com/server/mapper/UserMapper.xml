@@ -22,7 +22,7 @@
     </select>
     <select id="selectbyAccountNumberAndPasswordUser" resultMap="userResultMap">
         select *
-        from table_user
+        from tbl_user
         where account_number=#{accountNumber} and password=#{password};
     </select>
 </mapper>
