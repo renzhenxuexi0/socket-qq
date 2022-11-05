@@ -6,6 +6,7 @@ import com.server.utils.SqlSessionFactoryUtils;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 
+import java.util.List;
 import java.util.concurrent.Callable;
 
 public class UserService {
@@ -39,6 +40,25 @@ public class UserService {
                     // 出错返回false
                     return false;
                 }
+            }
+        };
+    }
+
+
+    public Callable<List<User>> selectAllUser() {
+        return () -> {
+            try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+                // 做数据校验 可以封装成工具类 如果有问题return false
+
+                // 如果没用问题
+                // 先把数据上传到数据库
+                // 1.得到mapper对象
+                UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
+                return userMapper.selectAll();
+            } catch (Exception e) {
+                e.printStackTrace();
+                // 出错返回null
+                return null;
             }
         };
     }

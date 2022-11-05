@@ -2,6 +2,8 @@ package com.server.mapper;
 
 import com.server.pojo.User;
 
+import java.util.List;
+
 public interface UserMapper {
 
     /**
@@ -9,4 +11,10 @@ public interface UserMapper {
      * @param user
      */
     void addUser(User user);
+
+    /**
+     * 查询所有用户
+     */
+    List<User> selectAll();
+
 }

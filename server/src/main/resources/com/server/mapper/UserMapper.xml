@@ -17,4 +17,7 @@
         insert into tbl_user (username, paasword, account_number)
         values (#{username}, #{password}, #{accountNumber});
     </insert>
+    <select id="selectAll" resultMap="userResultMap">
+        select * from tbl_user;
+    </select>
 </mapper>
