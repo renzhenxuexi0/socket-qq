@@ -85,7 +85,7 @@ public class ServerController {
                 User user = JSON.parseObject(jsonObject.get("object").toString(), User.class);
                 userService.setUser(user);
 
-                if (Objects.equals(Integer.getInteger(jsonObject.get("Code").toString()), Code.REGISTER_FAIL)) {
+                if (Objects.equals(jsonObject.get("Code"), Code.REGISTER_FAIL)) {
                     Data register = register(user);
                     ps.println(JSON.toJSONString(register));
                 }
