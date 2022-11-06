@@ -17,8 +17,6 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
-import java.util.List;
-
 public class LoginInterfaceController {
     private final UserService userService = new UserService();
     @FXML
@@ -42,7 +40,8 @@ public class LoginInterfaceController {
         user.setPassword(passwordInput.getText());
         data.setObject(user);
         Data data2 = userService.userLogin(data);
-        UserMemory.users = JSON.parseArray(data2.getObject().toString(), User.class);;
+        UserMemory.users = JSON.parseArray(data2.getObject().toString(), User.class);
+        ;
         Alert alert;
         if (Code.LOGIN_SUCCESS.equals(data2.getCode())) {
             UserApplication userApplication = new UserApplication();

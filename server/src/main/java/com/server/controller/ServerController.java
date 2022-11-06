@@ -28,7 +28,12 @@ public class ServerController {
 
     // 所有信息
     private String content = "";
-
+    @FXML
+    private Button closeServerButton;
+    @FXML
+    private Button startServerButton;
+    @FXML
+    private TextArea contentInput;
     // 服务端运行线程
     private final Thread start = new Thread(new Runnable() {
         @Override
@@ -36,16 +41,6 @@ public class ServerController {
             startServer();
         }
     });
-
-    @FXML
-    private Button closeServerButton;
-
-    @FXML
-    private Button startServerButton;
-
-
-    @FXML
-    private TextArea contentInput;
 
     /**
      * 创建线程启动服务

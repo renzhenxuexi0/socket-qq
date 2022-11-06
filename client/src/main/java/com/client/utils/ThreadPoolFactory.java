@@ -32,6 +32,9 @@ public class ThreadPoolFactory {
         workQueueSize = Integer.parseInt(properties.get("workQueueSize").toString());
     }
 
+    public static final ThreadPoolExecutor getThreadPool() {
+        return SingletonHolder.pool;
+    }
 
     /**
      * 静态内部类
@@ -41,10 +44,6 @@ public class ThreadPoolFactory {
                 2, TimeUnit.SECONDS,
                 new ArrayBlockingQueue<>(workQueueSize), Executors.defaultThreadFactory(),
                 new ThreadPoolExecutor.AbortPolicy());
-    }
-
-    public static final ThreadPoolExecutor getThreadPool() {
-        return SingletonHolder.pool;
     }
 
 }

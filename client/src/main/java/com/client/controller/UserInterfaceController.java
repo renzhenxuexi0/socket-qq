@@ -6,20 +6,16 @@ import com.client.pojo.Data;
 import com.client.pojo.User;
 import com.client.service.UserService;
 import com.client.utils.UserMemory;
-import javafx.event.EventHandler;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.HPos;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-import javafx.scene.shape.Shape;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -30,13 +26,11 @@ import java.util.concurrent.TimeUnit;
 public class UserInterfaceController implements Initializable {
 
 
+    private static final ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(1);
+    private final UserService userService = new UserService();
     // 用户界面的容器
     @FXML
     private GridPane ui;
-
-    private final UserService userService = new UserService();
-
-    private static final ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(1);
 
     /**
      * 每隔一段时间更新用户列表
@@ -58,7 +52,7 @@ public class UserInterfaceController implements Initializable {
                 }
                 buildUserList();
             }
-        }, 60, TimeUnit.SECONDS);
+        }, 5, TimeUnit.SECONDS);
     }
 
     void buildUserList() {
@@ -83,12 +77,12 @@ public class UserInterfaceController implements Initializable {
         ColumnConstraints columnConstraints = new ColumnConstraints();
         columnConstraints.setHalignment(HPos.LEFT);
         columnConstraints.setPrefWidth(274);
-        gridPane.getColumnConstraints().add(0,columnConstraints);
+        gridPane.getColumnConstraints().add(0, columnConstraints);
 
         ColumnConstraints columnConstraints2 = new ColumnConstraints();
         columnConstraints2.setHalignment(HPos.CENTER);
         columnConstraints2.setPrefWidth(30);
-        gridPane.getColumnConstraints().add(1,columnConstraints2);
+        gridPane.getColumnConstraints().add(1, columnConstraints2);
 
 //        for (RowConstraints rowConstraint : gridPane.getRowConstraints()) {
 //            rowConstraint.setPrefHeight(100);

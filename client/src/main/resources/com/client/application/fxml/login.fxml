@@ -6,7 +6,8 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
 <?import javafx.scene.text.Font?>
-<VBox xmlns:fx="http://javafx.com/fxml/1" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+<VBox xmlns:fx="http://javafx.com/fxml/1" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+      minWidth="-Infinity"
       prefHeight="300.0" prefWidth="350.0" xmlns="http://javafx.com/javafx/19"
       fx:controller="com.client.controller.LoginInterfaceController">
 
