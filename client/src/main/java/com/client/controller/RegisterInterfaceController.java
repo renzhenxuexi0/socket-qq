@@ -12,7 +12,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 
 public class RegisterInterfaceController {
-    private UserService userService = new UserService();
+    private final UserService userService = new UserService();
     @FXML
     private TextField accountInput;
 

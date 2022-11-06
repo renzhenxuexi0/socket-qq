@@ -9,10 +9,12 @@
         insert into tbl_user (username, password, account)
         values (#{username}, #{password}, #{account});
     </insert>
+
     <select id="selectAll" resultType="com.server.pojo.User">
         select id, username, account, login
         from tbl_user;
     </select>
+
     <select id="selectByAccountNumberAndPasswordUser" resultType="com.server.pojo.User">
         select *
         from tbl_user

@@ -6,6 +6,7 @@ import com.server.pojo.Code;
 import com.server.pojo.Data;
 import com.server.pojo.User;
 import com.server.service.UserService;
+import com.server.utils.UserMemory;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -24,19 +25,27 @@ public class ServerController {
             2, TimeUnit.SECONDS,
             new ArrayBlockingQueue<>(2), Executors.defaultThreadFactory(),
             new ThreadPoolExecutor.AbortPolicy());
-    @FXML
-    private Button startServerButton;
-    @FXML
-    private Button viewAllUserButton;
-    @FXML
-    private TextArea contentInput;
+
+    // 所有信息
     private String content = "";
+
+    // 服务端运行线程
     private final Thread start = new Thread(new Runnable() {
         @Override
         public void run() {
             startServer();
         }
     });
+
+    @FXML
+    private Button closeServerButton;
+
+    @FXML
+    private Button startServerButton;
+
+
+    @FXML
+    private TextArea contentInput;
 
     /**
      * 创建线程启动服务
@@ -49,23 +58,15 @@ public class ServerController {
     }
 
     @FXML
-    void viewAllUserButtonEvent(ActionEvent event) {
-        Callable<List<User>> listCallable = userService.selectAllUser();
-        Future<List<User>> submit = pool.submit(listCallable);
-        try {
-            List<User> users = submit.get();
-            content += users.toString() + "\n";
-            contentInput.setText(content);
-        } catch (Exception e) {
-            content += "未知错误" + "\n";
-            contentInput.setText(content);
-        }
+    void closeServerButtonEvent(ActionEvent event) {
+        // 调用该方法给线程打上中止标记
+        start.interrupt();
     }
 
     void startServer() {
         try {
             ServerSocket serverSocket = new ServerSocket(8080);
-            while (true) {
+            do {
                 Socket socket = serverSocket.accept();
                 // 流的封装
                 OutputStream os = socket.getOutputStream();//字节输出流抽象类
@@ -75,23 +76,29 @@ public class ServerController {
                 BufferedReader bfr = new BufferedReader(reader);//从字符流中读取文本，缓存
                 JSONObject jsonObject = JSON.parseObject(bfr.readLine());
                 System.out.println(jsonObject);
+
                 // 数据传给服务层
                 User user = JSON.parseObject(jsonObject.get("object").toString(), User.class);
+                Integer code = Integer.valueOf(jsonObject.get("code").toString());
 
-                if (Code.USER_REGISTER.equals(jsonObject.get("code"))) {
+                if (Code.USER_REGISTER.equals(code)) {
                     Data register = register(user);
                     ps.println(JSON.toJSONString(register));
                 }
-                if (Code.USER_LOGIN.equals(jsonObject.get("code"))) {
+                if (Code.USER_LOGIN.equals(code)) {
                     Data login = login(user);
                     ps.println(JSON.toJSONString(login));
+                }
+                if (Code.GET_USERS.equals(code)) {
+                    Data allUser = getAllUser();
+                    ps.println(JSON.toJSONString(allUser));
                 } else {
                     Data data = new Data();
                     data.setMsg("未知错误");
                     ps.println(JSON.toJSONString(data));
                 }
-
-            }
+                // 判读线程是否调用Interrupted，给线程打上中止标记 打上就退出循环
+            } while (!Thread.currentThread().isInterrupted());
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -136,6 +143,16 @@ public class ServerController {
             contentInput.setText(content);
         }
         return data;
+    }
 
+    Data getAllUser() throws Exception {
+        Future<List<User>> userFuture = pool.submit(userService.selectAllUser());
+        List<User> users = userFuture.get();
+        UserMemory.users = users;
+        //判断是否成功
+        Data data = new Data();
+        data.setCode(Code.GET_SUCCESS);
+        data.setObject(users);
+        return data;
     }
 }

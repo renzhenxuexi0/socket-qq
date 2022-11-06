@@ -15,7 +15,7 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
 public class LoginInterfaceController {
-    private UserService userService = new UserService();
+    private final UserService userService = new UserService();
     @FXML
     private Button loginButton;
 
