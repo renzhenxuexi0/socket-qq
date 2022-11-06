@@ -13,6 +13,11 @@ public class UserService {
     // 创建数据库连接工厂
     private static final SqlSessionFactory sqlSessionFactory = SqlSessionFactoryUtils.getSqlSessionFactory();
 
+    /**
+     * 用户注册
+     * @param user
+     * @return
+     */
     public Callable<Boolean> userRegister(User user) {
         return new Callable<>() {
             @Override
@@ -38,7 +43,10 @@ public class UserService {
         };
     }
 
-
+    /**
+     * 用户登录
+     * @return
+     */
     public Callable<List<User>> selectAllUser() {
         return () -> {
             try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
@@ -57,6 +65,11 @@ public class UserService {
         };
     }
 
+    /**
+     * 用户登录
+     * @param user
+     * @return
+     */
     public Callable<User> userLogin(User user) {
         return new Callable<>() {
             public User call() {
@@ -64,16 +77,32 @@ public class UserService {
                     // 得到mapper类
                     UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
                     // 获取输入的账号和密码
-                    return userMapper.selectByAccountNumberAndPasswordUser(user);
-
+                    return userMapper.selectByAccountAndPasswordUser(user);
                 } catch (Exception e) {
                     e.printStackTrace();
                     // 出错返回null
                     return null;
                 }
             }
-
         };
-
     }
+
+    public Runnable updateLogin(Integer id, Integer login){
+        return new Runnable() {
+            @Override
+            public void run() {
+                try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+                    // 得到mapper类
+                    UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
+                    // 修改登录状态
+                    userMapper.updateLogin(id, login);
+
+                    sqlSession.commit();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+    }
+
 }

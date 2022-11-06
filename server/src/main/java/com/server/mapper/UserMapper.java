@@ -1,6 +1,7 @@
 package com.server.mapper;
 
 import com.server.pojo.User;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -18,6 +19,17 @@ public interface UserMapper {
      */
     List<User> selectAll();
 
+    /**
+     * 根据账户和密码查询信息
+     * @param user
+     * @return
+     */
+    User selectByAccountAndPasswordUser(User user);
 
-    User selectByAccountNumberAndPasswordUser(User user);
+    /**
+     * 更新登录状态
+     * @param id
+     * @param login
+     */
+    void updateLogin(@Param("id") Integer id, @Param("login") Integer login);
 }
