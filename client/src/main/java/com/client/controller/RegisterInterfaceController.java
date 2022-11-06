@@ -31,7 +31,7 @@ public class RegisterInterfaceController {
      * @param event
      */
     @FXML
-    void submitButtonEvent(ActionEvent event) throws Exception {
+    void submitButtonEvent(ActionEvent event) {
         Data data = new Data();
         data.setCode(Code.USER_REGISTER);
         User user = new User();

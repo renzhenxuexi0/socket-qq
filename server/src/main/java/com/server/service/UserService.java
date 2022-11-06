@@ -14,7 +14,7 @@ public class UserService {
     private static final SqlSessionFactory sqlSessionFactory = SqlSessionFactoryUtils.getSqlSessionFactory();
 
     public Callable<Boolean> userRegister(User user) {
-        return new Callable<Boolean>() {
+        return new Callable<>() {
             @Override
             public Boolean call() {
                 try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
@@ -58,7 +58,7 @@ public class UserService {
     }
 
     public Callable<User> userLogin(User user) {
-        return new Callable<User>() {
+        return new Callable<>() {
             public User call() {
                 try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
                     // 得到mapper类

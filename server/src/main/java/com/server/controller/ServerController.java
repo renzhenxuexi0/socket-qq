@@ -64,8 +64,7 @@ public class ServerController {
     }
 
     void startServer() {
-        try {
-            ServerSocket serverSocket = new ServerSocket(8080);
+        try (ServerSocket serverSocket = new ServerSocket(8080)) {
             do {
                 Socket socket = serverSocket.accept();
                 // 流的封装
