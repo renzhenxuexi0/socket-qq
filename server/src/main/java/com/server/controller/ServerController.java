@@ -126,6 +126,10 @@ public class ServerController {
 
     Data login(User user) throws Exception {
         Future<User> userFuture = pool.submit(userService.userLogin(user));
+        Future<List<User>> userFuture2 = pool.submit(userService.selectAllUser());
+        List<User> users = userFuture2.get();
+        System.out.println(users);
+        UserMemory.users = users;
         User user2 = userFuture.get();
         //判断是否成功
         Data data = new Data();
@@ -133,6 +137,7 @@ public class ServerController {
             //返回数据给客户端
             data.setCode(Code.LOGIN_SUCCESS);
             data.setMsg("登录成功");
+            data.setObject(users);
             content += user2.getUsername() + "登录成功" + "\n";
             contentInput.setText(content);
         } else {
