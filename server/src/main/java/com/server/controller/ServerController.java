@@ -25,42 +25,45 @@ public class ServerController {
             2, TimeUnit.SECONDS,
             new ArrayBlockingQueue<>(2), Executors.defaultThreadFactory(),
             new ThreadPoolExecutor.AbortPolicy());
-
-    // 所有信息
-    private String content = "";
     @FXML
     private Button closeServerButton;
     @FXML
     private Button startServerButton;
     @FXML
     private TextArea contentInput;
-    // 服务端运行线程
-    private final Thread start = new Thread(new Runnable() {
-        @Override
-        public void run() {
-            startServer();
-        }
-    });
+
+    private Thread start;
 
     /**
      * 创建线程启动服务
      */
     @FXML
     void startServerButtonEvent(ActionEvent event) {
+        start = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                startServer();
+            }
+        });
         start.start();
-        content += "服务器启动" + "\n";
-        contentInput.setText(content);
+        contentInput.appendText("服务器启动\n");
     }
 
     @FXML
     void closeServerButtonEvent(ActionEvent event) {
-        // 调用该方法给线程打上中止标记
+        // 调用该方法给线程打上中止标记， 并创建一个socket连接防止阻塞
         start.interrupt();
+        try {
+            Socket socket = new Socket("127.0.0.1", 8080);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        contentInput.appendText("服务器关闭\n");
     }
 
     void startServer() {
         try (ServerSocket serverSocket = new ServerSocket(8080)) {
-            do {
+            while (!Thread.currentThread().isInterrupted()) {
                 Socket socket = serverSocket.accept();
                 // 流的封装
                 OutputStream os = socket.getOutputStream();//字节输出流抽象类
@@ -72,14 +75,15 @@ public class ServerController {
                 System.out.println(jsonObject);
 
                 // 数据传给服务层
-                User user = JSON.parseObject(jsonObject.get("object").toString(), User.class);
                 Integer code = Integer.valueOf(jsonObject.get("code").toString());
 
                 if (Code.USER_REGISTER.equals(code)) {
+                    User user = JSON.parseObject(jsonObject.get("object").toString(), User.class);
                     Data register = register(user);
                     ps.println(JSON.toJSONString(register));
                 }
                 if (Code.USER_LOGIN.equals(code)) {
+                    User user = JSON.parseObject(jsonObject.get("object").toString(), User.class);
                     Data login = login(user);
                     ps.println(JSON.toJSONString(login));
                 }
@@ -92,7 +96,7 @@ public class ServerController {
                     ps.println(JSON.toJSONString(data));
                 }
                 // 判读线程是否调用Interrupted，给线程打上中止标记 打上就退出循环
-            } while (!Thread.currentThread().isInterrupted());
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -108,13 +112,11 @@ public class ServerController {
             // 再返回数据给客户端
             data.setCode(Code.REGISTER_SUCCESS);
             data.setMsg("注册成功");
-            content += user.getUsername() + "注册成功" + "\n";
-            contentInput.setText(content);
+            contentInput.appendText(user.getUsername() + "注册成功\n");
         } else {
             data.setCode(Code.REGISTER_FAIL);
             data.setMsg("注册失败");
-            content += user.getUsername() + "注册失败" + "\n";
-            contentInput.setText(content);
+            contentInput.appendText("注册失败\n");
         }
         return data;
     }
@@ -137,13 +139,11 @@ public class ServerController {
             data.setCode(Code.LOGIN_SUCCESS);
             data.setMsg("登录成功");
             data.setObject(users);
-            content += user2.getUsername() + "登录成功" + "\n";
-            contentInput.setText(content);
+            contentInput.appendText(user2.getUsername() + "登录成功\n");
         } else {
             data.setCode(Code.LOGIN_FAIL);
             data.setMsg("登录失败");
-            content += "登录失败" + "\n";
-            contentInput.setText(content);
+            contentInput.appendText(user.getAccount() + "登录失败\n");
         }
         return data;
     }
@@ -156,6 +156,7 @@ public class ServerController {
         Data data = new Data();
         data.setCode(Code.GET_SUCCESS);
         data.setObject(users);
+        contentInput.appendText("所有用户信息:\n" + users.toString() + "\n");
         return data;
     }
 }

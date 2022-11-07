@@ -1,3 +1,4 @@
+/client/target/
 /.idea/
-/client/target/*
-/server/target/*
+/server/target/
+/server/src/main/resources/mybatis-config.xml
