@@ -9,7 +9,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1">
+<VBox fx:id="ui" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.client.controller.DialogBoxController">
    <children>
       <AnchorPane prefHeight="400.0" prefWidth="600.0">
          <children>
@@ -18,7 +18,7 @@
                   <Font size="15.0" />
                </font>
             </Text>
-            <Button id="close" layoutX="502.0" mnemonicParsing="false" prefHeight="39.0" prefWidth="97.0" text="关闭" />
+            <Button fx:id="close" layoutX="502.0" mnemonicParsing="false" onAction="#closeThePage" prefHeight="39.0" prefWidth="97.0" text="关闭" />
             <SplitPane dividerPositions="0.6145833333333334" layoutY="39.0" orientation="VERTICAL" prefHeight="366.0" prefWidth="600.0">
                <items>
                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="260.0" prefWidth="599.0">
@@ -29,12 +29,12 @@
                   </AnchorPane>
                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="292.0" prefWidth="599.0">
                      <children>
-                        <TextArea prefHeight="138.0" prefWidth="599.0" />
+                        <TextArea fx:id="inputBox" prefHeight="138.0" prefWidth="599.0" />
                      </children>
                   </AnchorPane>
                </items>
             </SplitPane>
-            <Button id="send" layoutX="531.0" layoutY="346.0" mnemonicParsing="false" prefHeight="39.0" prefWidth="52.0" text="发送" />
+            <Button fx:id="snedOut" layoutX="531.0" layoutY="346.0" mnemonicParsing="false" prefHeight="39.0" prefWidth="52.0" text="发送" />
          </children>
       </AnchorPane>
    </children>
