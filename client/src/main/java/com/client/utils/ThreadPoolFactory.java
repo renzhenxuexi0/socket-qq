@@ -32,7 +32,7 @@ public class ThreadPoolFactory {
         workQueueSize = Integer.parseInt(properties.get("workQueueSize").toString());
     }
 
-    public static final ThreadPoolExecutor getThreadPool() {
+    public static ThreadPoolExecutor getThreadPool() {
         return SingletonHolder.pool;
     }
 

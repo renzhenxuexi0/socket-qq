@@ -1,7 +1,7 @@
 package com.client.service;
 
-import com.client.pojo.Data;
-import com.client.utils.GetDataUtil;
+import com.client.pojo.Result;
+import com.client.utils.GetResultUtil;
 
 import java.io.IOException;
 import java.util.Properties;
@@ -26,10 +26,10 @@ public class MsgService {
      * 通过服务器转发文本消息
      * data里封装msg消息
      *
-     * @param data
+     * @param result
      * @return
      */
-    public Data sendMsgByServer(Data data) {
-        return GetDataUtil.getData(data, serverIP, serverPort);
+    public Result sendMsgByServer(Result result) {
+        return GetResultUtil.getResult(result, serverIP, serverPort);
     }
 }

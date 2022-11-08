@@ -2,7 +2,7 @@ package com.client.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.client.pojo.Code;
-import com.client.pojo.Data;
+import com.client.pojo.Result;
 import com.client.pojo.User;
 import com.client.service.UserService;
 import com.client.utils.UserMemory;
@@ -39,21 +39,18 @@ public class UserInterfaceController implements Initializable {
      */
     private void regularlyUpdateUser() {
 
-        Data data = new Data();
-        data.setCode(Code.GET_USERS);
+        Result result = new Result();
+        result.setCode(Code.GET_USERS);
 
         /*
             创键一个定时任务，不断执行
          */
-        scheduledExecutorService.schedule(new Runnable() {
-            @Override
-            public void run() {
-                Data data2 = userService.getAllUser(data);
-                if (Code.GET_SUCCESS.equals(data2.getCode())) {
-                    UserMemory.users = JSON.parseArray(data2.getObject().toString(), User.class);
-                }
-                buildUserList();
+        scheduledExecutorService.schedule(() -> {
+            Result result2 = userService.getAllUser(result);
+            if (Code.GET_SUCCESS.equals(result2.getCode())) {
+                UserMemory.users = JSON.parseArray(result2.getObject().toString(), User.class);
             }
+            buildUserList();
         }, 5, TimeUnit.SECONDS);
     }
 
@@ -85,13 +82,6 @@ public class UserInterfaceController implements Initializable {
         columnConstraints2.setHalignment(HPos.CENTER);
         columnConstraints2.setPrefWidth(30);
         gridPane.getColumnConstraints().add(1, columnConstraints2);
-
-//        for (RowConstraints rowConstraint : gridPane.getRowConstraints()) {
-//            rowConstraint.setPrefHeight(100);
-//        }
-//        ObservableList<ColumnConstraints> columnConstraints = gridPane.getColumnConstraints();
-//        columnConstraints.get(0).setHalignment(HPos.LEFT);
-//        columnConstraints.get(1).setHalignment(HPos.CENTER);
 
     }
 
