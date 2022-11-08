@@ -6,6 +6,7 @@ import com.client.pojo.Data;
 import com.client.pojo.User;
 import com.client.service.UserService;
 import com.client.utils.UserMemory;
+import de.felixroske.jfxsupport.FXMLController;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.HPos;
@@ -23,6 +24,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+@FXMLController
 public class UserInterfaceController implements Initializable {
 
 

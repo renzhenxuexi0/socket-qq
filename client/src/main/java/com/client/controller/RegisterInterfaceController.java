@@ -5,12 +5,14 @@ import com.client.pojo.Data;
 import com.client.pojo.User;
 import com.client.service.UserService;
 import com.client.utils.StageManager;
+import de.felixroske.jfxsupport.FXMLController;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 
+@FXMLController
 public class RegisterInterfaceController {
     private final UserService userService = new UserService();
     @FXML

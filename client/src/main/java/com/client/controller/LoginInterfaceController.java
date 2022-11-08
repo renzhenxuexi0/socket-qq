@@ -1,24 +1,27 @@
 package com.client.controller;
 
 import com.alibaba.fastjson.JSON;
-import com.client.application.RegisterApplication;
-import com.client.application.UserApplication;
+import com.client.ClientMain;
 import com.client.pojo.Code;
 import com.client.pojo.Data;
 import com.client.pojo.User;
 import com.client.service.UserService;
-import com.client.utils.StageManager;
 import com.client.utils.UserMemory;
+import com.client.view.RegisterView;
+import com.client.view.UserView;
+import de.felixroske.jfxsupport.FXMLController;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.stage.Stage;
+import javafx.stage.Modality;
 
+@FXMLController
 public class LoginInterfaceController {
     private final UserService userService = new UserService();
+
     @FXML
     private Button loginButton;
 
@@ -41,12 +44,9 @@ public class LoginInterfaceController {
         data.setObject(user);
         Data data2 = userService.userLogin(data);
         UserMemory.users = JSON.parseArray(data2.getObject().toString(), User.class);
-        ;
         Alert alert;
         if (Code.LOGIN_SUCCESS.equals(data2.getCode())) {
-            UserApplication userApplication = new UserApplication();
-            userApplication.start(new Stage());
-            StageManager.jump("登录界面", "用户界面");
+            ClientMain.showView(UserView.class, Modality.APPLICATION_MODAL);
             System.out.println("success！");
         } else {
             // 登录失败 弹出错误窗口
@@ -58,9 +58,7 @@ public class LoginInterfaceController {
 
     @FXML
     void registerButtonEvent(ActionEvent event) throws Exception {
-        RegisterApplication registerApplication = new RegisterApplication();
-        registerApplication.start(new Stage());
-        StageManager.jump("登录界面", "注册界面");
+        ClientMain.showView(RegisterView.class, Modality.APPLICATION_MODAL);
     }
 }
 

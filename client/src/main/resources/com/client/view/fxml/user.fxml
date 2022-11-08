@@ -2,7 +2,8 @@
 
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.*?>
-<GridPane xmlns:fx="http://javafx.com/fxml/1" fx:id="ui" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+<GridPane xmlns:fx="http://javafx.com/fxml/1" fx:id="ui" maxHeight="-Infinity" maxWidth="-Infinity"
+          minHeight="-Infinity"
           minWidth="-Infinity" prefHeight="590.0" prefWidth="304.0" xmlns="http://javafx.com/javafx/19"
           fx:controller="com.client.controller.UserInterfaceController">
     <columnConstraints>
