@@ -5,7 +5,7 @@ threadPool:
   maximumPoolSize: 4
   workQueueSize: 2
 
-
+# 服务端的ip地址和端口
 socket:
   ip: 127.0.0.1
   port: 8080

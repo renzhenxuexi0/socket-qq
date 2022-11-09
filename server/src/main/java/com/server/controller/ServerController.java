@@ -17,8 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.List;
-import java.util.concurrent.*;
+import java.util.concurrent.ThreadPoolExecutor;
 
 @FXMLController
 public class ServerController {
@@ -65,53 +64,58 @@ public class ServerController {
 
     void startServer() {
         try (ServerSocket serverSocket = new ServerSocket(8080)) {
+            // 判读线程是否调用Interrupted，给线程打上中止标记 打上就退出循环
             while (!Thread.currentThread().isInterrupted()) {
                 Socket socket = serverSocket.accept();
-                // 流的封装
-                OutputStream os = socket.getOutputStream();//字节输出流抽象类
-                PrintStream ps = new PrintStream(os);
-                InputStream is = socket.getInputStream();//面向字节的输入流抽象类
-                Reader reader = new InputStreamReader(is);//创建面向字节的字符流
-                BufferedReader bfr = new BufferedReader(reader);//从字符流中读取文本，缓存
+                pool.execute(() -> {
+                    // 流的封装
+                    OutputStream os = null;//字节输出流抽象类
+                    try {
+                        os = socket.getOutputStream();
+                        PrintStream ps = new PrintStream(os);
+                        InputStream is = socket.getInputStream();//面向字节的输入流抽象类
+                        Reader reader = new InputStreamReader(is);//创建面向字节的字符流
+                        BufferedReader bfr = new BufferedReader(reader);//从字符流中读取文本，缓存
 
-                JSONObject jsonObject = JSON.parseObject(bfr.readLine());
-                System.out.println(jsonObject);
+                        JSONObject jsonObject = JSON.parseObject(bfr.readLine());
+                        System.out.println(jsonObject);
 
-                // 数据传给服务层
-                Integer code = Integer.valueOf(jsonObject.get("code").toString());
+                        // 数据传给服务层
+                        Integer code = Integer.valueOf(jsonObject.get("code").toString());
 
-                if (Code.USER_REGISTER.equals(code)) {
-                    User user = JSON.parseObject(jsonObject.get("object").toString(), User.class);
-                    Result register = register(user);
-                    ps.println(JSON.toJSONString(register));
-                }
-                if (Code.USER_LOGIN.equals(code)) {
-                    User user = JSON.parseObject(jsonObject.get("object").toString(), User.class);
-                    Result login = login(user);
-                    ps.println(JSON.toJSONString(login));
-                }
-                if (Code.GET_USERS.equals(code)) {
-                    Result allUser = getAllUser();
-                    ps.println(JSON.toJSONString(allUser));
-                } else {
-                    Result result = new Result();
-                    result.setMsg("未知错误");
-                    ps.println(JSON.toJSONString(result));
-                }
-                // 判读线程是否调用Interrupted，给线程打上中止标记 打上就退出循环
+                        if (Code.USER_REGISTER.equals(code)) {
+                            User user = JSON.parseObject(jsonObject.get("object").toString(), User.class);
+                            Result register = register(user);
+                            ps.println(JSON.toJSONString(register));
+                        }
+                        if (Code.USER_LOGIN.equals(code)) {
+                            User user = JSON.parseObject(jsonObject.get("object").toString(), User.class);
+                            Result login = login(user);
+                            ps.println(JSON.toJSONString(login));
+                        }
+                        if (Code.GET_ALL_USERS.equals(code)) {
+                            Result allUser = getAllUser();
+                            ps.println(JSON.toJSONString(allUser));
+                        } else {
+                            Result result = new Result();
+                            result.setMsg("未知错误");
+                            ps.println(JSON.toJSONString(result));
+                        }
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    Result register(User user) throws ExecutionException, InterruptedException {
-        Future<Boolean> booleanFuture = pool.submit(userService.userRegister(user));
-        Boolean flag = booleanFuture.get();
+    Result register(User user) {
+        boolean b = userService.userRegister(user);
         // 判断是否成功
         Result result = new Result();
-        if (flag.equals(true)) {
+        if (b) {
             // 再返回数据给客户端
             result.setCode(Code.REGISTER_SUCCESS);
             result.setMsg("注册成功");
@@ -124,24 +128,20 @@ public class ServerController {
         return result;
     }
 
-    Result login(User user) throws Exception {
-        Future<User> userFuture = pool.submit(userService.userLogin(user));
-        User user2 = userFuture.get();
-
-        Future<List<User>> userFuture2 = pool.submit(userService.selectAllUser());
-        List<User> users = userFuture2.get();
-        UserMemory.users = users;
+    Result login(User user) {
+        User user2 = userService.userLogin(user);
+        UserMemory.users = userService.selectAllUser();
 
         //判断是否成功
         Result result = new Result();
 
         if (user2 != null) {
             // 设置登录状态
-            pool.execute(userService.updateLogin(user2.getId(), 1));
+            userService.updateLogin(user2.getId(), 1);
             //返回数据给客户端
             result.setCode(Code.LOGIN_SUCCESS);
             result.setMsg("登录成功");
-            result.setObject(users);
+            result.setObject(UserMemory.users);
             contentInput.appendText(user2.getUsername() + "登录成功\n");
         } else {
             result.setCode(Code.LOGIN_FAIL);
@@ -151,15 +151,11 @@ public class ServerController {
         return result;
     }
 
-    Result getAllUser() throws Exception {
-        Future<List<User>> userFuture = pool.submit(userService.selectAllUser());
-        List<User> users = userFuture.get();
-        UserMemory.users = users;
-        //判断是否成功
+    Result getAllUser() {
+        UserMemory.users = userService.selectAllUser();
         Result result = new Result();
-        result.setCode(Code.GET_SUCCESS);
-        result.setObject(users);
-        contentInput.appendText("所有用户信息:\n" + users.toString() + "\n");
+        result.setObject(UserMemory.users);
+        contentInput.appendText("所有用户信息:\n" + UserMemory.users.toString() + "\n");
         return result;
     }
 }

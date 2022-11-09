@@ -3,7 +3,9 @@ package com.client.service;
 import com.client.pojo.Result;
 import com.client.utils.GetResultUtil;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
+@Service
 public class MsgService {
     @Value("${socket.ip}")
     private String socketIP;

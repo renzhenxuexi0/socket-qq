@@ -17,6 +17,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -29,7 +30,8 @@ public class UserInterfaceController implements Initializable {
 
 
     private static final ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(1);
-    private final UserService userService = new UserService();
+    @Autowired
+    private UserService userService;
     // 用户界面的容器
     @FXML
     private GridPane ui;
@@ -40,16 +42,14 @@ public class UserInterfaceController implements Initializable {
     private void regularlyUpdateUser() {
 
         Result result = new Result();
-        result.setCode(Code.GET_USERS);
+        result.setCode(Code.GET_ALL_USERS);
 
         /*
             创键一个定时任务，不断执行
          */
         scheduledExecutorService.schedule(() -> {
             Result result2 = userService.getAllUser(result);
-            if (Code.GET_SUCCESS.equals(result2.getCode())) {
-                UserMemory.users = JSON.parseArray(result2.getObject().toString(), User.class);
-            }
+            UserMemory.users = JSON.parseArray(result2.getObject().toString(), User.class);
             buildUserList();
         }, 5, TimeUnit.SECONDS);
     }

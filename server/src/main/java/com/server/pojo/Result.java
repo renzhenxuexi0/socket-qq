@@ -1,6 +1,9 @@
 package com.server.pojo;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 
 @Data
 public class Result {

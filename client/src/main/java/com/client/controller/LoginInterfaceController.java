@@ -17,10 +17,12 @@ import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Modality;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @FXMLController
 public class LoginInterfaceController {
-    private final UserService userService = new UserService();
+    @Autowired
+    private UserService userService;
 
     @FXML
     private Button loginButton;

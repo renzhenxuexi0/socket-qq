@@ -17,14 +17,14 @@ public interface UserService {
      * @param user
      * @return
      */
-    Callable<Boolean> userRegister(User user);
+    boolean userRegister(User user);
 
     /**
      * 用户登录
      *
      * @return
      */
-    public Callable<List<User>> selectAllUser();
+    List<User> selectAllUser();
 
     /**
      * 用户登录
@@ -32,7 +32,7 @@ public interface UserService {
      * @param user
      * @return
      */
-    public Callable<User> userLogin(User user);
+    User userLogin(User user);
 
     /**
      * 更新在线状态
@@ -41,5 +41,5 @@ public interface UserService {
      * @param login
      * @return
      */
-    public Runnable updateLogin(Integer id, Integer login);
+    void updateLogin(Integer id, Integer login);
 }

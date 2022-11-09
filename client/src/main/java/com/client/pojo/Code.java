@@ -23,11 +23,7 @@ public class Code {
     // 发送文本消息失败
     public static final Integer SEND_TEXT_MSG_FAIL = 3003;
     // 获取所有用户信息
-    public static final Integer GET_USERS = 4001;
-    // 获取成功
-    public static final Integer GET_SUCCESS = 4002;
-    // 获取失败
-    public static final Integer GET_FAIL = 4003;
+    public static final Integer GET_ALL_USERS = 4001;
 
 }
 

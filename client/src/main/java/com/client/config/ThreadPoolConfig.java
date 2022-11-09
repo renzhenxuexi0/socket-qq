@@ -10,6 +10,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * 生成线程池的配置类
+ */
 @Configuration
 public class ThreadPoolConfig {
     @Value("${threadPool.corePoolSize}")

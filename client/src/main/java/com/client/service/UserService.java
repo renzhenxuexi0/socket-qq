@@ -3,10 +3,12 @@ package com.client.service;
 import com.client.pojo.Result;
 import com.client.utils.GetResultUtil;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.Properties;
 
+@Service
 public class UserService {
     @Value("${socket.ip}")
     private String socketIP;
