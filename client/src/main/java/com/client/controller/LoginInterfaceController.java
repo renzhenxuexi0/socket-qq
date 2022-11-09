@@ -12,15 +12,20 @@ import com.client.view.UserView;
 import de.felixroske.jfxsupport.FXMLController;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Modality;
+import javafx.stage.Stage;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.net.URL;
+import java.util.ResourceBundle;
+
 @FXMLController
-public class LoginInterfaceController {
+public class LoginInterfaceController implements Initializable {
     @Autowired
     private UserService userService;
 
@@ -59,8 +64,17 @@ public class LoginInterfaceController {
     }
 
     @FXML
-    void registerButtonEvent(ActionEvent event) throws Exception {
+    void registerButtonEvent(ActionEvent event) {
         ClientApp.showView(RegisterView.class);
+        Stage stage = ClientApp.getStage();
+        stage.setHeight(600);
+        stage.setWidth(500);
+    }
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        accountInput.setPromptText("输入6~11位的账号");
+        passwordInput.setPromptText("输入6~11位的密码");
     }
 }
 
