@@ -13,11 +13,8 @@ import de.felixroske.jfxsupport.FXMLController;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +26,13 @@ import java.util.ResourceBundle;
 public class LoginInterfaceController implements Initializable {
     @Autowired
     private UserService userService;
+
+    @FXML
+    private Label passwordReminder;
+
+
+    @FXML
+    private Label accountReminder;
 
     @FXML
     private Button loginButton;
@@ -43,7 +47,7 @@ public class LoginInterfaceController implements Initializable {
     private PasswordField passwordInput;
 
     @FXML
-    void loginButtonEvent(ActionEvent event) throws Exception {
+    void loginButtonEvent() {
         Result result = new Result();
         result.setCode(Code.USER_LOGIN);
         User user = new User();
@@ -61,6 +65,41 @@ public class LoginInterfaceController implements Initializable {
             alert = new Alert(Alert.AlertType.ERROR, result2.getMsg());
             alert.show();
             // 错误的话得重新输入
+        }
+    }
+
+    @FXML
+    void accountInputVerification(MouseEvent event) {
+        String account = accountInput.getText();
+        // 正则表达式匹配字符
+        if (account.matches("[^0]\\d{5,10}$")) {
+            loginButton.setOnAction(event1 -> loginButtonEvent());
+            accountReminder.setText("");
+        } else if ("".equals(account)){
+            loginButton.setOnAction(event1 -> {
+            });
+            accountReminder.setText("");
+        }else {
+            loginButton.setOnAction(event1 -> {
+            });
+            accountReminder.setText("账号输入错误");
+        }
+    }
+
+    @FXML
+    void passwordInputVerification(MouseEvent event) {
+        String password = passwordInput.getText();
+        if (password.matches("[a-zA-Z0-9]{6,11}")) {
+            loginButton.setOnAction(event1 -> loginButtonEvent());
+            passwordReminder.setText("");
+        } else if ("".equals(password)){
+            loginButton.setOnAction(event1 -> {
+            });
+            passwordReminder.setText("");
+        }else {
+            loginButton.setOnAction(event1 -> {
+            });
+            passwordReminder.setText("密码输入错误");
         }
     }
 
