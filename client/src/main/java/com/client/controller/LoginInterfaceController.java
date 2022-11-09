@@ -13,6 +13,7 @@ import de.felixroske.jfxsupport.FXMLController;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
@@ -65,10 +66,11 @@ public class LoginInterfaceController implements Initializable {
 
     @FXML
     void registerButtonEvent(ActionEvent event) {
-        ClientApp.showView(RegisterView.class);
         Stage stage = ClientApp.getStage();
         stage.setHeight(600);
         stage.setWidth(500);
+        stage.setTitle("注册界面");
+        ClientApp.showView(RegisterView.class);
     }
 
     @Override
