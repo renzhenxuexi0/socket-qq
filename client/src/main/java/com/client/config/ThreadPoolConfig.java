@@ -23,9 +23,8 @@ public class ThreadPoolConfig {
     private Integer workQueueSize;
 
 
-
     @Bean
-    ThreadPoolExecutor poolExecutor(){
+    ThreadPoolExecutor poolExecutor() {
         return new ThreadPoolExecutor(corePoolSize, maximumPoolSize,
                 2, TimeUnit.SECONDS,
                 new ArrayBlockingQueue<>(workQueueSize), Executors.defaultThreadFactory(),

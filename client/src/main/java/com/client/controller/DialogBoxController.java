@@ -1,7 +1,6 @@
 package com.client.controller;
 
 import de.felixroske.jfxsupport.FXMLController;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 
 import java.awt.*;

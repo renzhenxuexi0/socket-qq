@@ -4,7 +4,6 @@ import com.server.pojo.User;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.concurrent.Callable;
 
 // 开启事务处理
 @Transactional
