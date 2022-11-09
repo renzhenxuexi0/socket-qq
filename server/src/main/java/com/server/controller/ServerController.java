@@ -22,13 +22,12 @@ import java.util.concurrent.*;
 
 @FXMLController
 public class ServerController {
-    @Autowired
-    private UserService userService;
-
     private static final ThreadPoolExecutor pool = new ThreadPoolExecutor(2, 4,
             2, TimeUnit.SECONDS,
             new ArrayBlockingQueue<>(2), Executors.defaultThreadFactory(),
             new ThreadPoolExecutor.AbortPolicy());
+    @Autowired
+    private UserService userService;
     @FXML
     private Button closeServerButton;
     @FXML

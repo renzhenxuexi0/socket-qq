@@ -1,7 +1,7 @@
 package com.client.controller;
 
 import com.alibaba.fastjson.JSON;
-import com.client.ClientMain;
+import com.client.ClientApp;
 import com.client.pojo.Code;
 import com.client.pojo.Result;
 import com.client.pojo.User;
@@ -46,7 +46,7 @@ public class LoginInterfaceController {
         UserMemory.users = JSON.parseArray(result2.getObject().toString(), User.class);
         Alert alert;
         if (Code.LOGIN_SUCCESS.equals(result2.getCode())) {
-            ClientMain.showView(UserView.class, Modality.APPLICATION_MODAL);
+            ClientApp.showView(UserView.class, Modality.APPLICATION_MODAL);
             System.out.println("success！");
         } else {
             // 登录失败 弹出错误窗口
@@ -58,7 +58,7 @@ public class LoginInterfaceController {
 
     @FXML
     void registerButtonEvent(ActionEvent event) throws Exception {
-        ClientMain.showView(RegisterView.class);
+        ClientApp.showView(RegisterView.class);
     }
 }
 

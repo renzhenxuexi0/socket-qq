@@ -23,6 +23,7 @@ public interface UserMapper {
 
     /**
      * 根据账户和密码查询信息
+     *
      * @param user
      * @return
      */
@@ -30,6 +31,7 @@ public interface UserMapper {
 
     /**
      * 更新登录状态
+     *
      * @param id
      * @param login
      */

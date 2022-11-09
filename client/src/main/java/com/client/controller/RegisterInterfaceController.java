@@ -1,6 +1,6 @@
 package com.client.controller;
 
-import com.client.ClientMain;
+import com.client.ClientApp;
 import com.client.pojo.Code;
 import com.client.pojo.Result;
 import com.client.pojo.User;
@@ -49,7 +49,7 @@ public class RegisterInterfaceController {
         if (Code.REGISTER_SUCCESS.equals(result2.getCode())) {
             // 注册成功弹窗 显示服务器返回的信息
             alert = new Alert(Alert.AlertType.INFORMATION, result2.getMsg());
-            ClientMain.showView(UserView.class, Modality.APPLICATION_MODAL);
+            ClientApp.showView(UserView.class, Modality.APPLICATION_MODAL);
             alert.showAndWait();
         } else {
             // 注册失败 弹出错误窗口
