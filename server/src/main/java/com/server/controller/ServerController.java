@@ -40,12 +40,7 @@ public class ServerController {
      */
     @FXML
     void startServerButtonEvent(ActionEvent event) {
-        start = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                startServer();
-            }
-        });
+        start = new Thread(this::startServer);
         start.start();
         contentInput.appendText("服务器启动\n");
     }
@@ -69,7 +64,7 @@ public class ServerController {
                 Socket socket = serverSocket.accept();
                 pool.execute(() -> {
                     // 流的封装
-                    OutputStream os = null;//字节输出流抽象类
+                    OutputStream os;//字节输出流抽象类
                     try {
                         os = socket.getOutputStream();
                         PrintStream ps = new PrintStream(os);
