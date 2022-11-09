@@ -6,3 +6,10 @@ spring:
     password: "1234"
     url: jdbc:mysql://localhost:3306/socket_db?serverTimezone=UTC
     type: com.alibaba.druid.pool.DruidDataSource
+
+
+# 线程池配置
+threadPool:
+  corePoolSize: 2
+  maximumPoolSize: 4
+  workQueueSize: 2

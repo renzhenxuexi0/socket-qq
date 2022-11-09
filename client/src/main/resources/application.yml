@@ -1,0 +1,11 @@
+
+# 线程池配置
+threadPool:
+  corePoolSize: 2
+  maximumPoolSize: 4
+  workQueueSize: 2
+
+
+socket:
+  ip: 127.0.0.1
+  port: 8080

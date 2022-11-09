@@ -22,10 +22,9 @@ import java.util.concurrent.*;
 
 @FXMLController
 public class ServerController {
-    private static final ThreadPoolExecutor pool = new ThreadPoolExecutor(2, 4,
-            2, TimeUnit.SECONDS,
-            new ArrayBlockingQueue<>(2), Executors.defaultThreadFactory(),
-            new ThreadPoolExecutor.AbortPolicy());
+    // 自动注入线程池
+    @Autowired
+    private ThreadPoolExecutor pool;
     @Autowired
     private UserService userService;
     @FXML
@@ -74,6 +73,7 @@ public class ServerController {
                 InputStream is = socket.getInputStream();//面向字节的输入流抽象类
                 Reader reader = new InputStreamReader(is);//创建面向字节的字符流
                 BufferedReader bfr = new BufferedReader(reader);//从字符流中读取文本，缓存
+
                 JSONObject jsonObject = JSON.parseObject(bfr.readLine());
                 System.out.println(jsonObject);
 
