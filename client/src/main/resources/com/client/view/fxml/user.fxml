@@ -1,31 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.*?>
-<GridPane xmlns:fx="http://javafx.com/fxml/1" fx:id="ui" maxHeight="-Infinity" maxWidth="-Infinity"
-          minHeight="-Infinity"
-          minWidth="-Infinity" prefHeight="590.0" prefWidth="304.0" xmlns="http://javafx.com/javafx/19"
-          fx:controller="com.client.controller.UserInterfaceController">
-    <columnConstraints>
-        <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
-    </columnConstraints>
-    <rowConstraints>
-        <RowConstraints maxHeight="192.0" minHeight="10.0" prefHeight="63.0" vgrow="SOMETIMES"/>
-        <RowConstraints maxHeight="527.0" minHeight="10.0" prefHeight="527.0" vgrow="SOMETIMES"/>
-    </rowConstraints>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="620.0" prefWidth="306.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.client.controller.UserInterfaceController">
     <children>
-        <GridPane style="-fx-background-color: #6bc0eb;">
-            <columnConstraints>
-                <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0"/>
-            </columnConstraints>
-            <rowConstraints>
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-            </rowConstraints>
+        <Pane fx:id="mine" layoutY="-4.0" prefHeight="140.0" prefWidth="306.0">
             <children>
-                <Label text="用户名"/>
-                <Label text="鸡汤" GridPane.rowIndex="1"/>
+                <ImageView fx:id="head" fitHeight="83.0" fitWidth="83.0" layoutX="23.0" layoutY="30.0" onMouseClicked="#clickMyHeadButton" pickOnBounds="true" preserveRatio="true" />
+            <ImageView fitHeight="150.0" fitWidth="306.0" pickOnBounds="true" preserveRatio="true" />
+                <Label fx:id="user_name" layoutX="116.0" layoutY="44.0" text="Karam">
+                    <font>
+                        <Font size="20.0" />
+                    </font>
+                </Label>
+                <Label fx:id="user_label" layoutX="116.0" layoutY="78.0" prefHeight="15.0" prefWidth="126.0" text="Jesus In LA">
+                    <font>
+                        <Font size="13.0" />
+                    </font>
+                </Label>
             </children>
-        </GridPane>
+        </Pane>
+      <AnchorPane layoutY="136.0" prefHeight="486.0" prefWidth="306.0" />
     </children>
-</GridPane>
+</AnchorPane>
