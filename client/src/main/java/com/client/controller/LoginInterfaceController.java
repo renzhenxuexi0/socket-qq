@@ -10,11 +10,13 @@ import com.client.utils.UserMemory;
 import com.client.view.RegisterView;
 import com.client.view.UserView;
 import de.felixroske.jfxsupport.FXMLController;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +29,12 @@ public class LoginInterfaceController implements Initializable {
     @Autowired
     private UserService userService;
 
+    private Stage primaryStage;
+
+    @FXML
+    public Button minWindow;
+    @FXML
+    public Button closeWindow;
     @FXML
     private Label passwordReminder;
 
@@ -38,16 +46,19 @@ public class LoginInterfaceController implements Initializable {
     private Button loginButton;
 
     @FXML
+    private CheckBox rememberCheckBox;
+
+    @FXML
     private TextField accountInput;
 
     @FXML
-    private Button registerButton;
+    private Hyperlink registerHyperlink;
 
     @FXML
     private PasswordField passwordInput;
 
     @FXML
-    void loginButtonEvent() {
+    void loginButtonEvent(ActionEvent event) {
         Result result = new Result();
         result.setCode(Code.USER_LOGIN);
         User user = new User();
@@ -69,53 +80,36 @@ public class LoginInterfaceController implements Initializable {
     }
 
     @FXML
-    void accountInputVerification(MouseEvent event) {
-        String account = accountInput.getText();
-        // 正则表达式匹配字符
-        if (account.matches("[^0]\\d{5,10}$")) {
-            loginButton.setOnAction(event1 -> loginButtonEvent());
-            accountReminder.setText("");
-        } else if ("".equals(account)){
-            loginButton.setOnAction(event1 -> {
-            });
-            accountReminder.setText("");
-        }else {
-            loginButton.setOnAction(event1 -> {
-            });
-            accountReminder.setText("账号输入错误");
-        }
-    }
-
-    @FXML
-    void passwordInputVerification(MouseEvent event) {
-        String password = passwordInput.getText();
-        if (password.matches("[a-zA-Z0-9]{6,11}")) {
-            loginButton.setOnAction(event1 -> loginButtonEvent());
-            passwordReminder.setText("");
-        } else if ("".equals(password)){
-            loginButton.setOnAction(event1 -> {
-            });
-            passwordReminder.setText("");
-        }else {
-            loginButton.setOnAction(event1 -> {
-            });
-            passwordReminder.setText("密码输入错误");
-        }
-    }
-
-    @FXML
-    void registerButtonEvent(ActionEvent event) {
-        Stage stage = ClientApp.getStage();
-        stage.setHeight(600);
-        stage.setWidth(500);
-        stage.setTitle("注册界面");
+    void registerEvent(ActionEvent event) {
+        primaryStage.setHeight(600);
+        primaryStage.setWidth(500);
+        primaryStage.setTitle("注册界面");
         ClientApp.showView(RegisterView.class);
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         accountInput.setPromptText("输入6~11位的账号");
+        accountInput.textProperty().addListener((observable, oldValue, newValue) -> {
+            if ("".equals(newValue)) {
+                accountReminder.setText("账号不能为空");
+            } else {
+                accountReminder.setText("");
+            }
+        });
+        passwordInput.textProperty().addListener((observable, oldValue, newValue) -> {
+            if ("".equals(newValue)) {
+                passwordReminder.setText("密码不能为空");
+            } else {
+                passwordReminder.setText("");
+            }
+        });
+
         passwordInput.setPromptText("输入6~11位的密码");
+
+        primaryStage = ClientApp.getStage(); //primaryStage为start方法头中的Stage
+        minWindow.setOnAction(event -> primaryStage.setIconified(true)); /* 最小化 */
+        closeWindow.setOnAction((event)->System.exit(0)); /* 关闭程序 */
     }
 }
 
