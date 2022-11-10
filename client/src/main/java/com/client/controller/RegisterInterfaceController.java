@@ -5,6 +5,7 @@ import com.client.pojo.Code;
 import com.client.pojo.Result;
 import com.client.pojo.User;
 import com.client.service.UserService;
+import com.client.view.LoginView;
 import com.client.view.UserView;
 import de.felixroske.jfxsupport.FXMLController;
 import javafx.event.ActionEvent;
@@ -67,7 +68,7 @@ public class RegisterInterfaceController implements Initializable {
         if (Code.REGISTER_SUCCESS.equals(result2.getCode())) {
             // 注册成功弹窗 显示服务器返回的信息
             alert = new Alert(Alert.AlertType.INFORMATION, result2.getMsg());
-            ClientApp.showView(UserView.class, Modality.APPLICATION_MODAL);
+            ClientApp.showView(LoginView.class);
             alert.showAndWait();
         } else {
             // 注册失败 弹出错误窗口

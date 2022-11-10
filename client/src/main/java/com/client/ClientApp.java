@@ -12,30 +12,26 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Objects;
 
 @SpringBootApplication
-public class ClientApp extends AbstractJavaFxApplicationSupport implements ApplicationRunner {
+public class ClientApp extends AbstractJavaFxApplicationSupport {
     public static void main(String[] args) {
         launch(ClientApp.class, LoginView.class, args);
     }
 
     @Override
-    public void run(ApplicationArguments args) throws Exception {
-
-    }
-
-    @Override
     public void stop() throws Exception {
         super.stop();
-        System.exit(0);
+
     }
 
     @Override
     public Collection<Image> loadDefaultIcons() {
-        return Collections.singletonList(new Image(Objects.requireNonNull(getClass().getResource("/icon/qq.ico")).toExternalForm()));
+        return Collections.singletonList(new Image(Objects.requireNonNull(getClass().getResource("icons/logo.ico")).toExternalForm()));
     }
 
     @Override

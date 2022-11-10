@@ -14,14 +14,10 @@ import de.felixroske.jfxsupport.FXMLController;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.VBox;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -96,19 +92,57 @@ public class LoginInterfaceController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        loginButton.setDisable(true);
+        accountInput.requestFocus();
         accountInput.setPromptText("输入6~11位的账号");
-        accountInput.textProperty().addListener((observable, oldValue, newValue) -> {
-            if ("".equals(newValue)) {
-                accountReminder.setText("账号不能为空");
-            } else {
-                accountReminder.setText("");
+
+        accountInput.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (oldValue && !newValue) {
+                if ("".equals(accountInput.getText())) {
+                    accountReminder.setText("账号不能为空");
+                    loginButton.setDisable(true);
+                } else if ("".equals(passwordInput.getText())){
+                    accountReminder.setText("");
+                    loginButton.setDisable(true);
+                } else {
+                    accountReminder.setText("");
+                    loginButton.setDisable(false);
+                }
             }
         });
-        passwordInput.textProperty().addListener((observable, oldValue, newValue) -> {
-            if ("".equals(newValue)) {
-                passwordReminder.setText("密码不能为空");
-            } else {
-                passwordReminder.setText("");
+        passwordInput.focusedProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                if (oldValue && !newValue) {
+                    if ("".equals(passwordInput.getText())) {
+                        passwordReminder.setText("密码不能为空");
+                        loginButton.setDisable(true);
+                    } else if ("".equals(accountInput.getText())){
+                        passwordReminder.setText("");
+                        loginButton.setDisable(true);
+                    } else {
+                        passwordReminder.setText("");
+                        loginButton.setDisable(false);
+                    }
+                }
+            }
+        });
+
+        passwordInput.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                if (!"".equals(newValue)) {
+                    loginButton.setDisable(false);
+                }
+            }
+        });
+
+        accountInput.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                if (!"".equals(newValue)) {
+                    loginButton.setDisable(false);
+                }
             }
         });
 
@@ -116,7 +150,7 @@ public class LoginInterfaceController implements Initializable {
 
         primaryStage = ClientApp.getStage(); //primaryStage为start方法头中的Stage
         minWindow.setOnAction(event -> primaryStage.setIconified(true)); /* 最小化 */
-        closeWindow.setOnAction((event)->System.exit(0)); /* 关闭程序 */
+        closeWindow.setOnAction((event) -> System.exit(0)); /* 关闭程序 */
 
         DragUtil.addDragListener(primaryStage, backgroundImage);
 
