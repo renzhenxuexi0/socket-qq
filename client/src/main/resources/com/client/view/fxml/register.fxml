@@ -40,7 +40,7 @@
                 </Label>
                 <ImageView cache="true" fitHeight="121.0" fitWidth="83.0" pickOnBounds="true" preserveRatio="true">
                     <image>
-                        <Image url="@../image/register_logo.gif" />
+                        <Image url="@../image/register-logo.gif" />
                     </image>
                 </ImageView>
             </children>

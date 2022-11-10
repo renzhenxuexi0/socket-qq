@@ -40,7 +40,7 @@ public class ClientApp extends AbstractJavaFxApplicationSupport implements Appli
 
     @Override
     public void beforeInitialView(Stage stage, ConfigurableApplicationContext ctx) {
-        stage.setTitle("登录界面");
+        stage.setTitle("登录");
         stage.initStyle(StageStyle.TRANSPARENT);
         stage.setResizable(false);
     }
