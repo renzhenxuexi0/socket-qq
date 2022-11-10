@@ -1,9 +1,11 @@
 package com.client;
 
 import com.client.view.LoginView;
+
 import de.felixroske.jfxsupport.AbstractJavaFxApplicationSupport;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
+
 import javafx.stage.StageStyle;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -39,5 +41,7 @@ public class ClientApp extends AbstractJavaFxApplicationSupport implements Appli
     @Override
     public void beforeInitialView(Stage stage, ConfigurableApplicationContext ctx) {
         stage.setTitle("登录界面");
+        stage.initStyle(StageStyle.TRANSPARENT);
+        stage.setResizable(false);
     }
 }
