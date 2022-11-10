@@ -1,45 +1,53 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.net.URL?>
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.effect.Bloom?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
-<?import java.net.URL?>
-<VBox style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="com.client.controller.LoginInterfaceController">
+
+<VBox style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.client.controller.LoginInterfaceController">
 
     <children>
         <StackPane>
             <children>
-                <ImageView pickOnBounds="true" preserveRatio="true" fx:id="backgroundImage">
+                <ImageView fx:id="backgroundImage" pickOnBounds="true" preserveRatio="true">
                     <image>
-                        <Image url="@../image/login_bkg_normal.png"/>
+                        <Image url="@../image/login_bkg_normal.png" />
                     </image>
                 </ImageView>
-                <ImageView fitHeight="104.0" fitWidth="213.0" pickOnBounds="true" preserveRatio="true"
-                           StackPane.alignment="CENTER">
+                <ImageView fitHeight="104.0" fitWidth="213.0" pickOnBounds="true" preserveRatio="true" StackPane.alignment="CENTER">
                     <image>
-                        <Image url="@../image/logo.png"/>
+                        <Image url="@../image/logo.png" />
                     </image>
                 </ImageView>
 
-                <AnchorPane maxHeight="23.0" maxWidth="83.0" minHeight="23.0" minWidth="83.0" prefHeight="23.0"
-                            prefWidth="83.0" StackPane.alignment="TOP_RIGHT">
+                <AnchorPane maxHeight="23.0" maxWidth="83.0" minHeight="23.0" minWidth="83.0" prefHeight="23.0" prefWidth="83.0" StackPane.alignment="TOP_RIGHT">
                     <children>
-                        <Button fx:id="minWindow" mnemonicParsing="false" styleClass="dev-fx-window-min" text="一"
-                                AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="55.0" AnchorPane.topAnchor="0.0">
+                        <Button fx:id="minWindow" mnemonicParsing="false" styleClass="dev-fx-window-min" text="一" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="55.0" AnchorPane.topAnchor="0.0">
                             <tooltip>
-                                <Tooltip text="最小化"/>
+                                <Tooltip text="最小化" />
                             </tooltip>
                         </Button>
-                        <Button fx:id="closeWindow" mnemonicParsing="false" styleClass="dev-fx-window-close" text="X"
-                                AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <Button fx:id="closeWindow" mnemonicParsing="false" styleClass="dev-fx-window-close" text="X" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                             <tooltip>
-                                <Tooltip text="关闭"/>
+                                <Tooltip text="关闭" />
                             </tooltip>
                         </Button>
                     </children>
@@ -48,63 +56,53 @@
         </StackPane>
         <GridPane>
             <columnConstraints>
-                <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="170.0" minWidth="10.0"
-                                   prefWidth="79.0"/>
-                <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="310.0" minWidth="10.0"
-                                   prefWidth="248.0"/>
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="275.0" minWidth="10.0" prefWidth="86.0"/>
+                <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="170.0" minWidth="10.0" prefWidth="73.0" />
+                <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="310.0" minWidth="10.0" prefWidth="273.0" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="275.0" minWidth="10.0" prefWidth="81.0" />
             </columnConstraints>
             <rowConstraints>
-                <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" prefHeight="43.0"
-                                valignment="CENTER" vgrow="SOMETIMES"/>
-                <RowConstraints maxHeight="54.0" minHeight="10.0" prefHeight="43.0" valignment="CENTER"
-                                vgrow="SOMETIMES"/>
-                <RowConstraints maxHeight="39.0" minHeight="10.0" prefHeight="32.0" valignment="CENTER"
-                                vgrow="SOMETIMES"/>
-                <RowConstraints maxHeight="46.0" minHeight="10.0" prefHeight="45.0" valignment="CENTER"
-                                vgrow="SOMETIMES"/>
+                <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" prefHeight="43.0" valignment="CENTER" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="54.0" minHeight="10.0" prefHeight="43.0" valignment="CENTER" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="39.0" minHeight="10.0" prefHeight="32.0" valignment="CENTER" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="46.0" minHeight="10.0" prefHeight="45.0" valignment="CENTER" vgrow="SOMETIMES" />
             </rowConstraints>
             <children>
-                <Button fx:id="loginButton" mnemonicParsing="false" onAction="#loginButtonEvent" pickOnBounds="false"
-                        prefHeight="30.0" prefWidth="250.0" style="-fx-background-color: #00ccff;" text="登录"
-                        textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                <Button fx:id="loginButton" mnemonicParsing="false" onAction="#loginButtonEvent" pickOnBounds="false" prefHeight="30.0" prefWidth="250.0" style="-fx-background-color: #00ccff;" text="登录" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="3">
                     <font>
-                        <Font size="15.0"/>
+                        <Font size="15.0" />
                     </font>
                     <effect>
-                        <Bloom threshold="1.0"/>
+                        <Bloom threshold="1.0" />
                     </effect>
                 </Button>
-                <HBox alignment="CENTER" prefHeight="32.0" prefWidth="253.0" style="-fx-spacing: 110;"
-                      GridPane.columnIndex="1" GridPane.rowIndex="2">
+                <HBox alignment="CENTER" prefHeight="32.0" prefWidth="253.0" style="-fx-spacing: 110;" GridPane.columnIndex="1" GridPane.rowIndex="2">
                     <children>
-                        <CheckBox fx:id="rememberCheckBox" mnemonicParsing="false" style="-fx-border-color: bule;"
-                                  text="记住密码" textFill="#bfb8b8"/>
-                        <Hyperlink fx:id="registerHyperlink" onAction="#registerEvent" text="注册账号"/>
+                        <CheckBox fx:id="rememberCheckBox" mnemonicParsing="false" style="-fx-border-color: bule;" text="记住密码" textFill="#bfb8b8" />
+                        <Hyperlink fx:id="registerHyperlink" onAction="#registerEvent" text="注册账号" />
                     </children>
                 </HBox>
-                <Label fx:id="accountReminder" textFill="RED" GridPane.columnIndex="2"/>
-                <Label fx:id="passwordReminder" textFill="RED" GridPane.columnIndex="2" GridPane.rowIndex="1"/>
+                <Label fx:id="accountReminder" textFill="RED" GridPane.columnIndex="2" />
+                <Label fx:id="passwordReminder" textFill="RED" GridPane.columnIndex="2" GridPane.rowIndex="1" />
                 <VBox GridPane.columnIndex="1">
                     <children>
-                        <TextField fx:id="accountInput" style="-fx-background-color: transparent;">
+                        <TextField fx:id="accountInput" style="-fx-background-color: transparent;" translateX="10.0">
                             <VBox.margin>
-                                <Insets top="7.0"/>
+                                <Insets top="7.0" />
                             </VBox.margin>
                         </TextField>
-                        <Line endX="151.2928924560547" endY="-0.8284271955490112" startX="-100.0" stroke="#9a9393"/>
+                        <Line endX="151.2928924560547" endY="-0.8284271955490112" startX="-100.0" stroke="#9a9393" translateX="10.0" />
                     </children>
                 </VBox>
                 <VBox GridPane.columnIndex="1" GridPane.rowIndex="1">
                     <children>
-                        <PasswordField fx:id="passwordInput" style="-fx-background-color: transparent;"/>
-                        <Line endX="151.2928924560547" endY="-0.8284271955490112" startX="-100.0" stroke="#9a9393"/>
+                        <PasswordField fx:id="passwordInput" style="-fx-background-color: transparent;" translateX="10.0" />
+                        <Line endX="151.2928924560547" endY="-0.8284271955490112" startX="-100.0" stroke="#9a9393" translateX="10.0" />
                     </children>
                 </VBox>
             </children>
         </GridPane>
     </children>
     <stylesheets>
-        <URL value="@../css/window.css"/>
+        <URL value="@../css/window.css" />
     </stylesheets>
 </VBox>

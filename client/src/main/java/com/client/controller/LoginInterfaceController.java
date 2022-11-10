@@ -76,7 +76,7 @@ public class LoginInterfaceController implements Initializable {
         UserMemory.users = JSON.parseArray(result2.getObject().toString(), User.class);
         Alert alert;
         if (Code.LOGIN_SUCCESS.equals(result2.getCode())) {
-            ClientApp.showView(UserView.class, Modality.APPLICATION_MODAL);
+            ClientApp.showView(UserView.class);
             System.out.println("success！");
         } else {
             // 登录失败 弹出错误窗口

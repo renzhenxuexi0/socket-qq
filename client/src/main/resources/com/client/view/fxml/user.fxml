@@ -5,25 +5,28 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Font?>
-
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="620.0" prefWidth="306.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.client.controller.UserInterfaceController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="620.0"
+            prefWidth="306.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.client.controller.UserInterfaceController">
     <children>
         <Pane fx:id="mine" layoutY="-4.0" prefHeight="140.0" prefWidth="306.0">
             <children>
-                <ImageView fx:id="head" fitHeight="83.0" fitWidth="83.0" layoutX="23.0" layoutY="30.0" onMouseClicked="#clickMyHeadButton" pickOnBounds="true" preserveRatio="true" />
-            <ImageView fitHeight="150.0" fitWidth="306.0" pickOnBounds="true" preserveRatio="true" />
+                <ImageView fx:id="head" fitHeight="83.0" fitWidth="83.0" layoutX="23.0" layoutY="30.0"
+                           onMouseClicked="#clickMyHeadButton" pickOnBounds="true" preserveRatio="true"/>
+                <ImageView fitHeight="150.0" fitWidth="306.0" pickOnBounds="true" preserveRatio="true"/>
                 <Label fx:id="user_name" layoutX="116.0" layoutY="44.0" text="Karam">
                     <font>
-                        <Font size="20.0" />
+                        <Font size="20.0"/>
                     </font>
                 </Label>
-                <Label fx:id="user_label" layoutX="116.0" layoutY="78.0" prefHeight="15.0" prefWidth="126.0" text="Jesus In LA">
+                <Label fx:id="user_label" layoutX="116.0" layoutY="78.0" prefHeight="15.0" prefWidth="126.0"
+                       text="Jesus In LA">
                     <font>
-                        <Font size="13.0" />
+                        <Font size="13.0"/>
                     </font>
                 </Label>
             </children>
         </Pane>
-      <AnchorPane layoutY="136.0" prefHeight="486.0" prefWidth="306.0" />
+        <AnchorPane layoutY="136.0" prefHeight="486.0" prefWidth="306.0"/>
     </children>
 </AnchorPane>

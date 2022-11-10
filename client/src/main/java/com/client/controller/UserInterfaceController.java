@@ -12,9 +12,11 @@ import javafx.fxml.Initializable;
 import javafx.geometry.HPos;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -31,6 +33,10 @@ public class UserInterfaceController implements Initializable {
 
 
     private static final ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(1);
+    public Pane mine;
+    public ImageView head;
+    public Label user_name;
+    public Label user_label;
     @Autowired
     private UserService userService;
     // 用户界面的容器
@@ -89,8 +95,8 @@ public class UserInterfaceController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        buildUserList();
-        regularlyUpdateUser();
+//        buildUserList();
+//        regularlyUpdateUser();
     }
 
     public void clickMyHeadButton(MouseEvent mouseEvent) {
