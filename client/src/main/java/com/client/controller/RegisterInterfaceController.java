@@ -8,22 +8,22 @@ import com.client.service.UserService;
 import com.client.view.LoginView;
 import com.client.view.UserView;
 import de.felixroske.jfxsupport.FXMLController;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.input.MouseEvent;
 import javafx.stage.Modality;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @FXMLController
 public class RegisterInterfaceController implements Initializable {
+    private boolean AV,UV,PV;
     @Autowired
     private UserService userService;
     @FXML
@@ -50,8 +50,6 @@ public class RegisterInterfaceController implements Initializable {
 
     /**
      * 提交按钮触发事件
-     *
-     * @param
      */
     @FXML
     void submitButtonEvent() {
@@ -80,53 +78,50 @@ public class RegisterInterfaceController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        accountInput.setPromptText("请输入6-11位数字");
-        passwordInput.setPromptText("请输入任意6-11位数字或英文");
+        submitButton.setDisable(true);
         userNameInput.setPromptText("请输入6位以内英文或数字");
-    }
-
-    public void accountVerification(MouseEvent event) {
-        String account = accountInput.getText();
-
-        if (account.matches("[^0]\\d{5,10}")) {
-            submitButton.setOnAction(event1 -> submitButtonEvent());
-            av.setText("");
-        } else if ("".equals(account)) {
-            submitButton.setOnAction(event1 -> {});
-            av.setText("");
-        } else {
-            submitButton.setOnAction(event1 -> {});
-            av.setText("账号错误");
-        }
-    }
-
-
-
-    public void usernameVerification(MouseEvent event) {
-        String username = userNameInput.getText();
-        if (username.matches("[A-Za-z0-9]{0,5}")){
-            submitButton.setOnAction(event1 -> submitButtonEvent());
-            uv.setText("");
-        }else if ("".equals(username)) {
-            submitButton.setOnAction(event1 -> {});
-            uv.setText("");
-        } else {
-            submitButton.setOnAction(event1 -> {});
-            uv.setText("用户名错误");
-        }
-    }
-
-    public void passwordVerification(MouseEvent event) {
-        String password = passwordInput.getText();
-        if (password.matches("[A-Za-z0-9]{5,10}")){
-            submitButton.setOnAction(event1 -> submitButtonEvent());
-            pv.setText("");
-        }else if ("".equals(password)) {
-            submitButton.setOnAction(event1 -> {});
-            pv.setText("");
-        } else {
-            submitButton.setOnAction(event1 -> {});
-            pv.setText("密码错误");
-        }
+        userNameInput.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue.matches("[A-Za-z0-9]{0,6}")) {
+                uv.setText("");
+                UV=true;
+                submitButton.setDisable(false);
+            } else if ("".equals(newValue)) {
+                uv.setText("用户名不能为空");
+                submitButton.setDisable(true);
+            } else {
+                uv.setText("用户名错误");
+                submitButton.setDisable(true);
+            }
+        });
+        passwordInput.setPromptText("请输入任意6-11位数字或英文");
+        passwordInput.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue.matches("[A-Za-z0-9]{6,11}")) {
+                pv.setText("");
+                PV=true;
+                submitButton.setDisable(false);
+            } else if ("".equals(newValue)) {
+                pv.setText("密码不能为空");
+                submitButton.setDisable(true);
+            } else {
+                pv.setText("密码错误");
+                submitButton.setDisable(true);
+            }
+        });
+        accountInput.setPromptText("请输入6-11位数字");
+        accountInput.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue.matches("[^0]\\d{5,10}")) {
+                av.setText("");
+                AV=true;
+                submitButton.setDisable(false);
+            } else if ("".equals(newValue)) {
+                av.setText("账号不能为空");
+                submitButton.setDisable(true);
+            } else {
+                av.setText("账号错误");
+                submitButton.setDisable(true);
+            }
+        });
     }
 }
+
+
