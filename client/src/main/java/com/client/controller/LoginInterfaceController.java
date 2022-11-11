@@ -10,15 +10,19 @@ import com.client.utils.DragUtil;
 import com.client.utils.UserMemory;
 import com.client.view.RegisterView;
 import com.client.view.UserView;
+import com.jfoenix.controls.*;
+import com.jfoenix.validation.RequiredFieldValidator;
 import de.felixroske.jfxsupport.FXMLController;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
+import javafx.scene.paint.Color;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
+import org.kordamp.ikonli.fontawesome.FontAwesome;
+import org.kordamp.ikonli.javafx.FontIcon;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.net.URL;
@@ -28,36 +32,28 @@ import java.util.ResourceBundle;
 public class LoginInterfaceController implements Initializable {
     @FXML
     public ImageView backgroundImage;
-    @Autowired
-    private UserService userService;
-
-    private Stage primaryStage;
-
     @FXML
     public Button minWindow;
     @FXML
     public Button closeWindow;
-    @FXML
-    private Label passwordReminder;
-
-
-    @FXML
-    private Label accountReminder;
+    @Autowired
+    private UserService userService;
+    private Stage primaryStage;
 
     @FXML
-    private Button loginButton;
+    private JFXButton loginButton;
 
     @FXML
     private CheckBox rememberCheckBox;
 
     @FXML
-    private TextField accountInput;
+    private JFXTextField accountInput;
 
     @FXML
     private Hyperlink registerHyperlink;
 
     @FXML
-    private PasswordField passwordInput;
+    private JFXPasswordField passwordInput;
 
 
     @FXML
@@ -65,20 +61,37 @@ public class LoginInterfaceController implements Initializable {
         Result result = new Result();
         result.setCode(Code.USER_LOGIN);
         User user = new User();
-        user.setAccount(accountInput.getText());
-        user.setPassword(passwordInput.getText());
-        result.setObject(user);
-        Result result2 = userService.userLogin(result);
-        UserMemory.users = JSON.parseArray(result2.getObject().toString(), User.class);
-        Alert alert;
-        if (Code.LOGIN_SUCCESS.equals(result2.getCode())) {
-            ClientApp.showView(UserView.class);
-            System.out.println("success！");
+        String account = accountInput.getText();
+        String password = passwordInput.getText();
+        if (!"".equals(account) && !"".equals(password)) {
+            user.setAccount(account);
+            user.setPassword(password);
+            result.setObject(user);
+            Result result2 = userService.userLogin(result);
+            UserMemory.users = JSON.parseArray(result2.getObject().toString(), User.class);
+            Alert alert;
+            if (Code.LOGIN_SUCCESS.equals(result2.getCode())) {
+                ClientApp.showView(UserView.class);
+                System.out.println("success！");
+            } else {
+                // 登录失败 弹出错误窗口
+                alert = new Alert(Alert.AlertType.ERROR, result2.getMsg());
+                alert.show();
+                // 错误的话得重新输入
+            }
         } else {
-            // 登录失败 弹出错误窗口
-            alert = new Alert(Alert.AlertType.ERROR, result2.getMsg());
-            alert.show();
-            // 错误的话得重新输入
+            JFXAlert jfxAlert = new JFXAlert(primaryStage);
+            jfxAlert.initModality(Modality.APPLICATION_MODAL);
+            jfxAlert.setOverlayClose(false);
+            JFXDialogLayout layout = new JFXDialogLayout();
+            layout.setBody(new Label("请输入正确的账号密码"));
+            JFXButton closeButton = new JFXButton("确认");
+            closeButton.setStyle("-fx-font-size: 14");
+            closeButton.getStyleClass().add("dialog-accept");
+            closeButton.setOnAction(event2 -> jfxAlert.hideWithAnimation());
+            layout.setActions(closeButton);
+            jfxAlert.setContent(layout);
+            jfxAlert.show();
         }
     }
 
@@ -92,57 +105,31 @@ public class LoginInterfaceController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        loginButton.setDisable(true);
         accountInput.requestFocus();
-        accountInput.setPromptText("输入6~11位的账号");
+        RequiredFieldValidator accountValidator = new RequiredFieldValidator();
+        accountValidator.setMessage("请输入账号");
 
-        accountInput.focusedProperty().addListener((observable, oldValue, newValue) -> {
-            if (oldValue && !newValue) {
-                if ("".equals(accountInput.getText())) {
-                    accountReminder.setText("账号不能为空");
-                    loginButton.setDisable(true);
-                } else if ("".equals(passwordInput.getText())){
-                    accountReminder.setText("");
-                    loginButton.setDisable(true);
-                } else {
-                    accountReminder.setText("");
-                    loginButton.setDisable(false);
-                }
-            }
-        });
-        passwordInput.focusedProperty().addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                if (oldValue && !newValue) {
-                    if ("".equals(passwordInput.getText())) {
-                        passwordReminder.setText("密码不能为空");
-                        loginButton.setDisable(true);
-                    } else if ("".equals(accountInput.getText())){
-                        passwordReminder.setText("");
-                        loginButton.setDisable(true);
-                    } else {
-                        passwordReminder.setText("");
-                        loginButton.setDisable(false);
-                    }
-                }
+        FontIcon fontIcon = new FontIcon(FontAwesome.EXCLAMATION_TRIANGLE);
+        fontIcon.setIconColor(Color.RED);
+        fontIcon.setIconSize(11);
+
+        accountValidator.setIcon(fontIcon);
+
+        accountInput.getValidators().add(accountValidator);
+        accountInput.focusedProperty().addListener((o, oldVal, newVal) -> {
+            if (!newVal) {
+                accountInput.validate();
             }
         });
 
-        passwordInput.textProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                if (!"".equals(newValue)) {
-                    loginButton.setDisable(false);
-                }
-            }
-        });
+        RequiredFieldValidator passwordValidator = new RequiredFieldValidator();
+        passwordValidator.setMessage("请输入密码");
+        passwordValidator.setIcon(fontIcon);
 
-        accountInput.textProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                if (!"".equals(newValue)) {
-                    loginButton.setDisable(false);
-                }
+        passwordInput.getValidators().add(passwordValidator);
+        passwordInput.focusedProperty().addListener((o, oldVal, newVal) -> {
+            if (!newVal) {
+                passwordInput.validate();
             }
         });
 

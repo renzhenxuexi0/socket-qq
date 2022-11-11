@@ -31,3 +31,10 @@
     -fx-background-color: #e81123;
     -fx-text-fill: white; /* 字体颜色 */
 }
+
+.error-text {
+    -fx-font-size:12px;
+    -fx-font-weight:bold;
+    -fx-text-fill:red;
+    -fx-font-family:"Microsoft YaHei";
+}

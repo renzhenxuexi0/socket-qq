@@ -7,6 +7,6 @@ import javafx.fxml.Initializable;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-@FXMLView(value = "fxml/login.fxml", encoding = "UTF-8", css = {"css/window.css", "css/login.css"})
+@FXMLView(value = "fxml/login.fxml", encoding = "UTF-8", css = {"css/login.css"})
 public class LoginView extends AbstractFxmlView {
 }
