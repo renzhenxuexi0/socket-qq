@@ -26,6 +26,7 @@ import org.kordamp.ikonli.javafx.FontIcon;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.net.URL;
+import java.util.Arrays;
 import java.util.ResourceBundle;
 
 @FXMLController
@@ -36,8 +37,13 @@ public class LoginInterfaceController implements Initializable {
     public Button minWindow;
     @FXML
     public Button closeWindow;
+
+    @FXML
+    public ImageView logoImage;
+
     @Autowired
     private UserService userService;
+
     private Stage primaryStage;
 
     @FXML
@@ -139,8 +145,7 @@ public class LoginInterfaceController implements Initializable {
         minWindow.setOnAction(event -> primaryStage.setIconified(true)); /* 最小化 */
         closeWindow.setOnAction((event) -> System.exit(0)); /* 关闭程序 */
 
-        DragUtil.addDragListener(primaryStage, backgroundImage);
-
+        DragUtil.addDragListener(primaryStage, Arrays.asList(backgroundImage, logoImage));
     }
 }
 
