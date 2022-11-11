@@ -99,7 +99,7 @@ public class LoginInterfaceController implements Initializable {
     void registerEvent(ActionEvent event) {
         primaryStage.setHeight(600);
         primaryStage.setWidth(500);
-        primaryStage.setTitle("注册界面");
+        primaryStage.setTitle("注册");
         ClientApp.showView(RegisterView.class);
     }
 
