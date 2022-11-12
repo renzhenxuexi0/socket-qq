@@ -83,6 +83,8 @@ public class LoginInterfaceController implements Initializable {
             result.setObject(user);
             Result result2 = userService.userLogin(result);
             UserMemory.users = JSON.parseArray(result2.getObject().toString(), User.class);
+
+
             Alert alert;
 
             if (Code.LOGIN_SUCCESS.equals(result2.getCode())) {
@@ -90,6 +92,11 @@ public class LoginInterfaceController implements Initializable {
                 primaryStage.setWidth(306);
                 primaryStage.setTitle("IMO");
                 ClientApp.showView(UserView.class);
+                UserMemory.users.forEach(user1 -> {
+                    if (user1.getAccount().equals(user.getAccount())) {
+                        UserMemory.user = user1;
+                    }
+                });
                 System.out.println("success！");
             } else {
                 // 登录失败 弹出错误窗口

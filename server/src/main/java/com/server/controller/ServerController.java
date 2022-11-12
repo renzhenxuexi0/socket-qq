@@ -91,6 +91,10 @@ public class ServerController {
                         if (Code.GET_ALL_USERS.equals(code)) {
                             Result allUser = getAllUser();
                             ps.println(JSON.toJSONString(allUser));
+                        } else if (Code.OFF_LINE.equals(code)) {
+                            User user = JSON.parseObject(jsonObject.get("object").toString(), User.class);
+                            offLine(user);
+                            ps.println("");
                         } else {
                             Result result = new Result();
                             result.setMsg("未知错误");
@@ -152,5 +156,10 @@ public class ServerController {
         result.setObject(UserMemory.users);
         contentInput.appendText("所有用户信息:\n" + UserMemory.users.toString() + "\n");
         return result;
+    }
+
+    void offLine(User user) {
+        userService.updateLogin(user.getId(), 0);
+        contentInput.appendText(user.getUsername() + "下线\n");
     }
 }

@@ -1,12 +1,15 @@
 package com.client.service;
 
+import com.client.pojo.Code;
 import com.client.pojo.Result;
 import com.client.utils.GetResultUtil;
+import com.client.utils.UserMemory;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
-public class UserService {
+public class UserService implements DisposableBean {
     @Value("${socket.ip}")
     private String socketIP;
     @Value("${socket.port}")
@@ -42,6 +45,20 @@ public class UserService {
      */
     public Result getAllUser(Result result) {
         return GetResultUtil.getResult(result, socketIP, socketPort);
+    }
+
+
+    public void userOffLine(Result result) {
+        GetResultUtil.getResult(result, socketIP, socketPort);
+    }
+
+    @Override
+    public void destroy() {
+        Result result = new Result();
+        result.setCode(Code.OFF_LINE);
+        result.setObject(UserMemory.user);
+        System.out.println(result);
+        userOffLine(result);
     }
 }
 

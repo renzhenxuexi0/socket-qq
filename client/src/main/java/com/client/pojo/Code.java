@@ -22,8 +22,13 @@ public class Code {
     public static final Integer SEND_TEXT_MSG_SUCCESS = 3002;
     // 发送文本消息失败
     public static final Integer SEND_TEXT_MSG_FAIL = 3003;
+
     // 获取所有用户信息
     public static final Integer GET_ALL_USERS = 4001;
+
+    // 下线
+    public static final Integer OFF_LINE = 5001;
+
 
 }
 
