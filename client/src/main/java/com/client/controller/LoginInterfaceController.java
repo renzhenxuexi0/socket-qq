@@ -36,6 +36,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 
 @FXMLController
 public class LoginInterfaceController implements Initializable {
+
     @FXML
     public ImageView backgroundImage;
     @FXML
@@ -113,8 +114,8 @@ public class LoginInterfaceController implements Initializable {
 
     @FXML
     void registerEvent(ActionEvent event) {
-        primaryStage.setHeight(582);
-        primaryStage.setWidth(468);
+        primaryStage.setHeight(412);
+        primaryStage.setWidth(400);
         primaryStage.setTitle("注册");
         ClientApp.showView(RegisterView.class);
     }
