@@ -116,14 +116,13 @@ public class LoginInterfaceController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         accountInput.requestFocus();
         RequiredFieldValidator accountValidator = new RequiredFieldValidator();
-        accountValidator.setMessage("请输入账号");
 
         FontIcon fontIcon = new FontIcon(FontAwesome.EXCLAMATION_TRIANGLE);
         fontIcon.setIconColor(Color.RED);
         fontIcon.setIconSize(11);
 
         accountValidator.setIcon(fontIcon);
-
+        accountValidator.setMessage("请输入账户");
         accountInput.getValidators().add(accountValidator);
         accountInput.focusedProperty().addListener((o, oldVal, newVal) -> {
             if (!newVal) {
@@ -142,7 +141,11 @@ public class LoginInterfaceController implements Initializable {
             }
         });
 
-        passwordInput.setPromptText("输入6~11位的密码");
+        FontIcon fontIcon1 = new FontIcon(FontAwesome.QQ);
+        fontIcon1.setIconColor(Color.WHITE);
+        fontIcon1.setTranslateX(-50);
+        fontIcon1.setIconSize(13);
+        loginButton.setGraphic(fontIcon1);
 
         primaryStage = ClientApp.getStage(); //primaryStage为start方法头中的Stage
         minWindow.setOnAction(event -> primaryStage.setIconified(true)); /* 最小化 */

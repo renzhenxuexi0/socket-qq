@@ -46,7 +46,7 @@
                 </AnchorPane>
             </children>
         </StackPane>
-        <GridPane>
+        <GridPane prefHeight="178.0" prefWidth="428.0">
             <columnConstraints>
                 <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="170.0" minWidth="10.0"
                                    prefWidth="73.0"/>
@@ -60,9 +60,9 @@
                                 valignment="CENTER" vgrow="SOMETIMES"/>
                 <RowConstraints maxHeight="93.0" minHeight="10.0" prefHeight="57.0" valignment="CENTER"
                                 vgrow="SOMETIMES"/>
-                <RowConstraints maxHeight="50.0" minHeight="10.0" prefHeight="38.0" valignment="CENTER"
+                <RowConstraints maxHeight="50.0" minHeight="10.0" prefHeight="36.0" valignment="CENTER"
                                 vgrow="SOMETIMES"/>
-                <RowConstraints maxHeight="85.0" minHeight="10.0" prefHeight="71.0" valignment="CENTER"
+                <RowConstraints maxHeight="85.0" minHeight="10.0" prefHeight="53.0" valignment="CENTER"
                                 vgrow="SOMETIMES"/>
             </rowConstraints>
             <children>
@@ -80,7 +80,7 @@
                            prefWidth="260.0" ripplerFill="#20a2da" style="-fx-background-color: #05bafb;" text="登录"
                            textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="3">
                     <font>
-                        <Font size="14.0"/>
+                        <Font size="13.0"/>
                     </font>
                 </JFXButton>
                 <JFXPasswordField fx:id="passwordInput" focusColor="#21c0ff" promptText="输入密码"
