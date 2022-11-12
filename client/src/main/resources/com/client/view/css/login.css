@@ -33,8 +33,8 @@
 }
 
 .error-text {
-    -fx-font-size:12px;
-    -fx-font-weight:bold;
-    -fx-text-fill:red;
-    -fx-font-family:"Microsoft YaHei";
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-text-fill: red;
+    -fx-font-family: "Microsoft YaHei";
 }

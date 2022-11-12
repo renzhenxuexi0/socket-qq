@@ -10,16 +10,20 @@ import com.client.utils.DragUtil;
 import com.client.utils.UserMemory;
 import com.client.view.RegisterView;
 import com.client.view.UserView;
-import com.jfoenix.controls.*;
+import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXPasswordField;
+import com.jfoenix.controls.JFXTextField;
 import com.jfoenix.validation.RequiredFieldValidator;
 import de.felixroske.jfxsupport.FXMLController;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.Hyperlink;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.kordamp.ikonli.fontawesome.FontAwesome;
 import org.kordamp.ikonli.javafx.FontIcon;
@@ -28,6 +32,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.ResourceBundle;
+import java.util.concurrent.ThreadPoolExecutor;
 
 @FXMLController
 public class LoginInterfaceController implements Initializable {
@@ -43,6 +48,9 @@ public class LoginInterfaceController implements Initializable {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private ThreadPoolExecutor poolExecutor;
 
     private Stage primaryStage;
 
@@ -76,7 +84,11 @@ public class LoginInterfaceController implements Initializable {
             Result result2 = userService.userLogin(result);
             UserMemory.users = JSON.parseArray(result2.getObject().toString(), User.class);
             Alert alert;
+
             if (Code.LOGIN_SUCCESS.equals(result2.getCode())) {
+                primaryStage.setHeight(620);
+                primaryStage.setWidth(306);
+                primaryStage.setTitle("IMO");
                 ClientApp.showView(UserView.class);
                 System.out.println("success！");
             } else {
@@ -85,26 +97,17 @@ public class LoginInterfaceController implements Initializable {
                 alert.show();
                 // 错误的话得重新输入
             }
+        } else if ("".equals(account)) {
+            accountInput.validate();
         } else {
-            JFXAlert jfxAlert = new JFXAlert(primaryStage);
-            jfxAlert.initModality(Modality.APPLICATION_MODAL);
-            jfxAlert.setOverlayClose(false);
-            JFXDialogLayout layout = new JFXDialogLayout();
-            layout.setBody(new Label("请输入正确的账号密码"));
-            JFXButton closeButton = new JFXButton("确认");
-            closeButton.setStyle("-fx-font-size: 14");
-            closeButton.getStyleClass().add("dialog-accept");
-            closeButton.setOnAction(event2 -> jfxAlert.hideWithAnimation());
-            layout.setActions(closeButton);
-            jfxAlert.setContent(layout);
-            jfxAlert.show();
+            passwordInput.validate();
         }
     }
 
     @FXML
     void registerEvent(ActionEvent event) {
-        primaryStage.setHeight(600);
-        primaryStage.setWidth(500);
+        primaryStage.setHeight(582);
+        primaryStage.setWidth(468);
         primaryStage.setTitle("注册");
         ClientApp.showView(RegisterView.class);
     }

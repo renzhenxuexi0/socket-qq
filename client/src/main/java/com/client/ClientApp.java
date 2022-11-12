@@ -1,18 +1,13 @@
 package com.client;
 
 import com.client.view.LoginView;
-
 import de.felixroske.jfxsupport.AbstractJavaFxApplicationSupport;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
-
 import javafx.stage.StageStyle;
-import org.springframework.boot.ApplicationArguments;
-import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Objects;
