@@ -62,11 +62,7 @@ public class ProgressStageUtil {
         Label adLbl = new Label(ad);
         adLbl.setTextFill(Color.BLUE);
 
-
-        // progress
-//        ProgressIndicator indicator = new ProgressIndicator();
-//        indicator.setProgress(-1);
-//        indicator.progressProperty().bind(work.progressProperty());
+        // 组件库组件
         JFXSpinner jfxSpinner = new JFXSpinner();
         jfxSpinner.setRadius(30);
         jfxSpinner.setStartingAngle(20);
