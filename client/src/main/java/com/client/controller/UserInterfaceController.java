@@ -39,8 +39,6 @@ public class UserInterfaceController implements Initializable {
     @FXML
     private Label userName;
     @FXML
-    private Label userLabel;
-    @FXML
     private ImageView userHead;
     @FXML
     private JFXListView<Label> userListView;
