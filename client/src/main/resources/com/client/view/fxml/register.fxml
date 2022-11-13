@@ -45,7 +45,7 @@
                         <Font size="14.0" />
                     </font>
                 </Label>
-            <JFXTextField fx:id="userNameInput" focusColor="#05bafb" maxWidth="250.0" minWidth="250.0" prefWidth="250.0" promptText="请输入6位以内英文或数字" GridPane.columnIndex="1" />
+            <JFXTextField fx:id="userNameInput" focusColor="#05bafb" maxWidth="250.0" minWidth="250.0" prefWidth="250.0" promptText="请输入6位以内英文或数字或中文" GridPane.columnIndex="1" />
             <JFXTextField fx:id="accountInput" focusColor="#05bafb" maxWidth="250.0" minWidth="250.0" prefHeight="23.0" prefWidth="250.0" promptText="请输入6-11位数字(首位不为零)" GridPane.columnIndex="1" GridPane.rowIndex="1" />
             <JFXTextField fx:id="passwordInput" focusColor="#05bafb" maxWidth="250.0" minWidth="250.0" prefWidth="250.0" promptText="请输入任意6-11位数字或英文" GridPane.columnIndex="1" GridPane.rowIndex="2" />
             </children>

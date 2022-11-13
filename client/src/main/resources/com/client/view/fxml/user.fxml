@@ -26,14 +26,9 @@
                   <ColorAdjust />
                </effect>
                 </ImageView>
-                <Label fx:id="userName" layoutX="116.0" layoutY="44.0" text="Karam">
+                <Label fx:id="userName" layoutX="116.0" layoutY="44.0">
                     <font>
                         <Font size="20.0" />
-                    </font>
-                </Label>
-                <Label fx:id="userLabel" layoutX="116.0" layoutY="78.0" prefHeight="15.0" prefWidth="126.0" text="Jesus In LA">
-                    <font>
-                        <Font size="13.0" />
                     </font>
                 </Label>
                 <ImageView fx:id="userHead" fitHeight="83.0" fitWidth="83.0" layoutX="23.0" layoutY="30.0" pickOnBounds="true" preserveRatio="true" />
