@@ -9,6 +9,7 @@ import com.client.service.UserService;
 import com.client.utils.DragUtil;
 import com.client.utils.ProgressStageUtil;
 import com.client.utils.UserMemory;
+import com.client.view.DialogBoxView;
 import com.client.view.RegisterView;
 import com.client.view.UserView;
 import com.jfoenix.controls.JFXButton;
@@ -57,6 +58,8 @@ public class LoginInterfaceController implements Initializable {
 
     @Autowired
     private ThreadPoolExecutor poolExecutor;
+
+
 
     private Stage primaryStage;
 

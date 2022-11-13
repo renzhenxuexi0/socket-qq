@@ -5,10 +5,14 @@ import com.client.pojo.User;
 import com.client.service.UserService;
 import com.client.utils.DragUtil;
 import com.client.utils.UserMemory;
+import com.client.view.DialogBoxView;
 import com.jfoenix.controls.JFXListView;
 import de.felixroske.jfxsupport.FXMLController;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -16,7 +20,9 @@ import javafx.scene.control.Label;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -34,6 +40,10 @@ public class UserInterfaceController implements Initializable {
     public Button closeWindow;
     @FXML
     public ImageView backgroundImage;
+
+    @Autowired
+    private DialogBoxController dialogBoxController;
+
     @FXML
     private Pane userPane;
     @FXML
@@ -57,6 +67,23 @@ public class UserInterfaceController implements Initializable {
             if (!Objects.equals(user.getId(), UserMemory.myUser.getId())) {
                 Label label = new Label();
                 label.setText(user.getUsername());
+                label.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent event) {
+                        // 获取对于的user
+                        String text = label.getText();
+                        System.out.println(text);
+                        for (int i = 0; i < UserMemory.users.size(); i++) {
+                            User user2 = UserMemory.users.get(i);
+                            if (text.equals(user2.getUsername())){
+                                UserMemory.talkUser = user2;
+                            }
+                        }
+                        System.out.println(UserMemory.talkUser);
+
+                        ClientApp.showView(DialogBoxView.class, Modality.NONE);
+                    }
+                });
                 ImageView imageView = new ImageView(String.valueOf(getClass().getResource("headImage/head.png")));
                 if (user.getLogin() == 0) {
                     imageView.setEffect(colorAdjust);
