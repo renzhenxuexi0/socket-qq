@@ -10,8 +10,11 @@ import java.util.List;
 public class UserMemory {
 
     // 自己的用户信息
-    public static User user;
+    public static User myUser;
 
     // 所有用户列表
     public static List<User> users;
+
+    // 对正在聊天的用户
+    public static User talkUser;
 }

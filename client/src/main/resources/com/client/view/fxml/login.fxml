@@ -65,17 +65,17 @@
             <children>
                 <HBox alignment="CENTER" prefHeight="25.0" prefWidth="273.0" style="-fx-spacing: 140;" GridPane.columnIndex="1" GridPane.rowIndex="2">
                     <children>
-                        <JFXCheckBox fx:id="rememberCheckBox" checkedColor="#a7e4fb" text="记住密码" textFill="#bfbbbb" unCheckedColor="#c9c6c6" />
-                        <Hyperlink fx:id="registerHyperlink" onAction="#registerEvent" text="注册账号" />
+                        <JFXCheckBox fx:id="rememberCheckBox" checkedColor="#a7e4fb" focusTraversable="false" text="记住密码" textFill="#bfbbbb" unCheckedColor="#c9c6c6" />
+                        <Hyperlink fx:id="registerHyperlink" focusTraversable="false" onAction="#registerEvent" text="注册账号" />
                     </children>
                 </HBox>
-                <JFXTextField fx:id="accountInput" focusColor="#21c0ff" promptText="输入账号" unFocusColor="#bfbfbf" GridPane.columnIndex="1" />
-                <JFXButton fx:id="loginButton" buttonType="RAISED" onAction="#loginButtonEvent" prefHeight="29.0" prefWidth="260.0" ripplerFill="#20a2da" style="-fx-background-color: #05bafb;" text="登录" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                <JFXTextField fx:id="accountInput" focusColor="#21c0ff" focusTraversable="false" promptText="输入账号" unFocusColor="#bfbfbf" GridPane.columnIndex="1" />
+                <JFXButton fx:id="loginButton" buttonType="RAISED" defaultButton="true" focusTraversable="false" onAction="#loginButtonEvent" prefHeight="29.0" prefWidth="260.0" ripplerFill="#20a2da" style="-fx-background-color: #05bafb;" text="登录" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="3">
                     <font>
                         <Font size="13.0" />
                     </font>
                 </JFXButton>
-                <JFXPasswordField fx:id="passwordInput" focusColor="#21c0ff" promptText="输入密码" unFocusColor="#bfbfbf" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                <JFXPasswordField fx:id="passwordInput" focusColor="#21c0ff" focusTraversable="false" promptText="输入密码" unFocusColor="#bfbfbf" GridPane.columnIndex="1" GridPane.rowIndex="1" />
             </children>
         </GridPane>
     </children>
