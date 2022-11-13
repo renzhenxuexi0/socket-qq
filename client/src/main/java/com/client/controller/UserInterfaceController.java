@@ -1,6 +1,7 @@
 package com.client.controller;
 
 import com.client.ClientApp;
+import com.client.pojo.User;
 import com.client.service.UserService;
 import com.client.utils.DragUtil;
 import com.client.utils.UserMemory;
@@ -12,6 +13,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
@@ -49,11 +51,19 @@ public class UserInterfaceController implements Initializable {
     void buildUserList() {
 
         ObservableList<Label> userListLabel = FXCollections.observableArrayList();
+        ColorAdjust colorAdjust = new ColorAdjust();
+        colorAdjust.setBrightness(-0.5);
+
         for (int i = 0; i < UserMemory.users.size(); i++) {
-            if (!Objects.equals(UserMemory.users.get(i).getId(), UserMemory.myUser.getId())) {
+            User user = UserMemory.users.get(i);
+            if (!Objects.equals(user.getId(), UserMemory.myUser.getId())) {
                 Label label = new Label();
-                label.setText(UserMemory.users.get(i).getUsername());
+                label.setText(user.getUsername());
                 ImageView imageView = new ImageView(String.valueOf(getClass().getResource("headImage/head.png")));
+                if (user.getLogin() == 0) {
+                    imageView.setEffect(colorAdjust);
+                }
+
                 imageView.setFitHeight(40);
                 imageView.setFitWidth(40);
                 label.setGraphic(imageView);
