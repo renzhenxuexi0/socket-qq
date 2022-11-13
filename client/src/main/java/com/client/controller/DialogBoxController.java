@@ -1,14 +1,19 @@
 package com.client.controller;
 
+import com.client.ClientApp;
+import com.client.view.UserView;
 import de.felixroske.jfxsupport.FXMLController;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextArea;
 import javafx.stage.Stage;
 
-import java.awt.*;
 import java.net.URL;
 import java.util.ResourceBundle;
+
 
 @FXMLController
 public class DialogBoxController implements Initializable {
@@ -20,26 +25,26 @@ public class DialogBoxController implements Initializable {
     @FXML
     private TextArea input;
 
-    @FXML
-    private Button send;
+    private Stage primaryStage;
 
     @FXML
-    private TextArea inputArea;
+    private Button sendButton;
 
+    @FXML
+    private TextArea messageArea;
 
-
+    @FXML
+    private Button close;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+    }
+
+    public void sendMessage(ActionEvent mouseEvent) {
 
     }
 
-//    @FXML
-//    void closeThePage(ActionEvent event) {
-//
-//    }
-//
-//
-//    public void closeThePage(ActionEvent actionEvent) {
-//    }
+    public void returnToUser(ActionEvent event) {
+        ClientApp.showView(UserView.class);
+    }  //点击关闭后返回列表界面
 }

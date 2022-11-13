@@ -1,8 +1,13 @@
 package com.client.controller;
 
+import com.client.ClientApp;
 import com.client.service.UserService;
 import com.client.utils.UserMemory;
+import com.client.view.DialogBoxView;
+import com.client.view.RegisterView;
+import de.felixroske.jfxsupport.AbstractFxmlView;
 import de.felixroske.jfxsupport.FXMLController;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.HPos;
@@ -16,6 +21,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.stage.Stage;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.net.URL;
@@ -35,6 +41,8 @@ public class UserInterfaceController implements Initializable {
 
     @FXML
     public Label user_label;
+
+    private Stage primaryStage;
 
     @Autowired
     private UserService userService;
@@ -81,6 +89,7 @@ public class UserInterfaceController implements Initializable {
         ui.add(scrollPane, 0, 1);
         scrollPane.setContent(gridPane);
         buildUserList();
+        primaryStage = ClientApp.getStage();
         // 开启定时任务
 //        ScheduledService<Void> scheduledService = new ScheduledService<Void>() {
 //            @Override
@@ -95,5 +104,12 @@ public class UserInterfaceController implements Initializable {
 
 
     public void clickMyHeadButton(MouseEvent mouseEvent) {
+    }
+
+    public void turnToDialogBoxEvent(ActionEvent event) {
+        primaryStage.setHeight(400);
+        primaryStage.setWidth(600);
+        primaryStage.setTitle("聊天界面");
+        ClientApp.showView(DialogBoxView.class);
     }
 }

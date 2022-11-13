@@ -1,5 +1,6 @@
 package com.client;
 
+import com.client.controller.DialogBoxController;
 import com.client.service.UserService;
 import com.client.view.LoginView;
 import de.felixroske.jfxsupport.AbstractJavaFxApplicationSupport;
@@ -18,6 +19,7 @@ public class ClientApp extends AbstractJavaFxApplicationSupport {
     public static void main(String[] args) {
         launch(ClientApp.class, LoginView.class, args);
     }
+
 
     @Override
     public void stop() throws Exception {
