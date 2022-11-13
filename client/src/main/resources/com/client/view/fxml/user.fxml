@@ -5,6 +5,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.effect.ColorAdjust?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -21,6 +22,9 @@
                     <image>
                         <Image url="@../image/login_bkg_register.png" />
                     </image>
+               <effect>
+                  <ColorAdjust />
+               </effect>
                 </ImageView>
                 <Label fx:id="userName" layoutX="116.0" layoutY="44.0" text="Karam">
                     <font>
