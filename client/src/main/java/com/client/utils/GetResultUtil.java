@@ -3,10 +3,12 @@ package com.client.utils;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.client.pojo.Result;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.*;
 import java.net.Socket;
 
+@Slf4j
 public class GetResultUtil {
     /**
      * 通用发送给服务器消息模板
@@ -37,7 +39,7 @@ public class GetResultUtil {
             socket.close();
             return result2;
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.toString());
             // 出错报错
             Result result3 = new Result();
             result3.setMsg("未知错误");

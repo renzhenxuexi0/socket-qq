@@ -31,6 +31,10 @@ import java.util.ResourceBundle;
 @FXMLController
 public class RegisterInterfaceController implements Initializable {
     @FXML
+    public Button minWindow;
+    @FXML
+    public Button closeWindow;
+    @FXML
     private ImageView rgBackround;
     @FXML
     private ImageView rgLogo;
@@ -38,10 +42,6 @@ public class RegisterInterfaceController implements Initializable {
     private UserService userService;
     @FXML
     private JFXTextField accountInput;
-    @FXML
-    public Button minWindow;
-    @FXML
-    public Button closeWindow;
     private Stage primaryStage;
     // 账户验证
 
@@ -55,6 +55,7 @@ public class RegisterInterfaceController implements Initializable {
     private JFXTextField userNameInput;
     @FXML
     private Hyperlink returnLogin;
+
     @FXML
     void jumpLogin(ActionEvent event) {
         primaryStage.setHeight(344);
@@ -83,7 +84,7 @@ public class RegisterInterfaceController implements Initializable {
         Result result2 = userService.userRegister(result);
         Alert alert;
 
-        if (!"".equals(account) && !"".equals(password)&&!"".equals(username)) {
+        if (!"".equals(account) && !"".equals(password) && !"".equals(username)) {
             if (Code.REGISTER_SUCCESS.equals(result2.getCode())) {
                 // 注册成功弹窗 显示服务器返回的信息
                 alert = new Alert(Alert.AlertType.INFORMATION, result2.getMsg());
@@ -95,11 +96,11 @@ public class RegisterInterfaceController implements Initializable {
                 alert.show();
                 // 错误的话得重新输入
             }
-        }else if ("".equals(account)) {
+        } else if ("".equals(account)) {
             accountInput.validate();
-        } else if ("".equals(password)){
+        } else if ("".equals(password)) {
             passwordInput.validate();
-        }else {
+        } else {
             userNameInput.validate();
         }
     }
@@ -139,9 +140,12 @@ public class RegisterInterfaceController implements Initializable {
                 accountInput.validate();
             }
         });
-        primaryStage=ClientApp.getStage();
+        primaryStage = ClientApp.getStage();
         minWindow.setOnAction(event -> primaryStage.setIconified(true)); /* 最小化 */
-        closeWindow.setOnAction((event) -> System.exit(0)); /* 关闭程序 */
+        closeWindow.setOnAction((event) -> {
+            primaryStage.close();
+            System.exit(0);
+        }); /* 关闭程序 */
 
         DragUtil.addDragListener(primaryStage, Arrays.asList(rgBackround, rgLogo));
     }

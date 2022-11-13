@@ -18,6 +18,7 @@ import de.felixroske.jfxsupport.FXMLController;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -55,6 +56,8 @@ public class LoginInterfaceController implements Initializable {
 
     private Stage primaryStage;
 
+    private Scene primaryScene;
+
     @FXML
     private JFXButton loginButton;
 
@@ -73,38 +76,46 @@ public class LoginInterfaceController implements Initializable {
 
     @FXML
     void loginButtonEvent(ActionEvent event) {
-        Result result = new Result();
-        result.setCode(Code.USER_LOGIN);
-        User user = new User();
         String account = accountInput.getText();
         String password = passwordInput.getText();
         if (!"".equals(account) && !"".equals(password)) {
-            user.setAccount(account);
-            user.setPassword(password);
-            result.setObject(user);
-            Result result2 = userService.userLogin(result);
-            UserMemory.users = JSON.parseArray(result2.getObject().toString(), User.class);
+            try {
 
+                Result result = new Result();
+                result.setCode(Code.USER_LOGIN);
+                User user = new User();
 
-            Alert alert;
+                Result result2 = poolExecutor.submit(() -> {
+                    user.setAccount(account);
+                    user.setPassword(password);
+                    result.setObject(user);
+                    Result result21 = userService.userLogin(result);
+                    UserMemory.users = JSON.parseArray(result21.getObject().toString(), User.class);
+                    return result21;
+                }).get();
+                // 判断账号密码是否正确
+                if (Code.LOGIN_SUCCESS.equals(result2.getCode())) {
+                    primaryStage.setHeight(620);
+                    primaryStage.setWidth(306);
+                    primaryStage.setTitle("IMO");
+                    ClientApp.showView(UserView.class);
+                    UserMemory.users.forEach(user1 -> {
+                        if (user1.getAccount().equals(user.getAccount())) {
+                            UserMemory.user = user1;
+                        }
+                    });
 
-            if (Code.LOGIN_SUCCESS.equals(result2.getCode())) {
-                primaryStage.setHeight(620);
-                primaryStage.setWidth(306);
-                primaryStage.setTitle("IMO");
-                ClientApp.showView(UserView.class);
-                UserMemory.users.forEach(user1 -> {
-                    if (user1.getAccount().equals(user.getAccount())) {
-                        UserMemory.user = user1;
-                    }
-                });
-                System.out.println("success！");
-            } else {
-                // 登录失败 弹出错误窗口
-                alert = new Alert(Alert.AlertType.ERROR, result2.getMsg());
-                alert.show();
-                // 错误的话得重新输入
+                } else {
+                    // 登录失败 弹出错误窗口
+                    Alert alert = new Alert(Alert.AlertType.ERROR, result2.getMsg());
+                    alert.show();
+                    // 错误的话得重新输入
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
             }
+
         } else if ("".equals(account)) {
             accountInput.validate();
         } else {
@@ -120,6 +131,7 @@ public class LoginInterfaceController implements Initializable {
         ClientApp.showView(RegisterView.class);
     }
 
+    // 界面初始化
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         accountInput.requestFocus();
@@ -156,8 +168,14 @@ public class LoginInterfaceController implements Initializable {
         loginButton.setGraphic(fontIcon1);
 
         primaryStage = ClientApp.getStage(); //primaryStage为start方法头中的Stage
+        primaryScene = ClientApp.getScene();
+
         minWindow.setOnAction(event -> primaryStage.setIconified(true)); /* 最小化 */
-        closeWindow.setOnAction((event) -> System.exit(0)); /* 关闭程序 */
+
+        closeWindow.setOnAction((event) -> {
+            primaryStage.close();
+            System.exit(0);
+        }); /* 关闭程序 */
 
         DragUtil.addDragListener(primaryStage, Arrays.asList(backgroundImage, logoImage));
     }

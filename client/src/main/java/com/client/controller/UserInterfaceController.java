@@ -43,11 +43,10 @@ public class UserInterfaceController implements Initializable {
     @FXML
     private GridPane ui;
 
+
+    private GridPane gridPane;
+
     void buildUserList() {
-        GridPane gridPane = new GridPane();// 创建一个gridPane
-        ScrollPane scrollPane = new ScrollPane();// 同上
-        ui.add(scrollPane, 0, 1);
-        scrollPane.setContent(gridPane);
         // 不断生成新的用户状态栏
         for (int i = 0; i < UserMemory.users.size(); i++) {
             gridPane.add(new Label(UserMemory.users.get(i).getUsername()), 0, i);
@@ -77,7 +76,21 @@ public class UserInterfaceController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        gridPane = new GridPane();// 创建一个gridPane
+        ScrollPane scrollPane = new ScrollPane();// 同上
+        ui.add(scrollPane, 0, 1);
+        scrollPane.setContent(gridPane);
         buildUserList();
+        // 开启定时任务
+//        ScheduledService<Void> scheduledService = new ScheduledService<Void>() {
+//            @Override
+//            protected Task<Void> createTask() {
+//                buildUserList();
+//                return null;
+//            }
+//        };
+//        scheduledService.setPeriod(Duration.seconds(5));
+//        scheduledService.start();
     }
 
 
