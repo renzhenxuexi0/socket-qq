@@ -4,42 +4,46 @@
 <?import com.jfoenix.controls.JFXCheckBox?>
 <?import com.jfoenix.controls.JFXPasswordField?>
 <?import com.jfoenix.controls.JFXTextField?>
-<?import javafx.scene.control.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
-<VBox xmlns:fx="http://javafx.com/fxml/1" style="-fx-background-color: white;" stylesheets="@../css/main.css"
-      xmlns="http://javafx.com/javafx/8.0.171" fx:controller="com.client.controller.LoginInterfaceController">
+
+<VBox style="-fx-background-color: white;" stylesheets="@../css/main.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.client.controller.LoginInterfaceController">
 
     <children>
         <StackPane>
             <children>
                 <ImageView fx:id="backgroundImage" pickOnBounds="true" preserveRatio="true">
                     <image>
-                        <Image url="@../image/login_bkg_normal.png"/>
+                        <Image url="@../image/login_bkg_normal.png" />
                     </image>
                 </ImageView>
-                <ImageView fx:id="logoImage" fitHeight="104.0" fitWidth="213.0" pickOnBounds="true" preserveRatio="true"
-                           StackPane.alignment="CENTER">
+                <ImageView fx:id="logoImage" fitHeight="104.0" fitWidth="213.0" pickOnBounds="true" preserveRatio="true" StackPane.alignment="CENTER">
                     <image>
-                        <Image url="@../image/logo.png"/>
+                        <Image url="@../image/logo.png" />
                     </image>
                 </ImageView>
 
-                <AnchorPane maxHeight="23.0" maxWidth="83.0" minHeight="23.0" minWidth="83.0" prefHeight="23.0"
-                            prefWidth="83.0" StackPane.alignment="TOP_RIGHT">
+                <AnchorPane maxHeight="23.0" maxWidth="83.0" minHeight="23.0" minWidth="83.0" prefHeight="23.0" prefWidth="83.0" StackPane.alignment="TOP_RIGHT">
                     <children>
-                        <Button fx:id="minWindow" mnemonicParsing="false" styleClass="dev-fx-window-min" text="一"
-                                AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="55.0" AnchorPane.topAnchor="0.0">
+                        <Button fx:id="minWindow" mnemonicParsing="false" styleClass="dev-fx-window-min" text="一" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="55.0" AnchorPane.topAnchor="0.0">
                             <tooltip>
-                                <Tooltip text="最小化"/>
+                                <Tooltip text="最小化" />
                             </tooltip>
                         </Button>
-                        <Button fx:id="closeWindow" mnemonicParsing="false" styleClass="dev-fx-window-close" text="X"
-                                AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <Button fx:id="closeWindow" mnemonicParsing="false" styleClass="dev-fx-window-close" text="X" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                             <tooltip>
-                                <Tooltip text="关闭"/>
+                                <Tooltip text="关闭" />
                             </tooltip>
                         </Button>
                     </children>
@@ -48,43 +52,30 @@
         </StackPane>
         <GridPane prefHeight="178.0" prefWidth="428.0">
             <columnConstraints>
-                <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="170.0" minWidth="10.0"
-                                   prefWidth="73.0"/>
-                <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="310.0" minWidth="10.0"
-                                   prefWidth="273.0"/>
-                <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="275.0" minWidth="10.0"
-                                   prefWidth="81.0"/>
+                <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="170.0" minWidth="10.0" prefWidth="73.0" />
+                <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="310.0" minWidth="10.0" prefWidth="273.0" />
+                <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="275.0" minWidth="10.0" prefWidth="81.0" />
             </columnConstraints>
             <rowConstraints>
-                <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" prefHeight="52.0"
-                                valignment="CENTER" vgrow="SOMETIMES"/>
-                <RowConstraints maxHeight="93.0" minHeight="10.0" prefHeight="57.0" valignment="CENTER"
-                                vgrow="SOMETIMES"/>
-                <RowConstraints maxHeight="50.0" minHeight="10.0" prefHeight="36.0" valignment="CENTER"
-                                vgrow="SOMETIMES"/>
-                <RowConstraints maxHeight="85.0" minHeight="10.0" prefHeight="53.0" valignment="CENTER"
-                                vgrow="SOMETIMES"/>
+                <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" prefHeight="52.0" valignment="CENTER" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="93.0" minHeight="10.0" prefHeight="57.0" valignment="CENTER" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="50.0" minHeight="10.0" prefHeight="36.0" valignment="CENTER" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="85.0" minHeight="10.0" prefHeight="53.0" valignment="CENTER" vgrow="SOMETIMES" />
             </rowConstraints>
             <children>
-                <HBox alignment="CENTER" prefHeight="25.0" prefWidth="273.0" style="-fx-spacing: 140;"
-                      GridPane.columnIndex="1" GridPane.rowIndex="2">
+                <HBox alignment="CENTER" prefHeight="25.0" prefWidth="273.0" style="-fx-spacing: 140;" GridPane.columnIndex="1" GridPane.rowIndex="2">
                     <children>
-                        <JFXCheckBox fx:id="rememberCheckBox" checkedColor="#a7e4fb" text="记住密码" textFill="#bfbbbb"
-                                     unCheckedColor="#c9c6c6"/>
-                        <Hyperlink fx:id="registerHyperlink" onAction="#registerEvent" text="注册账号"/>
+                        <JFXCheckBox fx:id="rememberCheckBox" checkedColor="#a7e4fb" text="记住密码" textFill="#bfbbbb" unCheckedColor="#c9c6c6" />
+                        <Hyperlink fx:id="registerHyperlink" onAction="#registerEvent" text="注册账号" />
                     </children>
                 </HBox>
-                <JFXTextField fx:id="accountInput" focusColor="#21c0ff" promptText="输入账号" unFocusColor="#bfbfbf"
-                              GridPane.columnIndex="1"/>
-                <JFXButton fx:id="loginButton" buttonType="RAISED" onAction="#loginButtonEvent" prefHeight="29.0"
-                           prefWidth="260.0" ripplerFill="#20a2da" style="-fx-background-color: #05bafb;" text="登录"
-                           textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                <JFXTextField fx:id="accountInput" focusColor="#21c0ff" promptText="输入账号" unFocusColor="#bfbfbf" GridPane.columnIndex="1" />
+                <JFXButton fx:id="loginButton" buttonType="RAISED" onAction="#loginButtonEvent" prefHeight="29.0" prefWidth="260.0" ripplerFill="#20a2da" style="-fx-background-color: #05bafb;" text="登录" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="3">
                     <font>
-                        <Font size="13.0"/>
+                        <Font size="13.0" />
                     </font>
                 </JFXButton>
-                <JFXPasswordField fx:id="passwordInput" focusColor="#21c0ff" promptText="输入密码"
-                                  unFocusColor="#bfbfbf" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                <JFXPasswordField fx:id="passwordInput" focusColor="#21c0ff" promptText="输入密码" unFocusColor="#bfbfbf" GridPane.columnIndex="1" GridPane.rowIndex="1" />
             </children>
         </GridPane>
     </children>
