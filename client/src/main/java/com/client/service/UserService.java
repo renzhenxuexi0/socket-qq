@@ -56,7 +56,7 @@ public class UserService implements DisposableBean {
     public void destroy() {
         Result result = new Result();
         result.setCode(Code.OFF_LINE);
-        result.setObject(UserMemory.user);
+        result.setObject(UserMemory.myUser);
         System.out.println(result);
         userOffLine(result);
     }

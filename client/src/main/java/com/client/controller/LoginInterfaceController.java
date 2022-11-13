@@ -106,15 +106,15 @@ public class LoginInterfaceController implements Initializable {
                             try {
                                 // 判断账号密码是否正确
                                 if (Code.LOGIN_SUCCESS.equals(result2.getCode())) {
+                                    UserMemory.users.forEach(user1 -> {
+                                        if (user1.getAccount().equals(user.getAccount())) {
+                                            UserMemory.myUser = user1;
+                                        }
+                                    });
                                     primaryStage.setHeight(620);
                                     primaryStage.setWidth(306);
                                     primaryStage.setTitle("IMO");
                                     ClientApp.showView(UserView.class);
-                                    UserMemory.users.forEach(user1 -> {
-                                        if (user1.getAccount().equals(user.getAccount())) {
-                                            UserMemory.user = user1;
-                                        }
-                                    });
                                 } else {
                                     // 登录失败 弹出错误窗口
                                     // 错误的话得重新输入
