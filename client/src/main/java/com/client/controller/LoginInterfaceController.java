@@ -18,7 +18,6 @@ import de.felixroske.jfxsupport.FXMLController;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -26,6 +25,8 @@ import javafx.scene.control.Hyperlink;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.kordamp.ikonli.fontawesome.FontAwesome;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,9 +34,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.ResourceBundle;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ThreadPoolExecutor;
 
 @FXMLController
+@Slf4j
 public class LoginInterfaceController implements Initializable {
 
     @FXML
@@ -55,8 +58,6 @@ public class LoginInterfaceController implements Initializable {
     private ThreadPoolExecutor poolExecutor;
 
     private Stage primaryStage;
-
-    private Scene primaryScene;
 
     @FXML
     private JFXButton loginButton;
@@ -85,14 +86,20 @@ public class LoginInterfaceController implements Initializable {
                 result.setCode(Code.USER_LOGIN);
                 User user = new User();
 
-                Result result2 = poolExecutor.submit(() -> {
-                    user.setAccount(account);
-                    user.setPassword(password);
-                    result.setObject(user);
-                    Result result21 = userService.userLogin(result);
-                    UserMemory.users = JSON.parseArray(result21.getObject().toString(), User.class);
-                    return result21;
+                Result result2 = poolExecutor.submit(new Callable<Result>() {
+                    @Override
+                    // 自动抛出错误
+                    @SneakyThrows
+                    public Result call() throws Exception {
+                        user.setAccount(account);
+                        user.setPassword(password);
+                        result.setObject(user);
+                        Result result21 = userService.userLogin(result);
+                        UserMemory.users = JSON.parseArray(result21.getObject().toString(), User.class);
+                        return result21;
+                    }
                 }).get();
+
                 // 判断账号密码是否正确
                 if (Code.LOGIN_SUCCESS.equals(result2.getCode())) {
                     primaryStage.setHeight(620);
@@ -113,7 +120,9 @@ public class LoginInterfaceController implements Initializable {
                 }
 
             } catch (Exception e) {
-                e.printStackTrace();
+                Alert alert = new Alert(Alert.AlertType.ERROR, "未知错误");
+                alert.show();
+                log.error(e.toString());
             }
 
         } else if ("".equals(account)) {
@@ -168,7 +177,6 @@ public class LoginInterfaceController implements Initializable {
         loginButton.setGraphic(fontIcon1);
 
         primaryStage = ClientApp.getStage(); //primaryStage为start方法头中的Stage
-        primaryScene = ClientApp.getScene();
 
         minWindow.setOnAction(event -> primaryStage.setIconified(true)); /* 最小化 */
 
