@@ -15,6 +15,7 @@ import com.jfoenix.controls.JFXPasswordField;
 import com.jfoenix.controls.JFXTextField;
 import com.jfoenix.validation.RequiredFieldValidator;
 import de.felixroske.jfxsupport.FXMLController;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -25,7 +26,6 @@ import javafx.scene.control.Hyperlink;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.kordamp.ikonli.fontawesome.FontAwesome;
 import org.kordamp.ikonli.javafx.FontIcon;
@@ -77,59 +77,73 @@ public class LoginInterfaceController implements Initializable {
 
     @FXML
     void loginButtonEvent(ActionEvent event) {
-        String account = accountInput.getText();
-        String password = passwordInput.getText();
-        if (!"".equals(account) && !"".equals(password)) {
-            try {
+        poolExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                String account = accountInput.getText();
+                String password = passwordInput.getText();
+                if (!"".equals(account) && !"".equals(password)) {
+                    try {
 
-                Result result = new Result();
-                result.setCode(Code.USER_LOGIN);
-                User user = new User();
+                        Result result = new Result();
+                        result.setCode(Code.USER_LOGIN);
+                        User user = new User();
 
-                Result result2 = poolExecutor.submit(new Callable<Result>() {
-                    @Override
-                    // 自动抛出错误
-                    @SneakyThrows
-                    public Result call() throws Exception {
-                        user.setAccount(account);
-                        user.setPassword(password);
-                        result.setObject(user);
-                        Result result21 = userService.userLogin(result);
-                        UserMemory.users = JSON.parseArray(result21.getObject().toString(), User.class);
-                        return result21;
+                        Result result2 = poolExecutor.submit(new Callable<Result>() {
+                            @Override
+                            public Result call() throws Exception {
+                                user.setAccount(account);
+                                user.setPassword(password);
+                                result.setObject(user);
+                                Result result2 = null;
+                                try {
+                                    result2 = userService.userLogin(result);
+                                    UserMemory.users = JSON.parseArray(result2.getObject().toString(), User.class);
+                                } catch (Exception e) {
+                                    log.error(e.toString());
+                                }
+
+                                return result2;
+                            }
+                        }).get();
+                        Platform.runLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    // 判断账号密码是否正确
+                                    if (Code.LOGIN_SUCCESS.equals(result2.getCode())) {
+                                        primaryStage.setHeight(620);
+                                        primaryStage.setWidth(306);
+                                        primaryStage.setTitle("IMO");
+                                        ClientApp.showView(UserView.class);
+                                        UserMemory.users.forEach(user1 -> {
+                                            if (user1.getAccount().equals(user.getAccount())) {
+                                                UserMemory.user = user1;
+                                            }
+                                        });
+                                    } else {
+                                        // 登录失败 弹出错误窗口
+                                        // 错误的话得重新输入
+                                        Alert alert = new Alert(Alert.AlertType.ERROR, result2.getMsg());
+                                        alert.show();
+                                    }
+                                } catch (Exception e) {
+                                    log.error(e.toString());
+                                }
+                            }
+                        });
+                    } catch (Exception e) {
+                        Alert alert = new Alert(Alert.AlertType.ERROR, "未知错误");
+                        alert.show();
+                        log.error(e.toString());
                     }
-                }).get();
-
-                // 判断账号密码是否正确
-                if (Code.LOGIN_SUCCESS.equals(result2.getCode())) {
-                    primaryStage.setHeight(620);
-                    primaryStage.setWidth(306);
-                    primaryStage.setTitle("IMO");
-                    ClientApp.showView(UserView.class);
-                    UserMemory.users.forEach(user1 -> {
-                        if (user1.getAccount().equals(user.getAccount())) {
-                            UserMemory.user = user1;
-                        }
-                    });
-
+                } else if ("".equals(account)) {
+                    accountInput.validate();
                 } else {
-                    // 登录失败 弹出错误窗口
-                    Alert alert = new Alert(Alert.AlertType.ERROR, result2.getMsg());
-                    alert.show();
-                    // 错误的话得重新输入
+                    passwordInput.validate();
                 }
-
-            } catch (Exception e) {
-                Alert alert = new Alert(Alert.AlertType.ERROR, "未知错误");
-                alert.show();
-                log.error(e.toString());
             }
-
-        } else if ("".equals(account)) {
-            accountInput.validate();
-        } else {
-            passwordInput.validate();
-        }
+        });
     }
 
     @FXML
