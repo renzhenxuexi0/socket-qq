@@ -7,6 +7,7 @@ import com.client.pojo.Result;
 import com.client.pojo.User;
 import com.client.service.UserService;
 import com.client.utils.DragUtil;
+import com.client.utils.ProgressStageUtil;
 import com.client.utils.UserMemory;
 import com.client.view.RegisterView;
 import com.client.view.UserView;
@@ -16,6 +17,7 @@ import com.jfoenix.controls.JFXTextField;
 import com.jfoenix.validation.RequiredFieldValidator;
 import de.felixroske.jfxsupport.FXMLController;
 import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -34,7 +36,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.ResourceBundle;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ThreadPoolExecutor;
 
 @FXMLController
@@ -77,59 +78,51 @@ public class LoginInterfaceController implements Initializable {
 
     @FXML
     void loginButtonEvent(ActionEvent event) {
-        poolExecutor.execute(new Runnable() {
-            @Override
-            public void run() {
-                String account = accountInput.getText();
-                String password = passwordInput.getText();
-                if (!"".equals(account) && !"".equals(password)) {
+        String account = accountInput.getText();
+        String password = passwordInput.getText();
+        if (!"".equals(account) && !"".equals(password)) {
+            Task<Void> task = new Task<Void>() {
+                @Override
+                protected Void call() throws Exception {
                     try {
-
                         Result result = new Result();
                         result.setCode(Code.USER_LOGIN);
                         User user = new User();
 
-                        Result result2 = poolExecutor.submit(new Callable<Result>() {
-                            @Override
-                            public Result call() throws Exception {
-                                user.setAccount(account);
-                                user.setPassword(password);
-                                result.setObject(user);
-                                Result result2 = null;
-                                try {
-                                    result2 = userService.userLogin(result);
-                                    UserMemory.users = JSON.parseArray(result2.getObject().toString(), User.class);
-                                } catch (Exception e) {
-                                    log.error(e.toString());
-                                }
-
-                                return result2;
+                        Result result2 = poolExecutor.submit(() -> {
+                            user.setAccount(account);
+                            user.setPassword(password);
+                            result.setObject(user);
+                            Result result3 = null;
+                            try {
+                                result3 = userService.userLogin(result);
+                                UserMemory.users = JSON.parseArray(result3.getObject().toString(), User.class);
+                            } catch (Exception e) {
+                                log.error(e.toString());
                             }
+                            return result3;
                         }).get();
-                        Platform.runLater(new Runnable() {
-                            @Override
-                            public void run() {
-                                try {
-                                    // 判断账号密码是否正确
-                                    if (Code.LOGIN_SUCCESS.equals(result2.getCode())) {
-                                        primaryStage.setHeight(620);
-                                        primaryStage.setWidth(306);
-                                        primaryStage.setTitle("IMO");
-                                        ClientApp.showView(UserView.class);
-                                        UserMemory.users.forEach(user1 -> {
-                                            if (user1.getAccount().equals(user.getAccount())) {
-                                                UserMemory.user = user1;
-                                            }
-                                        });
-                                    } else {
-                                        // 登录失败 弹出错误窗口
-                                        // 错误的话得重新输入
-                                        Alert alert = new Alert(Alert.AlertType.ERROR, result2.getMsg());
-                                        alert.show();
-                                    }
-                                } catch (Exception e) {
-                                    log.error(e.toString());
+                        Platform.runLater(() -> {
+                            try {
+                                // 判断账号密码是否正确
+                                if (Code.LOGIN_SUCCESS.equals(result2.getCode())) {
+                                    primaryStage.setHeight(620);
+                                    primaryStage.setWidth(306);
+                                    primaryStage.setTitle("IMO");
+                                    ClientApp.showView(UserView.class);
+                                    UserMemory.users.forEach(user1 -> {
+                                        if (user1.getAccount().equals(user.getAccount())) {
+                                            UserMemory.user = user1;
+                                        }
+                                    });
+                                } else {
+                                    // 登录失败 弹出错误窗口
+                                    // 错误的话得重新输入
+                                    Alert alert = new Alert(Alert.AlertType.ERROR, result2.getMsg());
+                                    alert.show();
                                 }
+                            } catch (Exception e) {
+                                log.error(e.toString());
                             }
                         });
                     } catch (Exception e) {
@@ -137,13 +130,15 @@ public class LoginInterfaceController implements Initializable {
                         alert.show();
                         log.error(e.toString());
                     }
-                } else if ("".equals(account)) {
-                    accountInput.validate();
-                } else {
-                    passwordInput.validate();
+                    return null;
                 }
-            }
-        });
+            };
+            ProgressStageUtil.of(primaryStage, poolExecutor, task, "登录中").show();
+        } else if ("".equals(account)) {
+            accountInput.validate();
+        } else {
+            passwordInput.validate();
+        }
     }
 
     @FXML
