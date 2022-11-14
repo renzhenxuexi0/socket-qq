@@ -16,6 +16,7 @@ public class ClientApp extends AbstractJavaFxApplicationSupport {
     private UserService userService;
 
     public static void main(String[] args) {
+        System.out.println(ClientApp.class.getClassLoader().getResource(""));
         launch(ClientApp.class, LoginView.class, args);
     }
 

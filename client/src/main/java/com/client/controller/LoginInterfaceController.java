@@ -33,8 +33,14 @@ import org.kordamp.ikonli.fontawesome.FontAwesome;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintStream;
 import java.net.URL;
+import java.nio.file.Files;
 import java.util.Arrays;
+import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.concurrent.ThreadPoolExecutor;
 
@@ -58,6 +64,7 @@ public class LoginInterfaceController implements Initializable {
     @Autowired
     private ThreadPoolExecutor poolExecutor;
 
+    private File file;
 
     private Stage primaryStage;
 
@@ -84,7 +91,6 @@ public class LoginInterfaceController implements Initializable {
         if (!"".equals(account) && !"".equals(password)) {
             Task<Void> task = new Task<Void>() {
                 @Override
-
                 protected Void call() throws Exception {
                     try {
                         Result result = new Result();
@@ -99,6 +105,23 @@ public class LoginInterfaceController implements Initializable {
                             try {
                                 result3 = userService.userLogin(result);
                                 UserMemory.users = JSON.parseArray(result3.getObject().toString(), User.class);
+                                Properties properties = new Properties();
+                                properties.put("user.account", account);
+                                if (rememberCheckBox.isSelected()) {
+                                    properties.put("user.password", password);
+                                    properties.put("user.select", "1");
+                                } else {
+                                    properties.put("user.password", "");
+                                    properties.put("user.select", "0");
+                                }
+                                File fileParent = file.getParentFile();
+                                //判断是否存在，如果不存在则创建目录
+                                if (!fileParent.exists()) {
+                                    fileParent.mkdirs();
+                                    // 创建文件
+                                    file.createNewFile();
+                                }
+                                properties.list(new PrintStream(file));
                             } catch (Exception e) {
                                 log.error(e.toString());
                             }
@@ -156,6 +179,25 @@ public class LoginInterfaceController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         accountInput.requestFocus();
         RequiredFieldValidator accountValidator = new RequiredFieldValidator();
+
+        file = new File("C:\\Users\\Administrator\\.socket\\user.properties");
+        if (file.exists()) {
+            try {
+                Properties properties = new Properties();
+                properties.load(new InputStreamReader(Files.newInputStream(file.toPath())));
+                String select = properties.getProperty("user.select");
+                String account = properties.getProperty("user.account");
+                String password = properties.getProperty("user.password");
+                rememberCheckBox.setSelected("1".equals(select));
+                accountInput.setText(account);
+                if ("1".equals(select)) {
+                    passwordInput.setText(password);
+                }
+            } catch (IOException e) {
+                log.error(e.toString());
+            }
+        }
+
 
         FontIcon fontIcon = new FontIcon(FontAwesome.EXCLAMATION_TRIANGLE);
         fontIcon.setIconColor(Color.RED);

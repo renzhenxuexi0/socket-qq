@@ -5,7 +5,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
-<HBox xmlns:fx="http://javafx.com/fxml/1" fx:id="box" alignment="CENTER_LEFT" prefHeight="45.0" prefWidth="287.0"
+<HBox xmlns:fx="http://javafx.com/fxml/1" fx:id="box" alignment="CENTER_LEFT" prefHeight="45.0" prefWidth="288.0"
       spacing="10.0" xmlns="http://javafx.com/javafx/8.0.171"
       fx:controller="com.client.controller.UserCell">
     <children>
