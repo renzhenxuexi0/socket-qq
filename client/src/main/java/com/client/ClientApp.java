@@ -1,6 +1,5 @@
 package com.client;
 
-import com.client.controller.DialogBoxController;
 import com.client.service.UserService;
 import com.client.view.LoginView;
 import de.felixroske.jfxsupport.AbstractJavaFxApplicationSupport;
@@ -29,7 +28,7 @@ public class ClientApp extends AbstractJavaFxApplicationSupport {
     @Override
     public void beforeInitialView(Stage stage, ConfigurableApplicationContext ctx) {
         stage.setTitle("登录");
-        stage.initStyle(StageStyle.TRANSPARENT);
+        stage.initStyle(StageStyle.UNDECORATED);
         stage.setResizable(false);
     }
 }

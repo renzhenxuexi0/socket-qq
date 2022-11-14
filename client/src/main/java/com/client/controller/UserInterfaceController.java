@@ -4,14 +4,14 @@ import com.client.ClientApp;
 import com.client.pojo.User;
 import com.client.service.UserService;
 import com.client.utils.DragUtil;
+import com.client.utils.ShowNewViewUtil;
 import com.client.utils.UserMemory;
 import com.client.view.DialogBoxView;
 import com.jfoenix.controls.JFXListView;
+import de.felixroske.jfxsupport.AbstractFxmlView;
 import de.felixroske.jfxsupport.FXMLController;
-import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -22,9 +22,11 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 
 import java.net.URL;
 import java.util.Collections;
@@ -32,7 +34,7 @@ import java.util.Objects;
 import java.util.ResourceBundle;
 
 @FXMLController
-public class UserInterfaceController implements Initializable {
+public class UserInterfaceController implements Initializable, ApplicationContextAware {
 
     @FXML
     public Button minWindow;
@@ -43,6 +45,10 @@ public class UserInterfaceController implements Initializable {
 
     @Autowired
     private DialogBoxController dialogBoxController;
+
+    private ApplicationContext applicationContext;
+
+    private Stage newStage;
 
     @FXML
     private Pane userPane;
@@ -72,16 +78,16 @@ public class UserInterfaceController implements Initializable {
                     public void handle(MouseEvent event) {
                         // 获取对于的user
                         String text = label.getText();
-                        System.out.println(text);
                         for (int i = 0; i < UserMemory.users.size(); i++) {
                             User user2 = UserMemory.users.get(i);
-                            if (text.equals(user2.getUsername())){
+                            if (text.equals(user2.getUsername())) {
                                 UserMemory.talkUser = user2;
                             }
                         }
-                        System.out.println(UserMemory.talkUser);
-
-                        ClientApp.showView(DialogBoxView.class, Modality.NONE);
+                        final AbstractFxmlView view = applicationContext.getBean(DialogBoxView.class);
+                        dialogBoxController.primaryStage = ShowNewViewUtil.showView(view, primaryStage);
+                        dialogBoxController.userName.setText(text);
+                        dialogBoxController.primaryStage.show();
                     }
                 });
                 ImageView imageView = new ImageView(String.valueOf(getClass().getResource("headImage/head.png")));
@@ -124,5 +130,10 @@ public class UserInterfaceController implements Initializable {
 //        };
 //        scheduledService.setPeriod(Duration.seconds(5));
 //        scheduledService.start();
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
     }
 }

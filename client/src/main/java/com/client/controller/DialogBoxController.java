@@ -1,17 +1,13 @@
 package com.client.controller;
 
 import com.client.ClientApp;
-import com.client.utils.UserMemory;
 import com.client.view.UserView;
 import de.felixroske.jfxsupport.FXMLController;
-import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
 import javafx.stage.Stage;
 
 import java.net.URL;
@@ -23,18 +19,23 @@ public class DialogBoxController implements Initializable {
 
     @FXML
     public Label userName;
-
+    @FXML
+    public Button minWindow;
+    @FXML
+    public Button closeWindow;
+    public Stage primaryStage;
     @FXML
     private Button sendButton;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-
-
+        minWindow.setOnAction(event -> primaryStage.setIconified(true)); /* 最小化 */
+        closeWindow.setOnAction(event -> {
+            primaryStage.close();
+        });
     }
 
     public void sendMessage(ActionEvent mouseEvent) {
-
     }
 
     public void returnToUser(ActionEvent event) {

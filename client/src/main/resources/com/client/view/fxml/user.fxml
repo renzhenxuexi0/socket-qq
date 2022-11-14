@@ -55,7 +55,7 @@
                         <Font size="15.0" />
                     </font>
                 </Label>
-                <JFXListView fx:id="userListView" prefHeight="513.0" prefWidth="306.0" style="-fx-pref-width: 0;" />
+                <JFXListView fx:id="userListView" depth="10" prefHeight="513.0" prefWidth="306.0" style="-fx-pref-width: 0;" verticalGap="10.0" />
             </children>
         </VBox>
     </items>

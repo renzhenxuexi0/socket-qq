@@ -86,6 +86,7 @@ public class LoginInterfaceController implements Initializable {
         if (!"".equals(account) && !"".equals(password)) {
             Task<Void> task = new Task<Void>() {
                 @Override
+
                 protected Void call() throws Exception {
                     try {
                         Result result = new Result();
