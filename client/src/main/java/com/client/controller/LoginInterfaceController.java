@@ -180,7 +180,7 @@ public class LoginInterfaceController implements Initializable {
         accountInput.requestFocus();
         RequiredFieldValidator accountValidator = new RequiredFieldValidator();
 
-        file = new File("C:\\Users\\Administrator\\.socket\\user.properties");
+        file = new File("C:\\Users\\Public\\.socket\\user.properties");
         if (file.exists()) {
             try {
                 Properties properties = new Properties();
