@@ -10,18 +10,28 @@ public class Code {
     public static final Integer REGISTER_SUCCESS = 1002;
     // 注册失败
     public static final Integer REGISTER_FAIL = 1003;
+
     // 用户登录
     public static final Integer USER_LOGIN = 2001;
     // 登录成功
     public static final Integer LOGIN_SUCCESS = 2002;
     // 登录失败
     public static final Integer LOGIN_FAIL = 2003;
-    // 发送文本信息
-    public static final Integer USER_SEND_TEXT_MSG = 3001;
-    // 发送文本信息成功
+
+    // 发送在线文本信息
+    public static final Integer SEND_TEXT_MSG = 3001;
+    // 发送在线文本信息成功
     public static final Integer SEND_TEXT_MSG_SUCCESS = 3002;
-    // 发送文本消息失败
+    // 发送在线文本消息失败
     public static final Integer SEND_TEXT_MSG_FAIL = 3003;
+
+
+    // 发送离线文本信息
+    public static final Integer SEND_OFFLINE_TEXT_MSG = 3001;
+    // 发送离线文本信息成功
+    public static final Integer SEND_OFFLINE_TEXT_MSG_SUCCESS = 3002;
+    // 发送离线文本消息失败
+    public static final Integer SEND_OFFLINE_TEXT_MSG_FAIL = 3003;
 
     // 获取所有用户信息
     public static final Integer GET_ALL_USERS = 4001;
