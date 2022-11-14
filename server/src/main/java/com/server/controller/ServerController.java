@@ -3,8 +3,10 @@ package com.server.controller;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.server.pojo.Code;
+import com.server.pojo.Msg;
 import com.server.pojo.Result;
 import com.server.pojo.User;
+import com.server.service.MsgService;
 import com.server.service.UserService;
 import com.server.utils.UserMemory;
 import de.felixroske.jfxsupport.FXMLController;
@@ -17,6 +19,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.ThreadPoolExecutor;
 
 @FXMLController
@@ -26,6 +30,10 @@ public class ServerController {
     private ThreadPoolExecutor pool;
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private MsgService msgService;
+
     @FXML
     private Button closeServerButton;
     @FXML
@@ -95,6 +103,10 @@ public class ServerController {
                             User user = JSON.parseObject(jsonObject.get("object").toString(), User.class);
                             offLine(user);
                             ps.println("");
+                        } else if (Code.SEND_OFFLINE_TEXT_MSG.equals(code)) {
+                            Msg msg = JSON.parseObject(jsonObject.get("object").toString(), Msg.class);
+                            Result result = sendOffLineTextMsg(msg);
+                            ps.println(JSON.toJSONString(result));
                         } else {
                             Result result = new Result();
                             result.setMsg("未知错误");
@@ -130,17 +142,26 @@ public class ServerController {
     Result login(User user) {
         User user2 = userService.userLogin(user);
         UserMemory.users = userService.selectAllUser();
-
         //判断是否成功
         Result result = new Result();
 
         if (user2 != null) {
             // 设置登录状态
             userService.updateLogin(user2.getId(), 1);
+
             //返回数据给客户端
             result.setCode(Code.LOGIN_SUCCESS);
             result.setMsg("登录成功");
-            result.setObject(UserMemory.users);
+            // 查找关于自己的离线信息
+            List<Msg> aboutReceiveMsg = msgService.findAboutReceiveMsg(user2.getId());
+            
+            HashMap<String, Object> allContent = new HashMap<>();
+            allContent.put("msg", aboutReceiveMsg);
+            allContent.put("users", UserMemory.users);
+            allContent.put("myUser", user2);
+
+            result.setObject(allContent);
+
             contentInput.appendText(user2.getUsername() + "登录成功\n");
         } else {
             result.setCode(Code.LOGIN_FAIL);
@@ -162,4 +183,19 @@ public class ServerController {
         userService.updateLogin(user.getId(), 0);
         contentInput.appendText(user.getUsername() + "下线\n");
     }
+
+    Result sendOffLineTextMsg(Msg msg) {
+        Result result = new Result();
+        boolean b = msgService.CacheMsg(msg);
+        if (b) {
+            result.setCode(Code.SEND_OFFLINE_TEXT_MSG_SUCCESS);
+            contentInput.appendText(msg.getSenderId() + "该用户缓存信息成功\n");
+        } else {
+            result.setCode(Code.SEND_OFFLINE_TEXT_MSG_FAIL);
+            contentInput.appendText(msg.getSenderId() + "该用户缓存信息失败\n");
+        }
+        return result;
+    }
+
+
 }

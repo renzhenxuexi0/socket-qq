@@ -1,6 +1,7 @@
 package com.client.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.client.ClientApp;
 import com.client.pojo.Code;
 import com.client.pojo.Result;
@@ -104,40 +105,43 @@ public class LoginInterfaceController implements Initializable {
                             Result result3 = null;
                             try {
                                 result3 = userService.userLogin(result);
-                                UserMemory.users = JSON.parseArray(result3.getObject().toString(), User.class);
-                                Properties properties = new Properties();
-                                properties.put("user.account", account);
-                                if (rememberCheckBox.isSelected()) {
-                                    properties.put("user.password", password);
-                                    properties.put("user.select", "1");
-                                } else {
-                                    properties.put("user.password", "");
-                                    properties.put("user.select", "0");
-                                }
-                                File fileParent = file.getParentFile();
-                                //判断是否存在，如果不存在则创建目录
-                                if (!fileParent.exists()) {
-                                    fileParent.mkdirs();
-                                    // 创建文件
-                                    file.createNewFile();
-                                }
-                                properties.list(new PrintStream(file));
                             } catch (Exception e) {
                                 log.error(e.toString());
                             }
                             return result3;
                         }).get();
+
                         Platform.runLater(() -> {
                             try {
                                 // 判断账号密码是否正确
                                 if (Code.LOGIN_SUCCESS.equals(result2.getCode())) {
-                                    UserMemory.users.forEach(user1 -> {
-                                        if (user1.getAccount().equals(user.getAccount())) {
-                                            UserMemory.myUser = user1;
-                                        }
-                                    });
-                                    primaryStage.setHeight(620);
-                                    primaryStage.setWidth(306);
+
+                                    // 解析数据
+                                    JSONObject jsonObject = JSON.parseObject(result2.getObject().toString());
+                                    UserMemory.myUser = JSON.parseObject(jsonObject.get("myUser").toString(), User.class);
+                                    UserMemory.users = JSON.parseArray(jsonObject.get("users").toString(), User.class);
+
+                                    // 登录成功保存账户密码
+                                    Properties properties = new Properties();
+                                    properties.put("user.account", account);
+                                    if (rememberCheckBox.isSelected()) {
+                                        properties.put("user.password", password);
+                                        properties.put("user.select", "1");
+                                    } else {
+                                        properties.put("user.password", "");
+                                        properties.put("user.select", "0");
+                                    }
+                                    File fileParent = file.getParentFile();
+                                    //判断是否存在，如果不存在则创建目录
+                                    if (!fileParent.exists()) {
+                                        fileParent.mkdirs();
+                                        // 创建文件
+                                        file.createNewFile();
+                                    }
+                                    properties.list(new PrintStream(file));
+
+                                    primaryStage.setHeight(696.0);
+                                    primaryStage.setWidth(290.0);
                                     primaryStage.setTitle("IMO");
                                     ClientApp.showView(UserView.class);
                                 } else {

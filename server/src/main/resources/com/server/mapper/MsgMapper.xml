@@ -14,4 +14,11 @@
         insert into tbl_msg(message_time, content, content_type, sender_id, receiver_id)
         values (#{messageTime}, #{content}, #{contentType}, #{senderId}, #{receiveId})
     </insert>
+
+    <select id="selectByReceiveId" resultMap="msgResultMap">
+        select *
+        from tbl_msg
+        where receiver_id = #{receiveId}
+    </select>
+
 </mapper>
