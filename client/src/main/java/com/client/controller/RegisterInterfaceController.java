@@ -41,9 +41,9 @@ public class RegisterInterfaceController implements Initializable {
     @Autowired
     private ThreadPoolExecutor poolExecutor;
     @FXML
-    public Button minWindow;
+    private Button minWindow;
     @FXML
-    public Button closeWindow;
+    private Button closeWindow;
     @FXML
     private ImageView rgBackround;
     @FXML
@@ -87,7 +87,7 @@ public class RegisterInterfaceController implements Initializable {
 
 
         if (!"".equals(account) && !"".equals(password) && !"".equals(username)) {
-            Task<Void> task = new Task<Void>(){
+            Task<Void> task = new Task<Void>() {
                 @Override
                 protected Void call() throws Exception {
                     try {

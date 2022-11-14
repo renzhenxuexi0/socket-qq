@@ -19,11 +19,11 @@ public class DialogBoxController implements Initializable {
 
     @FXML
     public Label userName;
-    @FXML
-    public Button minWindow;
-    @FXML
-    public Button closeWindow;
     public Stage primaryStage;
+    @FXML
+    private Button minWindow;
+    @FXML
+    private Button closeWindow;
     @FXML
     private Button sendButton;
 

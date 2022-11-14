@@ -9,7 +9,6 @@ import com.client.service.UserService;
 import com.client.utils.DragUtil;
 import com.client.utils.ProgressStageUtil;
 import com.client.utils.UserMemory;
-import com.client.view.DialogBoxView;
 import com.client.view.RegisterView;
 import com.client.view.UserView;
 import com.jfoenix.controls.JFXButton;
@@ -44,21 +43,20 @@ import java.util.concurrent.ThreadPoolExecutor;
 public class LoginInterfaceController implements Initializable {
 
     @FXML
-    public ImageView backgroundImage;
+    private ImageView backgroundImage;
     @FXML
-    public Button minWindow;
+    private Button minWindow;
     @FXML
-    public Button closeWindow;
+    private Button closeWindow;
 
     @FXML
-    public ImageView logoImage;
+    private ImageView logoImage;
 
     @Autowired
     private UserService userService;
 
     @Autowired
     private ThreadPoolExecutor poolExecutor;
-
 
 
     private Stage primaryStage;

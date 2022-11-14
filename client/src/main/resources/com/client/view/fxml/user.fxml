@@ -1,61 +1,62 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import com.jfoenix.controls.JFXListView?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.SplitPane?>
-<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.control.*?>
 <?import javafx.scene.effect.ColorAdjust?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.Pane?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
-
-<SplitPane dividerPositions="0.18043478260869567" orientation="VERTICAL" prefHeight="667.0" prefWidth="308.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.client.controller.UserInterfaceController">
+<SplitPane xmlns:fx="http://javafx.com/fxml/1" dividerPositions="0.1548872180451128" orientation="VERTICAL" prefHeight="696.0"
+           prefWidth="306.0" stylesheets="@../css/main.css" xmlns="http://javafx.com/javafx/8.0.171"
+           fx:controller="com.client.controller.UserInterfaceController">
     <items>
         <Pane fx:id="userPane" prefHeight="130.0" prefWidth="306.0">
             <children>
 
-                <ImageView fx:id="backgroundImage" fitHeight="241.0" fitWidth="306.0" pickOnBounds="true" preserveRatio="true">
+                <ImageView fx:id="backgroundImage" fitHeight="239.0" fitWidth="306.0" layoutX="-1.0" layoutY="-3.0"
+                           pickOnBounds="true" preserveRatio="true">
                     <image>
-                        <Image url="@../image/login_bkg_register.png" />
+                        <Image url="@../image/login_bkg_register.png"/>
                     </image>
-               <effect>
-                  <ColorAdjust />
-               </effect>
+                    <effect>
+                        <ColorAdjust/>
+                    </effect>
                 </ImageView>
                 <Label fx:id="userName" layoutX="116.0" layoutY="44.0">
                     <font>
-                        <Font size="20.0" />
+                        <Font size="20.0"/>
                     </font>
                 </Label>
-                <ImageView fx:id="userHead" fitHeight="83.0" fitWidth="83.0" layoutX="23.0" layoutY="30.0" pickOnBounds="true" preserveRatio="true" />
-                <AnchorPane layoutX="223.0" layoutY="2.0" maxHeight="23.0" maxWidth="83.0" minHeight="23.0" minWidth="83.0" prefHeight="23.0" prefWidth="83.0" stylesheets="@../css/main.css">
+                <ImageView fx:id="userHead" fitHeight="83.0" fitWidth="83.0" layoutX="22.0" layoutY="9.0"
+                           pickOnBounds="true" preserveRatio="true"/>
+                <AnchorPane layoutX="223.0" layoutY="2.0" maxHeight="23.0" maxWidth="83.0" minHeight="23.0"
+                            minWidth="83.0" prefHeight="23.0" prefWidth="83.0" stylesheets="@../css/main.css">
                     <children>
-                        <Button fx:id="minWindow" mnemonicParsing="false" styleClass="dev-fx-window-min" text="一" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="55.0" AnchorPane.topAnchor="0.0">
+                        <Button fx:id="minWindow" mnemonicParsing="false" styleClass="dev-fx-window-min" text="一"
+                                AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="55.0" AnchorPane.topAnchor="0.0">
                             <tooltip>
-                                <Tooltip text="最小化" />
+                                <Tooltip text="最小化"/>
                             </tooltip>
                         </Button>
-                        <Button fx:id="closeWindow" mnemonicParsing="false" styleClass="dev-fx-window-close" text="X" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <Button fx:id="closeWindow" mnemonicParsing="false" styleClass="dev-fx-window-close" text="X"
+                                AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                             <tooltip>
-                                <Tooltip text="关闭" />
+                                <Tooltip text="关闭"/>
                             </tooltip>
                         </Button>
                     </children>
                 </AnchorPane>
             </children>
         </Pane>
-        <VBox alignment="CENTER" prefHeight="708.0" prefWidth="306.0" style="-fx-spacing: 5; -fx-background-color: white;">
+        <VBox alignment="CENTER" prefHeight="708.0" prefWidth="306.0">
             <children>
-                <Label prefHeight="20.0" prefWidth="122.0" text="      用户列表" textAlignment="CENTER" textFill="#0cc7e8" textOverrun="CLIP">
+                <Label prefHeight="20.0" prefWidth="122.0" text="      用户列表" textAlignment="CENTER"
+                       textFill="#0cc7e8" textOverrun="CLIP">
                     <font>
-                        <Font size="15.0" />
+                        <Font size="15.0"/>
                     </font>
                 </Label>
-                <JFXListView fx:id="userListView" depth="10" prefHeight="513.0" prefWidth="306.0" style="-fx-pref-width: 0;" verticalGap="10.0" />
+                <ListView fx:id="userListView" maxWidth="306.0" prefHeight="580.0" prefWidth="304.0"/>
             </children>
         </VBox>
     </items>
