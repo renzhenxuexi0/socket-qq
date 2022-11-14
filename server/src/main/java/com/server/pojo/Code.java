@@ -27,17 +27,17 @@ public class Code {
 
 
     // 发送离线文本信息
-    public static final Integer SEND_OFFLINE_TEXT_MSG = 3001;
+    public static final Integer SEND_OFFLINE_TEXT_MSG = 4001;
     // 发送离线文本信息成功
-    public static final Integer SEND_OFFLINE_TEXT_MSG_SUCCESS = 3002;
+    public static final Integer SEND_OFFLINE_TEXT_MSG_SUCCESS = 4002;
     // 发送离线文本消息失败
-    public static final Integer SEND_OFFLINE_TEXT_MSG_FAIL = 3003;
+    public static final Integer SEND_OFFLINE_TEXT_MSG_FAIL = 4003;
 
     // 获取所有用户信息
-    public static final Integer GET_ALL_USERS = 4001;
+    public static final Integer GET_ALL_USERS = 5001;
 
     // 下线
-    public static final Integer OFF_LINE = 5001;
+    public static final Integer OFF_LINE = 6001;
 
 
 }

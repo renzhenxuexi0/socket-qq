@@ -1,8 +1,8 @@
 # 线程池配置
 threadPool:
-  corePoolSize: 2
-  maximumPoolSize: 4
-  workQueueSize: 2
+  corePoolSize: 6
+  maximumPoolSize: 10
+  workQueueSize: 10
 
 # 服务端的ip地址和端口
 socket:
