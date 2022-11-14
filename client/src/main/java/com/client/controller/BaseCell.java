@@ -46,6 +46,7 @@ public abstract class BaseCell<T> extends ListCell<T> implements Callback<Class<
                 try {
                     setGraphic(FXMLLoader.load(fxmlURL, null, null, this,
                             Charset.forName(FXMLLoader.DEFAULT_CHARSET_NAME)));
+                    setGraphicTextGap(0);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

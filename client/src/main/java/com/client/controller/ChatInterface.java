@@ -15,7 +15,7 @@ import java.util.ResourceBundle;
 
 
 @FXMLController
-public class DialogBoxController implements Initializable {
+public class ChatInterface implements Initializable {
 
     @FXML
     public Label userName;

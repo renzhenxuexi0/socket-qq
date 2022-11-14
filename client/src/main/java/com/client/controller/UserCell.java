@@ -1,21 +1,28 @@
 package com.client.controller;
 
 import com.client.pojo.User;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.HBox;
 
-public class UserCell extends BaseCell<User> {
+import java.net.URL;
+import java.util.ResourceBundle;
 
+public abstract class UserCell extends BaseCell<User> implements Initializable {
+
+    @FXML
+    public HBox box;
+    public Label dateLabel;
     @FXML
     private ImageView headImage;
     @FXML
     private Label usernameLabel;
     @FXML
     private Label msgLabel;
-    @FXML
-    private Label dataLabel;
-
 
     /**
      * 构造表上某一列的视图
@@ -28,5 +35,12 @@ public class UserCell extends BaseCell<User> {
     @Override
     public void bindData(User item) {
         usernameLabel.setText(item.getUsername());
+    }
+
+    public abstract EventHandler<? super MouseEvent> setOnclickBox();
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        box.setOnMouseClicked(setOnclickBox());
     }
 }

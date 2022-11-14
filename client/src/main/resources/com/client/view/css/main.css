@@ -38,3 +38,18 @@
     -fx-text-fill: red;
     -fx-font-family: "Microsoft YaHei";
 }
+
+
+#userListView {
+    -fx-background-color: #ffffff;
+    -fx-border-width: 0;
+}
+
+
+#userListView .list-cell:selected {
+    -fx-background-color: #28dde7;
+}
+
+#userListView .list-view {
+    -fx-hbar-policy: nerver;
+}
