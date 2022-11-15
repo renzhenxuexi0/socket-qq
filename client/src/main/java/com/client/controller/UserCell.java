@@ -7,7 +7,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.HBox;
+import javafx.scene.layout.AnchorPane;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -15,7 +15,8 @@ import java.util.ResourceBundle;
 public abstract class UserCell extends BaseCell<User> implements Initializable {
 
     @FXML
-    public HBox box;
+    public AnchorPane mainPane;
+
     public Label dateLabel;
     @FXML
     private ImageView headImage;
@@ -41,6 +42,7 @@ public abstract class UserCell extends BaseCell<User> implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        box.setOnMouseClicked(setOnclickBox());
+        mainPane.setOnMouseClicked(setOnclickBox());
+
     }
 }

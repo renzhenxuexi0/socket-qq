@@ -69,13 +69,13 @@
                         <Hyperlink fx:id="registerHyperlink" focusTraversable="false" onAction="#registerEvent" text="注册账号" />
                     </children>
                 </HBox>
-                <JFXTextField fx:id="accountInput" focusColor="#21c0ff" focusTraversable="false" promptText="输入账号" unFocusColor="#bfbfbf" GridPane.columnIndex="1" />
+                <JFXTextField fx:id="accountInput" focusColor="#21c0ff" promptText="输入账号" unFocusColor="#bfbfbf" GridPane.columnIndex="1" />
                 <JFXButton fx:id="loginButton" buttonType="RAISED" defaultButton="true" focusTraversable="false" onAction="#loginButtonEvent" prefHeight="29.0" prefWidth="260.0" ripplerFill="#20a2da" style="-fx-background-color: #05bafb;" text="登录" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="3">
                     <font>
                         <Font size="14.0" />
                     </font>
                 </JFXButton>
-                <JFXPasswordField fx:id="passwordInput" focusColor="#21c0ff" focusTraversable="false" promptText="输入密码" unFocusColor="#bfbfbf" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                <JFXPasswordField fx:id="passwordInput" focusColor="#21c0ff" promptText="输入密码" unFocusColor="#bfbfbf" GridPane.columnIndex="1" GridPane.rowIndex="1" />
             </children>
         </GridPane>
     </children>
