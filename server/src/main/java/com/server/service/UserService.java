@@ -34,6 +34,12 @@ public interface UserService {
     User userLogin(User user);
 
     /**
+     * 获取用户IP和端口
+     *
+     */
+    void updateIpAndPort(Integer id,String ip,Integer port);
+
+    /**
      * 更新在线状态
      *
      * @param id
@@ -42,3 +48,4 @@ public interface UserService {
      */
     void updateLogin(Integer id, Integer login);
 }
+

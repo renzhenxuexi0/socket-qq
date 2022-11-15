@@ -32,7 +32,13 @@ public class UserServiceImpl implements UserService {
         return userMapper.selectByAccountAndPasswordUser(user);
     }
 
+    public void updateIpAndPort(Integer id, String ip, Integer port) {
+        userMapper.updateIpAndPort(id, ip, port);
+    }
+
+
     public void updateLogin(Integer id, Integer login) {
         userMapper.updateLogin(id, login);
     }
+
 }

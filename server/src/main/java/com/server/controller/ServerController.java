@@ -97,7 +97,7 @@ public class ServerController {
                         }
                         if (Code.USER_LOGIN.equals(code)) {
                             User user = JSON.parseObject(jsonObject.get("object").toString(), User.class);
-                            Result login = login(user);
+                            Result login = login(user, socket.getRemoteSocketAddress().toString(), socket.getPort());
                             ps.println(JSON.toJSONString(login));
                         }
                         if (Code.GET_ALL_USERS.equals(code)) {
@@ -144,9 +144,9 @@ public class ServerController {
         return result;
     }
 
-    Result login(User user) {
+    Result login(User user, String ip, Integer port) {
         User user2 = userService.userLogin(user);
-
+        userService.updateIpAndPort(user2.getId(), ip, port);
         UserMemory.users = userService.selectAllUser();
 
         //判断是否成功
