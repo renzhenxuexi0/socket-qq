@@ -3,13 +3,13 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
     # 数字要带上双引号
-    password: "123456"
+    password: "1234"
     url: jdbc:mysql://localhost:3306/socket_db?serverTimezone=UTC
     type: com.alibaba.druid.pool.DruidDataSource
 
 
 # 线程池配置
 threadPool:
-  corePoolSize: 2
-  maximumPoolSize: 4
-  workQueueSize: 2
+  corePoolSize: 6
+  maximumPoolSize: 10
+  workQueueSize: 10
