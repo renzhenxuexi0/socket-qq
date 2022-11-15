@@ -33,11 +33,29 @@ public class Code {
     // 发送离线文本消息失败
     public static final Integer SEND_OFFLINE_TEXT_MSG_FAIL = 4003;
 
+
+    //发送文件信息
+    public static final Integer SEND_FILE_MSG=5001;
+    //发送在线文件信息成功
+    public static final Integer SEND_FILE_MSG_SUCCESS=5002;
+    //发送在线文件信息失败
+    public static final Integer SEND_FILE_MSG_FAIL=5003;
+
+
+    //发送离线文件信息
+    public static final Integer SEND_OFFLINE_FILE_MSG=6001;
+    //发送离线文件信息成功
+    public static final Integer SEND_OFFLINE_FILE_MSG_SUCCESS=6002;
+    //发送离线文件信息失败
+    public static final Integer SEND_OFFLINE_FILE_MSG_FAIL=6003;
+
+
+
     // 获取所有用户信息
-    public static final Integer GET_ALL_USERS = 5001;
+    public static final Integer GET_ALL_USERS = 7001;
 
     // 下线
-    public static final Integer OFF_LINE = 6001;
+    public static final Integer OFF_LINE = 8001;
 
 
 }
