@@ -11,7 +11,7 @@ import java.util.List;
 
 @Service
 @Slf4j
-public class TextTextMsgServiceImpl implements TextMsgService {
+public class TextMsgServiceImpl implements TextMsgService {
 
     @Autowired
     private TextMsgMapper textMsgMapper;

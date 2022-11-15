@@ -185,6 +185,7 @@ public class LoginInterfaceController implements Initializable {
         RequiredFieldValidator accountValidator = new RequiredFieldValidator();
 
         file = new File(System.getProperty("user.home") + "\\.socket\\user.properties");
+
         if (file.exists()) {
             try {
                 Properties properties = new Properties();
