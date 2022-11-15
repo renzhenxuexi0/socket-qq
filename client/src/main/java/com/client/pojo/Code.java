@@ -37,17 +37,17 @@ public class Code {
     //发送文件信息
     public static final Integer SEND_FILE_MSG=5001;
     //发送在线文件信息成功
-    public static final Integer SEND_FILE_MSG_SUCCESS=5001;
+    public static final Integer SEND_FILE_MSG_SUCCESS=5002;
     //发送在线文件信息失败
-    public static final Integer SEND_FILE_MSG_FAIL=5001;
+    public static final Integer SEND_FILE_MSG_FAIL=5003;
 
 
     //发送离线文件信息
     public static final Integer SEND_OFFLINE_FILE_MSG=6001;
     //发送离线文件信息成功
-    public static final Integer SEND_OFFLINE_FILE_MSG_SUCCESS=6001;
+    public static final Integer SEND_OFFLINE_FILE_MSG_SUCCESS=6002;
     //发送离线文件信息失败
-    public static final Integer SEND_OFFLINE_FILE_MSG_FAIL=6001;
+    public static final Integer SEND_OFFLINE_FILE_MSG_FAIL=6003;
 
 
 
