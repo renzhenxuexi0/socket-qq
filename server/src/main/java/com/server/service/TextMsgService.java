@@ -1,19 +1,19 @@
 package com.server.service;
 
-import com.server.pojo.Msg;
+import com.server.pojo.TextMsg;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Transactional
-public interface MsgService {
+public interface TextMsgService {
 
     /**
      * 如果对方不在线 则进行消息缓存
      *
-     * @param msg
+     * @param textMsg
      */
-    boolean CacheMsg(Msg msg);
+    boolean CacheTextMsg(TextMsg textMsg);
 
     /**
      * 查找关于接受者的信息
@@ -21,5 +21,5 @@ public interface MsgService {
      * @param receiveId
      * @return
      */
-    List<Msg> findAboutReceiveMsg(Integer receiveId);
+    List<TextMsg> findAboutReceiveTextMsg(Integer receiveId);
 }

@@ -3,10 +3,10 @@ package com.server.controller;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.server.pojo.Code;
-import com.server.pojo.Msg;
 import com.server.pojo.Result;
+import com.server.pojo.TextMsg;
 import com.server.pojo.User;
-import com.server.service.MsgService;
+import com.server.service.TextMsgService;
 import com.server.service.UserService;
 import com.server.utils.UserMemory;
 import de.felixroske.jfxsupport.FXMLController;
@@ -15,6 +15,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 
 import java.io.*;
 import java.net.ServerSocket;
@@ -24,6 +26,7 @@ import java.util.List;
 import java.util.concurrent.ThreadPoolExecutor;
 
 @FXMLController
+@EnableScheduling
 public class ServerController {
     // 自动注入线程池
     @Autowired
@@ -32,7 +35,7 @@ public class ServerController {
     private UserService userService;
 
     @Autowired
-    private MsgService msgService;
+    private TextMsgService textMsgService;
 
     @FXML
     private Button closeServerButton;
@@ -86,6 +89,7 @@ public class ServerController {
                         // 数据传给服务层
                         Integer code = Integer.valueOf(jsonObject.get("code").toString());
 
+
                         if (Code.USER_REGISTER.equals(code)) {
                             User user = JSON.parseObject(jsonObject.get("object").toString(), User.class);
                             Result register = register(user);
@@ -104,14 +108,15 @@ public class ServerController {
                             offLine(user);
                             ps.println("");
                         } else if (Code.SEND_OFFLINE_TEXT_MSG.equals(code)) {
-                            Msg msg = JSON.parseObject(jsonObject.get("object").toString(), Msg.class);
-                            Result result = sendOffLineTextMsg(msg);
+                            TextMsg textMsg = JSON.parseObject(jsonObject.get("object").toString(), TextMsg.class);
+                            Result result = sendOffLineTextMsg(textMsg);
                             ps.println(JSON.toJSONString(result));
                         } else {
                             Result result = new Result();
                             result.setMsg("未知错误");
                             ps.println(JSON.toJSONString(result));
                         }
+
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
@@ -141,7 +146,9 @@ public class ServerController {
 
     Result login(User user) {
         User user2 = userService.userLogin(user);
+
         UserMemory.users = userService.selectAllUser();
+
         //判断是否成功
         Result result = new Result();
 
@@ -153,10 +160,10 @@ public class ServerController {
             result.setCode(Code.LOGIN_SUCCESS);
             result.setMsg("登录成功");
             // 查找关于自己的离线信息
-            List<Msg> aboutReceiveMsg = msgService.findAboutReceiveMsg(user2.getId());
-            
+            List<TextMsg> aboutReceiveTextMsg = textMsgService.findAboutReceiveTextMsg(user2.getId());
+
             HashMap<String, Object> allContent = new HashMap<>();
-            allContent.put("msg", aboutReceiveMsg);
+            allContent.put("msg", aboutReceiveTextMsg);
             allContent.put("users", UserMemory.users);
             allContent.put("myUser", user2);
 
@@ -172,11 +179,18 @@ public class ServerController {
     }
 
     Result getAllUser() {
-        UserMemory.users = userService.selectAllUser();
         Result result = new Result();
         result.setObject(UserMemory.users);
         contentInput.appendText("所有用户信息:\n" + UserMemory.users.toString() + "\n");
         return result;
+    }
+
+
+    @Scheduled(cron = "0/2 * * * * ?")
+    void getAllUserScheduled() {
+        // 打算做个优化 服务端自己不断获取就行， 返回内存里的用户列表即可
+        // 防止请求很多导致数据不同步问题
+        UserMemory.users = userService.selectAllUser();
     }
 
     void offLine(User user) {
@@ -184,15 +198,15 @@ public class ServerController {
         contentInput.appendText(user.getUsername() + "下线\n");
     }
 
-    Result sendOffLineTextMsg(Msg msg) {
+    Result sendOffLineTextMsg(TextMsg textMsg) {
         Result result = new Result();
-        boolean b = msgService.CacheMsg(msg);
+        boolean b = textMsgService.CacheTextMsg(textMsg);
         if (b) {
             result.setCode(Code.SEND_OFFLINE_TEXT_MSG_SUCCESS);
-            contentInput.appendText(msg.getSenderId() + "该用户缓存信息成功\n");
+            contentInput.appendText(textMsg.getSenderId() + "该用户缓存信息成功\n");
         } else {
             result.setCode(Code.SEND_OFFLINE_TEXT_MSG_FAIL);
-            contentInput.appendText(msg.getSenderId() + "该用户缓存信息失败\n");
+            contentInput.appendText(textMsg.getSenderId() + "该用户缓存信息失败\n");
         }
         return result;
     }

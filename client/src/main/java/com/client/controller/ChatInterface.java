@@ -3,8 +3,8 @@ package com.client.controller;
 import com.alibaba.fastjson.JSON;
 import com.client.ClientApp;
 import com.client.pojo.Code;
-import com.client.pojo.Msg;
 import com.client.pojo.Result;
+import com.client.pojo.TextMsg;
 import com.client.pojo.User;
 import com.client.service.MsgService;
 import com.client.service.UserService;
@@ -38,15 +38,15 @@ public class ChatInterface implements Initializable {
 
     @FXML
     public TextArea inputArea;
+    @FXML
+    public Label userName;
+    public Stage primaryStage;
     @Autowired
     private MsgService msgService;
     @Autowired
     private ThreadPoolExecutor poolExecutor;
     @Autowired
     private UserService userService;
-    @FXML
-    public Label userName;
-    public Stage primaryStage;
     @FXML
     private Button minWindow;
     @FXML
@@ -68,7 +68,6 @@ public class ChatInterface implements Initializable {
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//注意月和小时的格式为两个大写字母
         java.util.Date date = new Date();//获得当前时间
         String mstime = df.format(date);//将当前时间转换成特定格式的时间字符串，这样便可以插入到数据库中
-        Integer contentType= 0;
 //        File file = new File(text);
 //        if(file.isFile()){
 //             contentType=1;
@@ -76,24 +75,23 @@ public class ChatInterface implements Initializable {
 //             contentType=0;
 //        }
 
-         Integer senderId = UserMemory.myUser.getId();
-         Integer receiveId = UserMemory.talkUser.getId();
-        if(!text.equals("")){
+        Integer senderId = UserMemory.myUser.getId();
+        Integer receiveId = UserMemory.talkUser.getId();
+        if (!text.equals("")) {
             try {
-                Msg msg = new Msg();
+                TextMsg textMsg = new TextMsg();
                 Result result = new Result();
-                if (1==(UserMemory.talkUser.getLogin())){
+                if (1 == (UserMemory.talkUser.getLogin())) {
                     result.setCode(Code.SEND_TEXT_MSG);
-                }else {
+                } else {
                     result.setCode(Code.SEND_OFFLINE_TEXT_MSG);
                 }
                 Result result2 = poolExecutor.submit(() -> {
-                    msg.setMessageTime(mstime);
-                    msg.setContent(text);
-                    msg.setContentType(contentType);
-                    msg.setSenderId(senderId);
-                    msg.setReceiveId(Integer.valueOf(receiveId));
-                    result.setObject(msg);
+                    textMsg.setMessageTime(mstime);
+                    textMsg.setContent(text);
+                    textMsg.setSenderId(senderId);
+                    textMsg.setReceiveId(Integer.valueOf(receiveId));
+                    result.setObject(textMsg);
                     Result result3 = null;
                     try {
                         result3 = msgService.sendMsgByServer(result);
@@ -120,12 +118,12 @@ public class ChatInterface implements Initializable {
                     }
                 });
 
-           }catch (Exception e){
+            } catch (Exception e) {
                 Alert alert = new Alert(Alert.AlertType.ERROR, "未知错误");
                 alert.show();
                 log.error(e.toString());
             }
-        }else {
+        } else {
             Alert alert = new Alert(Alert.AlertType.ERROR, "发送的消息不能为空！");
             alert.show();
 
