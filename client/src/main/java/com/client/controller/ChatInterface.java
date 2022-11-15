@@ -49,13 +49,16 @@ public class ChatInterface implements Initializable {
     public Stage primaryStage;
 
     @FXML
-    public JFXButton fileChoiceButton;
+    private JFXButton fileChoiceButton;
+
     @Autowired
     private MsgService msgService;
     @Autowired
     private ThreadPoolExecutor poolExecutor;
+
     @Autowired
     private UserService userService;
+
     @FXML
     private Button minWindow;
     @FXML

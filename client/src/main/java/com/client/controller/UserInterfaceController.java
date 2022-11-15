@@ -7,7 +7,7 @@ import com.client.utils.DragUtil;
 import com.client.utils.ShowNewViewUtil;
 import com.client.utils.UserMemory;
 import com.client.view.ChatView;
-import com.jfoenix.controls.JFXListView;
+import com.jfoenix.controls.JFXTextField;
 import de.felixroske.jfxsupport.FXMLController;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -16,11 +16,15 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import org.kordamp.ikonli.fontawesome.FontAwesome;
+import org.kordamp.ikonli.javafx.FontIcon;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -39,6 +43,8 @@ public class UserInterfaceController implements Initializable, ApplicationContex
     public Button closeWindow;
     @FXML
     public ImageView backgroundImage;
+    @FXML
+    public JFXTextField findUserTextField;
 
     @Autowired
     private ChatInterface chatInterface;
@@ -54,7 +60,7 @@ public class UserInterfaceController implements Initializable, ApplicationContex
     @FXML
     private ImageView userHead;
     @FXML
-    private JFXListView<User> userListView;
+    private ListView<User> userListView;
     private Stage primaryStage;
     @Autowired
     private UserService userService;
@@ -67,6 +73,11 @@ public class UserInterfaceController implements Initializable, ApplicationContex
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        FontIcon fontIcon = new FontIcon(FontAwesome.SEARCH);
+        fontIcon.setIconSize(12);
+        fontIcon.setIconColor(Color.WHITE);
+
+
         userListView.setCellFactory(param -> new UserCell() {
             @Override
             public EventHandler<? super MouseEvent> setOnclickBox() {

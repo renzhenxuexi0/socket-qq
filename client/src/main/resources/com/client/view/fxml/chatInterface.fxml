@@ -50,7 +50,11 @@
             <ListView prefHeight="200.0" prefWidth="200.0" />
             <VBox prefHeight="200.0" prefWidth="100.0" style="-fx-background-color: white;">
                <children>
-                  <JFXButton fx:id="fileChoiceButton" buttonType="RAISED" onAction="#choiceFileEvent" ripplerFill="#e1e1e1" />
+                  <AnchorPane prefHeight="200.0" prefWidth="200.0">
+                     <children>
+                        <JFXButton fx:id="fileChoiceButton" buttonType="RAISED" onAction="#choiceFileEvent" ripplerFill="#e1e1e1" />
+                     </children>
+                  </AnchorPane>
                         <AnchorPane style="-fx-background-color: white;">
                      <children>
                         <JFXTextArea fx:id="inputArea" prefHeight="179.0" prefWidth="598.0" wrapText="true">

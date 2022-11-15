@@ -48,8 +48,18 @@
 
 #userListView .list-cell:selected {
     -fx-background-color: #6ae4ff;
+    -fx-hbar-policy: never;
 }
 
 #userListView .list-view {
     -fx-hbar-policy: nerver;
+}
+
+#userListView {
+    -fx-background-color: white;
+    -fx-hbar-policy: nerver;
+}
+
+#userName {
+    -fx-font-style: white;
 }

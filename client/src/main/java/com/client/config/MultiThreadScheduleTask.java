@@ -33,6 +33,5 @@ public class MultiThreadScheduleTask {
         } catch (Exception e) {
             log.error(e.toString());
         }
-
     }
 }

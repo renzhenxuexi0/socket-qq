@@ -1,20 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import com.jfoenix.controls.JFXListView?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.effect.ColorAdjust?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
-<SplitPane xmlns:fx="http://javafx.com/fxml/1" dividerPositions="0.1548872180451128" orientation="VERTICAL" prefHeight="696.0"
-           prefWidth="290.0" stylesheets="@../css/main.css" xmlns="http://javafx.com/javafx/8.0.171"
-           fx:controller="com.client.controller.UserInterfaceController">
-    <items>
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1" maxHeight="600.0" minHeight="600.0" prefHeight="600.0"
+            stylesheets="@../css/main.css" xmlns="http://javafx.com/javafx/8.0.171"
+            fx:controller="com.client.controller.UserInterfaceController">
+    <children>
         <Pane fx:id="userPane">
             <children>
-
-                <ImageView fx:id="backgroundImage" fitHeight="239.0" fitWidth="306.0" layoutX="-1.0" layoutY="-3.0"
+                <ImageView fx:id="backgroundImage" fitHeight="235.0" fitWidth="310.0" layoutY="-65.0"
                            pickOnBounds="true" preserveRatio="true">
                     <image>
                         <Image url="@../image/login_bkg_register.png"/>
@@ -23,42 +21,38 @@
                         <ColorAdjust/>
                     </effect>
                 </ImageView>
-                <Label fx:id="userName" layoutX="116.0" layoutY="44.0">
-                    <font>
-                        <Font size="20.0"/>
-                    </font>
-                </Label>
-                <ImageView fx:id="userHead" fitHeight="83.0" fitWidth="83.0" layoutX="22.0" layoutY="9.0"
+                <ImageView fx:id="userHead" fitHeight="50.0" fitWidth="50.0" layoutX="14.0" layoutY="21.0"
                            pickOnBounds="true" preserveRatio="true"/>
-                <AnchorPane layoutX="223.0" layoutY="2.0" maxHeight="23.0" maxWidth="83.0" minHeight="23.0"
-                            minWidth="83.0" prefHeight="23.0" prefWidth="83.0" stylesheets="@../css/main.css">
+                <AnchorPane layoutX="183.0" layoutY="-1.0" stylesheets="@../css/main.css">
                     <children>
-                        <Button fx:id="minWindow" mnemonicParsing="false" styleClass="dev-fx-window-min" text="一"
-                                AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="55.0" AnchorPane.topAnchor="0.0">
+                        <Button fx:id="minWindow" layoutY="2.0" mnemonicParsing="false" styleClass="dev-fx-window-min"
+                                text="一" AnchorPane.bottomAnchor="-2.0" AnchorPane.rightAnchor="68.0"
+                                AnchorPane.topAnchor="2.0">
                             <tooltip>
                                 <Tooltip text="最小化"/>
                             </tooltip>
                         </Button>
-                        <Button fx:id="closeWindow" mnemonicParsing="false" styleClass="dev-fx-window-close" text="X"
-                                AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <Button fx:id="closeWindow" mnemonicParsing="false" prefHeight="31.0"
+                                styleClass="dev-fx-window-close" text="X" AnchorPane.bottomAnchor="0.0"
+                                AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                             <tooltip>
                                 <Tooltip text="关闭"/>
                             </tooltip>
                         </Button>
                     </children>
                 </AnchorPane>
-            </children>
-        </Pane>
-        <VBox alignment="CENTER">
-            <children>
-                <Label prefHeight="20.0" prefWidth="122.0" text="      用户列表" textAlignment="CENTER"
-                       textFill="#0cc7e8" textOverrun="CLIP">
+                <Label fx:id="userName" layoutX="79.0" layoutY="32.0" text="123">
                     <font>
-                        <Font size="15.0"/>
+                        <Font size="20.0"/>
                     </font>
                 </Label>
-                <JFXListView fx:id="userListView" prefHeight="580.0" prefWidth="304.0"/>
+            </children>
+        </Pane>
+        <VBox alignment="CENTER" layoutY="74.0" prefHeight="535.0" prefWidth="307.0">
+            <children>
+                <ListView fx:id="userListView" maxHeight="541.0" minHeight="541.0" prefHeight="541.0"
+                          prefWidth="307.0"/>
             </children>
         </VBox>
-    </items>
-</SplitPane>
+    </children>
+</AnchorPane>
