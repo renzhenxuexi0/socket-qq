@@ -48,7 +48,6 @@
 
 #userListView .list-cell:selected {
     -fx-background-color: #6ae4ff;
-    -fx-hbar-policy: never;
 }
 
 #userListView .list-view {
