@@ -10,6 +10,7 @@ import com.client.service.MsgService;
 import com.client.service.UserService;
 import com.client.utils.UserMemory;
 import com.client.view.UserView;
+import com.jfoenix.controls.JFXButton;
 import de.felixroske.jfxsupport.FXMLController;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -19,10 +20,15 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
+import javafx.scene.paint.Color;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
+import org.kordamp.ikonli.fontawesome.FontAwesome;
+import org.kordamp.ikonli.javafx.FontIcon;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.text.DateFormat;
@@ -41,6 +47,9 @@ public class ChatInterface implements Initializable {
     @FXML
     public Label userName;
     public Stage primaryStage;
+
+    @FXML
+    public JFXButton fileChoiceButton;
     @Autowired
     private MsgService msgService;
     @Autowired
@@ -54,12 +63,20 @@ public class ChatInterface implements Initializable {
     @FXML
     private Button sendButton;
 
+    private FileChooser fileChooser;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         minWindow.setOnAction(event -> primaryStage.setIconified(true)); /* 最小化 */
         closeWindow.setOnAction(event -> {
             primaryStage.close();
         });
+
+        FontIcon fontIcon = new FontIcon(FontAwesome.FOLDER_O);
+        fontIcon.setIconColor(Color.valueOf("#868A98FF"));
+        fontIcon.setIconSize(18);
+        fileChoiceButton.setGraphic(fontIcon);
+        fileChooser = new FileChooser();
     }
 
     public void sendMessage(ActionEvent mouseEvent) throws IOException {
@@ -134,4 +151,7 @@ public class ChatInterface implements Initializable {
         ClientApp.showView(UserView.class);
     }  //点击关闭后返回列表界面
 
+    public void choiceFileEvent(ActionEvent actionEvent) {
+        File file = fileChooser.showOpenDialog(primaryStage);
+    }
 }

@@ -10,13 +10,13 @@
         <result column="receive_id" property="receiveId"/>
     </resultMap>
     <insert id="addMsg">
-        insert into tbl_msg(message_time, content, sender_id, receiver_id)
+        insert into tbl_text_msg(message_time, content, sender_id, receiver_id)
         values (#{messageTime}, #{content}, #{senderId}, #{receiveId})
     </insert>
 
     <select id="selectByReceiveId" resultMap="msgResultMap">
         select *
-        from tbl_msg
+        from tbl_text_msg
         where receiver_id = #{receiveId}
     </select>
 

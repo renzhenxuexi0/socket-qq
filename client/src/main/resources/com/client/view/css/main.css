@@ -47,7 +47,7 @@
 
 
 #userListView .list-cell:selected {
-    -fx-background-color: #28dde7;
+    -fx-background-color: #6ae4ff;
 }
 
 #userListView .list-view {

@@ -7,6 +7,7 @@ import com.client.utils.DragUtil;
 import com.client.utils.ShowNewViewUtil;
 import com.client.utils.UserMemory;
 import com.client.view.ChatView;
+import com.jfoenix.controls.JFXListView;
 import de.felixroske.jfxsupport.FXMLController;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -15,7 +16,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -54,7 +54,7 @@ public class UserInterfaceController implements Initializable, ApplicationContex
     @FXML
     private ImageView userHead;
     @FXML
-    private ListView<User> userListView;
+    private JFXListView<User> userListView;
     private Stage primaryStage;
     @Autowired
     private UserService userService;
