@@ -203,7 +203,11 @@ public class ChatInterfaceController implements Initializable {
                         // 发送文件流，字节缓冲流即可
                         BufferedOutputStream socketOutputStream = new BufferedOutputStream(socket.getOutputStream());
 
-                        // 同意发送即开始发送
+                        // 发送 开始发送
+                        Result resultStart = new Result();
+                        resultStart.setCode(Code.SEND_OFFLINE_FILE_MSG);
+                        socketPrintStream.println(JSON.toJSONString(resultStart));
+
 
                         File logFile = new File(System.getProperty("user.home") + "\\.socket\\" + aimFile.getName() + ".log");
                         try (

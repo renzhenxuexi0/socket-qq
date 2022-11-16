@@ -216,7 +216,9 @@ public class ServerController {
         return result;
     }
 
-    Result sendOffLineFileMsg(FileMsg fileMsg){
+    Result sendOffLineFileMsg(FileMsg fileMsg) {
+
+
         Result result = new Result();
         boolean b = fileMsgService.CacheFileMsg(fileMsg);
         if (b) {
