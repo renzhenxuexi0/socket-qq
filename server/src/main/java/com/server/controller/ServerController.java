@@ -228,15 +228,11 @@ public class ServerController {
 
             BufferedInputStream bufferedInputStream = new BufferedInputStream(is);
 
-            File file = new File(System.getProperty("user.home") + "\\.socket\\" + aimFile.getName());
+            File file = new File(System.getProperty("user.home") + "\\.socket\\" + fileName);
             if(file.exists()){
                 file.createNewFile();
             }
-            int read;
-            byte[] bytes=new byte[1024*10];
-            while ((read= is.read(bytes))!=-1){
-
-            }
+            RandomAccessFile randomAccessAimFile = new RandomAccessFile(file, "w"));
 
         } catch (IOException e) {
             throw new RuntimeException(e);
