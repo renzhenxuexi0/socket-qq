@@ -2,10 +2,8 @@ package com.server.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.server.pojo.Code;
-import com.server.pojo.Result;
-import com.server.pojo.TextMsg;
-import com.server.pojo.User;
+import com.server.pojo.*;
+import com.server.service.FileMsgService;
 import com.server.service.TextMsgService;
 import com.server.service.UserService;
 import com.server.utils.UserMemory;
@@ -14,7 +12,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -24,12 +21,10 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.ThreadPoolExecutor;
 
 @FXMLController
 @EnableScheduling
-@Slf4j
 public class ServerController {
     // 自动注入线程池
     @Autowired
@@ -39,6 +34,8 @@ public class ServerController {
 
     @Autowired
     private TextMsgService textMsgService;
+
+    private FileMsgService fileMsgService;
 
     @FXML
     private Button closeServerButton;
@@ -77,16 +74,14 @@ public class ServerController {
             while (!Thread.currentThread().isInterrupted()) {
                 Socket socket = serverSocket.accept();
                 pool.execute(() -> {
-                    // 打印流 主要打印json字符串
-                    PrintStream printStream = null;
-
+                    // 流的封装
+                    OutputStream os;//字节输出流抽象类
                     try {
-                        OutputStream outputStream = socket.getOutputStream();
-                        InputStream inputStream = socket.getInputStream();
-
-                        // 包装的一些字符流 用来读文本数据
-                        printStream = new PrintStream(outputStream);
-                        BufferedReader bfr = new BufferedReader(new InputStreamReader(inputStream));
+                        os = socket.getOutputStream();
+                        PrintStream ps = new PrintStream(os);
+                        InputStream is = socket.getInputStream();//面向字节的输入流抽象类
+                        Reader reader = new InputStreamReader(is);//创建面向字节的字符流
+                        BufferedReader bfr = new BufferedReader(reader);//从字符流中读取文本，缓存
 
                         JSONObject jsonObject = JSON.parseObject(bfr.readLine());
                         System.out.println(jsonObject);
@@ -94,49 +89,40 @@ public class ServerController {
                         // 数据传给服务层
                         Integer code = Integer.valueOf(jsonObject.get("code").toString());
 
+
                         if (Code.USER_REGISTER.equals(code)) {
-                            // 注册操作
                             User user = JSON.parseObject(jsonObject.get("object").toString(), User.class);
                             Result register = register(user);
-                            printStream.println(JSON.toJSONString(register));
-                        } else if (Code.USER_LOGIN.equals(code)) {
-                            // 登录操作
+                            ps.println(JSON.toJSONString(register));
+                        }
+                        if (Code.USER_LOGIN.equals(code)) {
                             User user = JSON.parseObject(jsonObject.get("object").toString(), User.class);
-                            // 对地址进行切割分成ip和端口
-                            String s = socket.getRemoteSocketAddress().toString();
-                            String[] s1 = s.split(":");
-                            String ip = s1[0].substring(1);
-                            Integer port = Integer.valueOf(s1[1]);
-
-                            Result login = login(user, ip, port);
-                            printStream.println(JSON.toJSONString(login));
-                        } else if (Code.GET_ALL_USERS.equals(code)) {
-                            // 获取所有用户信息操作
+                            Result login = login(user);
+                            ps.println(JSON.toJSONString(login));
+                        }
+                        if (Code.GET_ALL_USERS.equals(code)) {
                             Result allUser = getAllUser();
-                            printStream.println(JSON.toJSONString(allUser));
+                            ps.println(JSON.toJSONString(allUser));
                         } else if (Code.OFF_LINE.equals(code)) {
-                            // 下线操作
                             User user = JSON.parseObject(jsonObject.get("object").toString(), User.class);
                             offLine(user);
-                            printStream.println("");
+                            ps.println("");
                         } else if (Code.SEND_OFFLINE_TEXT_MSG.equals(code)) {
-                            // 发送文本信息操作
                             TextMsg textMsg = JSON.parseObject(jsonObject.get("object").toString(), TextMsg.class);
                             Result result = sendOffLineTextMsg(textMsg);
-                            printStream.println(JSON.toJSONString(result));
+                            ps.println(JSON.toJSONString(result));
+                        } else if (Code.SEND_OFFLINE_FILE_MSG.equals(code)) {
+                            FileMsg fileMsg = JSON.parseObject(jsonObject.get("object").toString(), FileMsg.class);
+                            Result result = sendOffLineFileMsg(fileMsg);
+                            ps.println(JSON.toJSONString(result));
                         } else {
-                            // 没有找到匹配的操作码操作
                             Result result = new Result();
                             result.setMsg("未知错误");
-                            printStream.println(JSON.toJSONString(result));
+                            ps.println(JSON.toJSONString(result));
                         }
 
                     } catch (IOException e) {
-                        // 错误操作
-                        Result result = new Result();
-                        result.setMsg("未知错误");
-                        Objects.requireNonNull(printStream).println(JSON.toJSONString(result));
-                        log.error(e.toString());
+                        throw new RuntimeException(e);
                     }
                 });
             }
@@ -162,10 +148,8 @@ public class ServerController {
         return result;
     }
 
-    Result login(User user, String ip, Integer port) {
+    Result login(User user) {
         User user2 = userService.userLogin(user);
-
-        userService.updateIpAndPort(user2.getId(), ip, port);
 
         UserMemory.users = userService.selectAllUser();
 
@@ -181,18 +165,19 @@ public class ServerController {
             result.setMsg("登录成功");
             // 查找关于自己的离线信息
             List<TextMsg> aboutReceiveTextMsg = textMsgService.findAboutReceiveTextMsg(user2.getId());
-
+            List<FileMsg> aboutReceiveFileMsg = fileMsgService.findAboutReceiveFileMsg(user2.getId());
             HashMap<String, Object> allContent = new HashMap<>();
             allContent.put("msg", aboutReceiveTextMsg);
             allContent.put("users", UserMemory.users);
             allContent.put("myUser", user2);
+
 
             result.setObject(allContent);
 
             contentInput.appendText(user2.getUsername() + "登录成功\n");
         } else {
             result.setCode(Code.LOGIN_FAIL);
-            result.setMsg("账号或密码错误！");
+            result.setMsg("登录失败");
             contentInput.appendText(user.getAccount() + "登录失败\n");
         }
         return result;
@@ -229,6 +214,21 @@ public class ServerController {
             contentInput.appendText(textMsg.getSenderId() + "该用户缓存信息失败\n");
         }
         return result;
+    }
+
+    Result sendOffLineFileMsg(FileMsg fileMsg){
+        Result result = new Result();
+        boolean b = fileMsgService.CacheFileMsg(fileMsg);
+        if (b) {
+            result.setCode(Code.SEND_OFFLINE_FILE_MSG_SUCCESS);
+            contentInput.appendText(fileMsg.getSenderId() + "该用户缓存文件信息成功\n");
+        } else {
+            result.setCode(Code.SEND_OFFLINE_TEXT_MSG_FAIL);
+            contentInput.appendText(fileMsg.getSenderId() + "该用户缓存信息失败\n");
+        }
+        return result;
+
+
     }
 
 

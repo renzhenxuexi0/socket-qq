@@ -36,6 +36,4 @@ public interface UserMapper {
      * @param login
      */
     void updateLogin(@Param("id") Integer id, @Param("login") Integer login);
-
-    void updateIpAndPort(@Param("id") Integer id,@Param("ip") String ip,@Param("port") Integer port);
 }

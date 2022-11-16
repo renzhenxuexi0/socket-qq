@@ -15,11 +15,6 @@
         set login=#{login}
         where id = #{id};
     </update>
-    <update id="updateIpAndPort">
-        update tbl_user
-        set ip=#{ip},port=#{port}
-        where id = #{id};
-    </update>
 
     <select id="selectAll" resultType="com.server.pojo.User">
         select id, username, account, login
