@@ -84,28 +84,26 @@ public class ChatInterface implements Initializable {
         String text = inputArea.getText();
 
         poolExecutor.execute(() -> {
-            DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//注意月和小时的格式为两个大写字母
-            Date date = new Date();//获得当前时间
-            String msgTime = df.format(date);//将当前时间转换成特定格式的时间字符串，这样便可以插入到数据库中
-
-            Integer senderId = UserMemory.myUser.getId();
-            Integer receiveId = UserMemory.talkUser.getId();
-            TextMsg textMsg = new TextMsg();
-            Result result = new Result();
-            textMsg.setMessageTime(msgTime);
-            textMsg.setContent(text);
-            textMsg.setSenderId(senderId);
-            textMsg.setReceiveId(receiveId);
-            result.setObject(textMsg);
-
-            if (1 == (UserMemory.talkUser.getLogin())) {
-                result.setCode(Code.SEND_TEXT_MSG);
-            } else {
-                result.setCode(Code.SEND_OFFLINE_TEXT_MSG);
-            }
-
             if (!text.equals("")) {
                 try {
+                    DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//注意月和小时的格式为两个大写字母
+                    Date date = new Date();//获得当前时间
+                    String msgTime = df.format(date);//将当前时间转换成特定格式的时间字符串，这样便可以插入到数据库中
+
+                    TextMsg textMsg = new TextMsg();
+                    Result result = new Result();
+                    textMsg.setMessageTime(msgTime);
+                    textMsg.setSenderId(UserMemory.myUser.getId());
+                    textMsg.setReceiveId(UserMemory.talkUser.getId());
+                    result.setObject(textMsg);
+
+                    if (1 == (UserMemory.talkUser.getLogin())) {
+                        result.setCode(Code.SEND_TEXT_MSG);
+                    } else {
+                        result.setCode(Code.SEND_OFFLINE_TEXT_MSG);
+                    }
+
+                    textMsg.setContent(text);
                     Result result2 = poolExecutor.submit(() -> {
                         Result result3 = null;
                         try {
