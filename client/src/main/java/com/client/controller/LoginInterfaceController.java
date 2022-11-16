@@ -154,6 +154,7 @@ public class LoginInterfaceController implements Initializable {
                                 log.error(e.toString());
                             }
                         });
+
                     } catch (Exception e) {
                         Alert alert = new Alert(Alert.AlertType.ERROR, "未知错误");
                         alert.show();
@@ -162,6 +163,7 @@ public class LoginInterfaceController implements Initializable {
                     return null;
                 }
             };
+
             ProgressStageUtil.of(primaryStage, poolExecutor, task, "登录中").show();
         } else if ("".equals(account)) {
             accountInput.validate();

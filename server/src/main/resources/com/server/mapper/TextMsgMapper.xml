@@ -4,17 +4,18 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.server.mapper.TextMsgMapper">
-    <resultMap id="msgResultMap" type="com.server.pojo.TextMsg">
+    <resultMap id="textMsgResultMap" type="com.server.pojo.TextMsg">
         <result column="message_time" property="messageTime"/>
         <result column="sender_id" property="senderId"/>
         <result column="receive_id" property="receiveId"/>
     </resultMap>
-    <insert id="addMsg">
+
+    <insert id="addTextMsg">
         insert into tbl_text_msg(message_time, content, sender_id, receiver_id)
         values (#{messageTime}, #{content}, #{senderId}, #{receiveId})
     </insert>
 
-    <select id="selectByReceiveId" resultMap="msgResultMap">
+    <select id="selectByReceiveId" resultMap="textMsgResultMap">
         select *
         from tbl_text_msg
         where receiver_id = #{receiveId}

@@ -19,7 +19,7 @@ public class TextMsgServiceImpl implements TextMsgService {
     @Override
     public boolean CacheTextMsg(TextMsg textMsg) {
         try {
-            textMsgMapper.addMsg(textMsg);
+            textMsgMapper.addTextMsg(textMsg);
             return true;
         } catch (Exception e) {
             log.error(e.toString());

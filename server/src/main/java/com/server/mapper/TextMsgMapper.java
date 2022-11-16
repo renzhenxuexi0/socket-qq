@@ -9,7 +9,7 @@ import java.util.List;
 @Mapper
 public interface TextMsgMapper {
 
-    void addMsg(TextMsg textMsg);
+    void addTextMsg(TextMsg textMsg);
 
     List<TextMsg> selectByReceiveId(@Param("receiveId") Integer receiveId);
 }
