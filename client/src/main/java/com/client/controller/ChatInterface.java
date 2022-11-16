@@ -6,10 +6,12 @@ import com.client.service.FileMsgService;
 import com.client.service.TextMsgService;
 import com.client.service.UserService;
 import com.client.utils.GetFileIcon;
+import com.client.utils.ProgressStageUtil;
 import com.client.utils.UserMemory;
 import com.jfoenix.controls.JFXButton;
 import de.felixroske.jfxsupport.FXMLController;
 import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -88,69 +90,81 @@ public class ChatInterface implements Initializable {
 
     public void sendTextMsg(ActionEvent mouseEvent) {
         String text = inputArea.getText();
+        if (!text.equals("")) {
+            Task<Void> task = new Task<Void>() {
+                @Override
+                protected Void call() throws Exception {
+                    try {
+                        DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//注意月和小时的格式为两个大写字母
+                        Date date = new Date();//获得当前时间
+                        String msgTime = df.format(date);//将当前时间转换成特定格式的时间字符串，这样便可以插入到数据库中
 
-        poolExecutor.execute(() -> {
-            if (!text.equals("")) {
-                try {
-                    DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//注意月和小时的格式为两个大写字母
-                    Date date = new Date();//获得当前时间
-                    String msgTime = df.format(date);//将当前时间转换成特定格式的时间字符串，这样便可以插入到数据库中
+                        TextMsg textMsg = new TextMsg();
+                        Result result = new Result();
+                        textMsg.setMessageTime(msgTime);
+                        textMsg.setSenderId(UserMemory.myUser.getId());
+                        textMsg.setReceiveId(UserMemory.talkUser.getId());
+                        result.setObject(textMsg);
 
-                    TextMsg textMsg = new TextMsg();
-                    Result result = new Result();
-                    textMsg.setMessageTime(msgTime);
-                    textMsg.setSenderId(UserMemory.myUser.getId());
-                    textMsg.setReceiveId(UserMemory.talkUser.getId());
-                    result.setObject(textMsg);
-
-                    if (1 == (UserMemory.talkUser.getLogin())) {
-                        result.setCode(Code.SEND_TEXT_MSG);
-                    } else {
-                        result.setCode(Code.SEND_OFFLINE_TEXT_MSG);
-                    }
-
-                    textMsg.setContent(text);
-                    Result result2 = poolExecutor.submit(() -> {
-                        Result result3 = null;
-                        try {
-                            result3 = textMsgService.sendTextMsgByServer(result);
-                            UserMemory.users = JSON.parseArray(result3.getObject().toString(), User.class);
-                        } catch (Exception e) {
-                            log.error(e.toString());
+                        if (1 == (UserMemory.talkUser.getLogin())) {
+                            result.setCode(Code.SEND_TEXT_MSG);
+                        } else {
+                            result.setCode(Code.SEND_OFFLINE_TEXT_MSG);
                         }
-                        return result3;
-                    }).get();
 
-                    Platform.runLater(() -> {
-                        try {
-                            if (Code.SEND_OFFLINE_TEXT_MSG_SUCCESS.equals(result2.getCode())) {
-                                // 发送成功弹窗 显示服务器返回的信息
-                                Alert alert = new Alert(Alert.AlertType.INFORMATION, result2.getMsg());
-                                alert.showAndWait();
-                            } else {
-                                // 发送失败 弹出错误窗口
-                                Alert alert = new Alert(Alert.AlertType.ERROR, result2.getMsg());
-                                alert.show();
-                                // 失败的话得重新输入
+                        textMsg.setContent(text);
+                        Result result2 = poolExecutor.submit(() -> {
+                            Result result3 = null;
+                            try {
+                                result3 = textMsgService.sendTextMsgByServer(result);
+                                UserMemory.users = JSON.parseArray(result3.getObject().toString(), User.class);
+                            } catch (Exception e) {
+                                log.error(e.toString());
                             }
-                        } catch (Exception e) {
-                            log.error(e.toString());
-                        }
-                    });
+                            return result3;
+                        }).get();
 
-                } catch (Exception e) {
-                    Alert alert = new Alert(Alert.AlertType.ERROR, "未知错误");
-                    alert.show();
-                    log.error(e.toString());
+                        Platform.runLater(() -> {
+                            try {
+                                if (Code.SEND_OFFLINE_TEXT_MSG_SUCCESS.equals(result2.getCode())) {
+                                    // 发送成功弹窗 显示服务器返回的信息
+                                    Alert alert = new Alert(Alert.AlertType.INFORMATION, result2.getMsg());
+                                    alert.showAndWait();
+                                } else {
+                                    // 发送失败 弹出错误窗口
+                                    Alert alert = new Alert(Alert.AlertType.ERROR, result2.getMsg());
+                                    alert.show();
+                                    // 失败的话得重新输入
+                                }
+                            } catch (Exception e) {
+                                log.error(e.toString());
+                            }
+                        });
+
+                    } catch (Exception e) {
+                        Alert alert = new Alert(Alert.AlertType.ERROR, "未知错误");
+                        alert.show();
+                        log.error(e.toString());
+                    }
+                    return null;
                 }
-            } else {
-                Alert alert = new Alert(Alert.AlertType.ERROR, "发送的消息不能为空！");
-                alert.show();
-            }
-        });
+            };
+            ProgressStageUtil.of(primaryStage, poolExecutor, task, "发送中");
+        } else {
+            Alert alert = new Alert(Alert.AlertType.ERROR, "发送的消息不能为空！");
+            alert.show();
+        }
+
+
     }
 
     public void choiceFileEvent(ActionEvent actionEvent) {
+        fileChooser.setTitle("请选择你想要的文件");
+
+        fileChooser.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter("All File","*.*")
+        );
+
         File aimFile = fileChooser.showOpenDialog(primaryStage);
 
         // 获取文件图标
