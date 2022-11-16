@@ -1,6 +1,5 @@
 package com.client.service;
 
-import com.client.pojo.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,10 +19,9 @@ public class FileMsgService {
     private int socketPort;
 
     /**
-     * @param result 发送给服务端的信息
      * @return 返回result对象
      */
-    public Socket sendOfflineFileMsg(Result result) {
+    public Socket sendOfflineFileMsg() {
         try {
             return new Socket(socketIP, socketPort);
         } catch (Exception e) {
