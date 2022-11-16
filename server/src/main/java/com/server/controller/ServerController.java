@@ -14,6 +14,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -27,6 +28,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 
 @FXMLController
 @EnableScheduling
+@Slf4j
 public class ServerController {
     // 自动注入线程池
     @Autowired
@@ -74,14 +76,16 @@ public class ServerController {
             while (!Thread.currentThread().isInterrupted()) {
                 Socket socket = serverSocket.accept();
                 pool.execute(() -> {
-                    // 流的封装
-                    OutputStream os;//字节输出流抽象类
+                    // 打印流 主要打印json字符串
+                    PrintStream printStream = null;
+
                     try {
-                        os = socket.getOutputStream();
-                        PrintStream ps = new PrintStream(os);
-                        InputStream is = socket.getInputStream();//面向字节的输入流抽象类
-                        Reader reader = new InputStreamReader(is);//创建面向字节的字符流
-                        BufferedReader bfr = new BufferedReader(reader);//从字符流中读取文本，缓存
+                        OutputStream outputStream = socket.getOutputStream();
+                        InputStream inputStream = socket.getInputStream();
+
+                        // 包装的一些字符流 用来读文本数据
+                        printStream = new PrintStream(outputStream);
+                        BufferedReader bfr = new BufferedReader(new InputStreamReader(inputStream));
 
                         JSONObject jsonObject = JSON.parseObject(bfr.readLine());
                         System.out.println(jsonObject);
@@ -89,42 +93,49 @@ public class ServerController {
                         // 数据传给服务层
                         Integer code = Integer.valueOf(jsonObject.get("code").toString());
 
-
                         if (Code.USER_REGISTER.equals(code)) {
+                            // 注册操作
                             User user = JSON.parseObject(jsonObject.get("object").toString(), User.class);
                             Result register = register(user);
-                            ps.println(JSON.toJSONString(register));
-                        }
-                        if (Code.USER_LOGIN.equals(code)) {
+                            printStream.println(JSON.toJSONString(register));
+                        } else if (Code.USER_LOGIN.equals(code)) {
+                            // 登录操作
                             User user = JSON.parseObject(jsonObject.get("object").toString(), User.class);
+                            // 对地址进行切割分成ip和端口
                             String s = socket.getRemoteSocketAddress().toString();
                             String[] s1 = s.split(":");
                             String ip = s1[0].substring(1);
                             Integer port = Integer.valueOf(s1[1]);
 
-
                             Result login = login(user, ip, port);
-                            ps.println(JSON.toJSONString(login));
-                        }
-                        if (Code.GET_ALL_USERS.equals(code)) {
+                            printStream.println(JSON.toJSONString(login));
+                        } else if (Code.GET_ALL_USERS.equals(code)) {
+                            // 获取所有用户信息操作
                             Result allUser = getAllUser();
-                            ps.println(JSON.toJSONString(allUser));
+                            printStream.println(JSON.toJSONString(allUser));
                         } else if (Code.OFF_LINE.equals(code)) {
+                            // 下线操作
                             User user = JSON.parseObject(jsonObject.get("object").toString(), User.class);
                             offLine(user);
-                            ps.println("");
+                            printStream.println("");
                         } else if (Code.SEND_OFFLINE_TEXT_MSG.equals(code)) {
+                            // 发送文本信息操作
                             TextMsg textMsg = JSON.parseObject(jsonObject.get("object").toString(), TextMsg.class);
                             Result result = sendOffLineTextMsg(textMsg);
-                            ps.println(JSON.toJSONString(result));
+                            printStream.println(JSON.toJSONString(result));
                         } else {
+                            // 没有找到匹配的操作码操作
                             Result result = new Result();
                             result.setMsg("未知错误");
-                            ps.println(JSON.toJSONString(result));
+                            printStream.println(JSON.toJSONString(result));
                         }
 
                     } catch (IOException e) {
-                        throw new RuntimeException(e);
+                        // 错误操作
+                        Result result = new Result();
+                        result.setMsg("未知错误");
+                        printStream.println(JSON.toJSONString(result));
+                        log.error(e.toString());
                     }
                 });
             }
