@@ -27,8 +27,9 @@ public class GetResultUtil {
             InputStream is = socket.getInputStream();
             Reader reader = new InputStreamReader(is);
             BufferedReader bfr = new BufferedReader(reader);
-            // 登陆信息
+
             String json = JSON.toJSONString(result, SerializerFeature.WriteMapNullValue);
+
             System.out.println(json);
             ps.println(json);
             ps.flush();
@@ -46,4 +47,5 @@ public class GetResultUtil {
             return result3;
         }
     }
+
 }

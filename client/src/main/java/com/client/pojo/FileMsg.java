@@ -10,4 +10,5 @@ public class FileMsg {
     private String fileAddress;
     private Integer senderId;
     private Integer receiveId;
+    private Long pos;
 }

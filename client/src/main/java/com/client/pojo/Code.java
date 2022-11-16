@@ -35,20 +35,25 @@ public class Code {
 
 
     //发送文件信息
-    public static final Integer SEND_FILE_MSG=5001;
+    public static final Integer SEND_FILE_MSG = 5001;
+    // 同意发送在线文件
+    public static final Integer ALLOW_SEND_FILE_MSG = 5002;
+    // 拒绝发送在线文件
+    public static final Integer NOT_ALLOW_SEND_FILE_MSG = 5003;
     //发送在线文件信息成功
-    public static final Integer SEND_FILE_MSG_SUCCESS=5002;
+    public static final Integer SEND_FILE_MSG_SUCCESS = 5004;
     //发送在线文件信息失败
-    public static final Integer SEND_FILE_MSG_FAIL=5003;
+    public static final Integer SEND_FILE_MSG_FAIL = 5005;
 
 
     //发送离线文件信息
-    public static final Integer SEND_OFFLINE_FILE_MSG=6001;
-    //发送离线文件信息成功
-    public static final Integer SEND_OFFLINE_FILE_MSG_SUCCESS=6002;
-    //发送离线文件信息失败
-    public static final Integer SEND_OFFLINE_FILE_MSG_FAIL=6003;
-
+    public static final Integer SEND_OFFLINE_FILE_MSG = 6001;
+    // 发送完成离线文件
+    public static final Integer SEND_COMPLETED_OFFLINE_FILE_MSG = 6002;
+    // 发送离线文件信息成功
+    public static final Integer SEND_OFFLINE_FILE_MSG_SUCCESS = 6003;
+    // 发送离线文件信息失败
+    public static final Integer SEND_OFFLINE_FILE_MSG_FAIL = 6004;
 
 
     // 获取所有用户信息
