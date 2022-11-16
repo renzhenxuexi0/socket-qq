@@ -41,7 +41,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 
 @FXMLController
 @Slf4j
-public class ChatInterface implements Initializable {
+public class ChatInterfaceController implements Initializable {
 
     @FXML
     public TextArea inputArea;
@@ -162,7 +162,7 @@ public class ChatInterface implements Initializable {
         fileChooser.setTitle("请选择你想要的文件");
 
         fileChooser.getExtensionFilters().add(
-                new FileChooser.ExtensionFilter("All File","*.*")
+                new FileChooser.ExtensionFilter("All File", "*.*")
         );
 
         File aimFile = fileChooser.showOpenDialog(primaryStage);

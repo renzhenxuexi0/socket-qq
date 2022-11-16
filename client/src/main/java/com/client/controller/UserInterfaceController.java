@@ -47,7 +47,7 @@ public class UserInterfaceController implements Initializable, ApplicationContex
     public JFXTextField findUserTextField;
 
     @Autowired
-    private ChatInterface chatInterface;
+    private ChatInterfaceController chatInterface;
 
     private ApplicationContext applicationContext;
 
