@@ -206,6 +206,7 @@ public class ChatInterfaceController implements Initializable {
                         // 发送 开始发送
                         Result resultStart = new Result();
                         resultStart.setCode(Code.SEND_OFFLINE_FILE_MSG);
+                        resultStart.setObject(aimFile.getName());
                         socketPrintStream.println(JSON.toJSONString(resultStart));
 
 
