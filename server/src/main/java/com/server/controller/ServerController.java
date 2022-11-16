@@ -113,7 +113,8 @@ public class ServerController {
                             ps.println(JSON.toJSONString(result));
                         } else if (Code.SEND_OFFLINE_FILE_MSG.equals(code)) {
                             FileMsg fileMsg = JSON.parseObject(jsonObject.get("object").toString(), FileMsg.class);
-                            Result result = sendOffLineFileMsg(fileMsg);
+                            String filename= (String) jsonObject.get("object");
+                            Result result = sendOffLineFileMsg(fileMsg,socket,filename);
                             ps.println(JSON.toJSONString(result));
                         } else {
                             Result result = new Result();
@@ -216,8 +217,30 @@ public class ServerController {
         return result;
     }
 
-    Result sendOffLineFileMsg(FileMsg fileMsg) {
+    Result sendOffLineFileMsg(FileMsg fileMsg, Socket socket, String fileName) {
+        try {
 
+            OutputStream os = socket.getOutputStream();
+            InputStream is = socket.getInputStream();
+
+            PrintStream socketPrintStream = new PrintStream(os);
+            BufferedReader socketReader = new BufferedReader(new InputStreamReader(is));
+
+            BufferedInputStream bufferedInputStream = new BufferedInputStream(is);
+
+            File file = new File(System.getProperty("user.home") + "\\.socket\\" + aimFile.getName());
+            if(file.exists()){
+                file.createNewFile();
+            }
+            int read;
+            byte[] bytes=new byte[1024*10];
+            while ((read= is.read(bytes))!=-1){
+
+            }
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
         Result result = new Result();
         boolean b = fileMsgService.CacheFileMsg(fileMsg);
