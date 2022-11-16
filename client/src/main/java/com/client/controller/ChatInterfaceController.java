@@ -15,10 +15,7 @@ import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.*;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
@@ -42,7 +39,8 @@ import java.util.concurrent.ThreadPoolExecutor;
 @FXMLController
 @Slf4j
 public class ChatInterfaceController implements Initializable {
-
+    @FXML
+    private ListView<User> msgListView;
     @FXML
     public TextArea inputArea;
     @FXML
