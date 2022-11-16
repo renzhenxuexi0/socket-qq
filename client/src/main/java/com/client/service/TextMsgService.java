@@ -19,7 +19,7 @@ public class TextMsgService {
      * @param result
      * @return
      */
-    public Result sendMsgByServer(Result result) {
+    public Result sendTextMsgByServer(Result result) {
         return GetResultUtil.getResult(result, socketIP, socketPort);
     }
 }

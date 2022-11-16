@@ -109,7 +109,7 @@ public class ChatInterface implements Initializable {
                     Result result2 = poolExecutor.submit(() -> {
                         Result result3 = null;
                         try {
-                            result3 = textMsgService.sendMsgByServer(result);
+                            result3 = textMsgService.sendTextMsgByServer(result);
                             UserMemory.users = JSON.parseArray(result3.getObject().toString(), User.class);
                         } catch (Exception e) {
                             log.error(e.toString());
@@ -171,7 +171,7 @@ public class ChatInterface implements Initializable {
                     fileMsg.setReceiveId(receiveId);
                     Result result3 = null;
                     try {
-                        result3 = textMsgService.sendMsgByServer(result);
+                        result3 = textMsgService.sendTextMsgByServer(result);
                         UserMemory.users = JSON.parseArray(result3.getObject().toString(), User.class);
                     } catch (Exception e) {
                         log.error(e.toString());
