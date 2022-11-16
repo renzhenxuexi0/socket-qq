@@ -18,6 +18,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -44,6 +45,8 @@ public class ChatInterface implements Initializable {
     @FXML
     public Label userName;
     public Stage primaryStage;
+    @FXML
+    public AnchorPane headPane;
 
     @FXML
     private JFXButton fileChoiceButton;
@@ -67,6 +70,8 @@ public class ChatInterface implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        System.out.println(primaryStage);
+
         minWindow.setOnAction(event -> primaryStage.setIconified(true)); /* 最小化 */
         closeWindow.setOnAction(event -> {
             primaryStage.close();
@@ -76,6 +81,7 @@ public class ChatInterface implements Initializable {
         fontIcon.setIconColor(Color.valueOf("#868A98FF"));
         fontIcon.setIconSize(18);
         fileChoiceButton.setGraphic(fontIcon);
+
         fileChooser = new FileChooser();
     }
 

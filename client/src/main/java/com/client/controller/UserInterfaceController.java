@@ -87,6 +87,7 @@ public class UserInterfaceController implements Initializable, ApplicationContex
                         chatInterface.primaryStage = ShowNewViewUtil.showView(view, primaryStage);
                         UserMemory.talkUser = userListView.getSelectionModel().getSelectedItem();
                         chatInterface.userName.setText(userListView.getSelectionModel().getSelectedItem().getUsername());
+                        DragUtil.addDragListener(chatInterface.primaryStage, chatInterface.headPane);
                         chatInterface.primaryStage.show();
                     }
                 };

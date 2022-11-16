@@ -24,6 +24,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.ThreadPoolExecutor;
 
 @FXMLController
@@ -134,7 +135,7 @@ public class ServerController {
                         // 错误操作
                         Result result = new Result();
                         result.setMsg("未知错误");
-                        printStream.println(JSON.toJSONString(result));
+                        Objects.requireNonNull(printStream).println(JSON.toJSONString(result));
                         log.error(e.toString());
                     }
                 });
@@ -191,7 +192,7 @@ public class ServerController {
             contentInput.appendText(user2.getUsername() + "登录成功\n");
         } else {
             result.setCode(Code.LOGIN_FAIL);
-            result.setMsg("登录失败");
+            result.setMsg("账号或密码错误！");
             contentInput.appendText(user.getAccount() + "登录失败\n");
         }
         return result;

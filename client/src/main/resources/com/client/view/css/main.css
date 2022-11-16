@@ -43,11 +43,18 @@
 #userListView {
     -fx-background-color: #ffffff;
     -fx-border-width: 0;
+    -fx-hbar-policy: nerver;
+
 }
 
 
 #userListView .list-cell:selected {
-    -fx-background-color: #6ae4ff;
+    -fx-background-color: #c9c9c9;
+    -fx-text-fill: black;
+}
+
+#userListView .list-cell:hover {
+    -fx-background-color: #f1f1f1;
 }
 
 #userListView .list-view {
@@ -55,10 +62,9 @@
 }
 
 #userListView {
-    -fx-background-color: white;
     -fx-hbar-policy: nerver;
 }
 
-#userName {
-    -fx-font-style: white;
+#fileChoiceButton:hover {
+    -fx-background-color: #f1f1f1;
 }
