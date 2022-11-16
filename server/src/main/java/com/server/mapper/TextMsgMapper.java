@@ -13,4 +13,3 @@ public interface TextMsgMapper {
 
     List<TextMsg> selectByReceiveId(@Param("receiveId") Integer receiveId);
 }
-
