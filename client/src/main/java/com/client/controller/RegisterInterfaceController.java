@@ -2,12 +2,12 @@ package com.client.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.client.ClientApp;
+import com.client.config.ProgressStageConfig;
 import com.client.pojo.Code;
 import com.client.pojo.Result;
 import com.client.pojo.User;
 import com.client.service.UserService;
 import com.client.utils.DragUtil;
-import com.client.utils.ProgressStageUtil;
 import com.client.utils.UserMemory;
 import com.client.view.LoginView;
 import com.jfoenix.controls.JFXButton;
@@ -50,6 +50,9 @@ public class RegisterInterfaceController implements Initializable {
     private ImageView rgLogo;
     @Autowired
     private UserService userService;
+    @Autowired
+    private ProgressStageConfig progressStageConfig;
+
     @FXML
     private JFXTextField accountInput;
     private Stage primaryStage;
@@ -135,7 +138,10 @@ public class RegisterInterfaceController implements Initializable {
                     return null;
                 }
             };
-            ProgressStageUtil.of(primaryStage, poolExecutor, task, "注册中").show();
+            progressStageConfig.setParent(primaryStage);
+            progressStageConfig.setText("注册中");
+            progressStageConfig.setWork(task);
+            progressStageConfig.show();
         } else if ("".equals(account)) {
             accountInput.validate();
         } else if ("".equals(password)) {

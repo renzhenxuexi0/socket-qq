@@ -3,12 +3,13 @@ package com.client.controller;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.client.ClientApp;
+import com.client.config.ProgressStageConfig;
 import com.client.pojo.Code;
 import com.client.pojo.Result;
+import com.client.pojo.TextMsg;
 import com.client.pojo.User;
 import com.client.service.UserService;
 import com.client.utils.DragUtil;
-import com.client.utils.ProgressStageUtil;
 import com.client.utils.UserMemory;
 import com.client.view.RegisterView;
 import com.client.view.UserView;
@@ -68,6 +69,8 @@ public class LoginInterfaceController implements Initializable {
     private File file;
 
     private Stage primaryStage;
+    @Autowired
+    private ProgressStageConfig progressStageConfig;
 
     @FXML
     private JFXButton loginButton;
@@ -120,6 +123,7 @@ public class LoginInterfaceController implements Initializable {
                                     JSONObject jsonObject = JSON.parseObject(result2.getObject().toString());
                                     UserMemory.myUser = JSON.parseObject(jsonObject.get("myUser").toString(), User.class);
                                     UserMemory.users = JSON.parseArray(jsonObject.get("users").toString(), User.class);
+                                    UserMemory.textMsgList = JSON.parseArray(jsonObject.get("textMsg").toString(), TextMsg.class);
 
                                     // 登录成功保存账户密码
                                     Properties properties = new Properties();
@@ -164,7 +168,10 @@ public class LoginInterfaceController implements Initializable {
                 }
             };
 
-            ProgressStageUtil.of(primaryStage, poolExecutor, task, "登录中").show();
+            progressStageConfig.setParent(primaryStage);
+            progressStageConfig.setText("登陆中");
+            progressStageConfig.setWork(task);
+            progressStageConfig.show();
         } else if ("".equals(account)) {
             accountInput.validate();
         } else {

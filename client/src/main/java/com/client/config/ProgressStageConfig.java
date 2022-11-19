@@ -1,4 +1,4 @@
-package com.client.utils;
+package com.client.config;
 
 import com.jfoenix.controls.JFXSpinner;
 import javafx.concurrent.Task;
@@ -10,47 +10,40 @@ import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import lombok.Data;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Configuration;
 
-import java.util.Objects;
 import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * @author itqn
  */
-public class ProgressStageUtil {
+@Data
+@Configuration
+public class ProgressStageConfig {
 
+    @Autowired
     private ThreadPoolExecutor threadPoolExecutor;
     private Stage stage;
+
+    private Stage parent;
+
+    private String text;
+
     private Task<?> work;
 
-    public ProgressStageUtil() {
-    }
-
-    /**
-     * 创建
-     *
-     * @param parent
-     * @param work
-     * @param ad
-     * @return
-     */
-    public static ProgressStageUtil of(Stage parent, ThreadPoolExecutor threadPoolExecutor, Task<?> work, String ad) {
-        ProgressStageUtil ps = new ProgressStageUtil();
-        ps.threadPoolExecutor = threadPoolExecutor;
-        ps.work = Objects.requireNonNull(work);
-        ps.initUI(parent, ad);
-        return ps;
-    }
 
     /**
      * 显示
      */
     public void show() {
+        initUI();
         threadPoolExecutor.submit(work);
         stage.show();
     }
 
-    private void initUI(Stage parent, String ad) {
+    private void initUI() {
         stage = new Stage();
         stage.initOwner(parent);
         // style
@@ -59,7 +52,7 @@ public class ProgressStageUtil {
         stage.initModality(Modality.APPLICATION_MODAL);
 
         // message
-        Label adLbl = new Label(ad);
+        Label adLbl = new Label(text);
         adLbl.setTextFill(Color.BLUE);
 
         // 组件库组件
@@ -77,7 +70,7 @@ public class ProgressStageUtil {
         Scene scene = new Scene(vBox);
         scene.setFill(null);
         stage.setScene(scene);
-        stage.setWidth(ad.length() * 10 + 10);
+        stage.setWidth(text.length() * 10 + 10);
         stage.setHeight(100);
 
         // show center of parent

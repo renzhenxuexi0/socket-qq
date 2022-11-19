@@ -35,6 +35,7 @@ public class ServerController {
     @Autowired
     private TextMsgService textMsgService;
 
+    @Autowired
     private FileMsgService fileMsgService;
 
     @FXML
@@ -87,16 +88,16 @@ public class ServerController {
                         System.out.println(jsonObject);
 
                         // 数据传给服务层
-                        Integer code = Integer.valueOf(jsonObject.get("code").toString());
+                        Integer code = Integer.valueOf(jsonObject.getString("code"));
 
 
                         if (Code.USER_REGISTER.equals(code)) {
-                            User user = JSON.parseObject(jsonObject.get("object").toString(), User.class);
+                            User user = JSON.parseObject(jsonObject.getString("object"), User.class);
                             Result register = register(user);
                             ps.println(JSON.toJSONString(register));
                         }
                         if (Code.USER_LOGIN.equals(code)) {
-                            User user = JSON.parseObject(jsonObject.get("object").toString(), User.class);
+                            User user = JSON.parseObject(jsonObject.getString("object").toString(), User.class);
                             Result login = login(user);
                             ps.println(JSON.toJSONString(login));
                         }
@@ -104,18 +105,16 @@ public class ServerController {
                             Result allUser = getAllUser();
                             ps.println(JSON.toJSONString(allUser));
                         } else if (Code.OFF_LINE.equals(code)) {
-                            User user = JSON.parseObject(jsonObject.get("object").toString(), User.class);
+                            User user = JSON.parseObject(jsonObject.getString("object"), User.class);
                             offLine(user);
                             ps.println("");
                         } else if (Code.SEND_OFFLINE_TEXT_MSG.equals(code)) {
-                            TextMsg textMsg = JSON.parseObject(jsonObject.get("object").toString(), TextMsg.class);
+                            TextMsg textMsg = JSON.parseObject(jsonObject.getString("object"), TextMsg.class);
                             Result result = sendOffLineTextMsg(textMsg);
                             ps.println(JSON.toJSONString(result));
                         } else if (Code.SEND_OFFLINE_FILE_MSG.equals(code)) {
-                            FileMsg fileMsg = JSON.parseObject(jsonObject.get("object").toString(), FileMsg.class);
-                            String filename= (String) jsonObject.get("object");
-                            Result result = sendOffLineFileMsg(fileMsg,socket,filename);
-                            ps.println(JSON.toJSONString(result));
+                            FileMsg fileMsg = JSON.parseObject(jsonObject.getString("object"), FileMsg.class);
+                            sendOffLineFileMsg(fileMsg, is);
                         } else {
                             Result result = new Result();
                             result.setMsg("未知错误");
@@ -164,11 +163,13 @@ public class ServerController {
             //返回数据给客户端
             result.setCode(Code.LOGIN_SUCCESS);
             result.setMsg("登录成功");
+
             // 查找关于自己的离线信息
             List<TextMsg> aboutReceiveTextMsg = textMsgService.findAboutReceiveTextMsg(user2.getId());
-            List<FileMsg> aboutReceiveFileMsg = fileMsgService.findAboutReceiveFileMsg(user2.getId());
+//            List<FileMsg> aboutReceiveFileMsg = fileMsgService.findAboutReceiveFileMsg(user2.getId());
+
             HashMap<String, Object> allContent = new HashMap<>();
-            allContent.put("msg", aboutReceiveTextMsg);
+            allContent.put("textMsg", aboutReceiveTextMsg);
             allContent.put("users", UserMemory.users);
             allContent.put("myUser", user2);
 
@@ -217,40 +218,38 @@ public class ServerController {
         return result;
     }
 
-    Result sendOffLineFileMsg(FileMsg fileMsg, Socket socket, String fileName) {
-        try {
-
-            OutputStream os = socket.getOutputStream();
-            InputStream is = socket.getInputStream();
-
-            PrintStream socketPrintStream = new PrintStream(os);
-            BufferedReader socketReader = new BufferedReader(new InputStreamReader(is));
-
-            BufferedInputStream bufferedInputStream = new BufferedInputStream(is);
-
-            File file = new File(System.getProperty("user.home") + "\\.socket\\" + fileName);
-            if(file.exists()){
+    void sendOffLineFileMsg(FileMsg fileMsg, InputStream inputStream) {
+        String[] split = fileMsg.getFileName().split("\\.");
+        String nameSuffix = split[split.length - 1];
+        File file = new File(System.getProperty("user.home") + "\\.serverSocketFiles\\" + System.currentTimeMillis() + "." + nameSuffix);
+        fileMsg.setFileAddress(System.getProperty("user.home") + "\\.serverSocketFiles\\" + System.currentTimeMillis() + "." + nameSuffix);
+        if (!file.exists()) {
+            File parentFile = file.getParentFile();
+            try {
+                if (!parentFile.exists()) {
+                    parentFile.mkdirs();
+                }
                 file.createNewFile();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
-            RandomAccessFile randomAccessAimFile = new RandomAccessFile(file, "w"));
-
+        }
+        try (RandomAccessFile rw = new RandomAccessFile(file, "rw")) {
+            rw.seek(fileMsg.getStartPoint());
+            DataInputStream dataInputStream = new DataInputStream(inputStream);
+            byte[] bytes = new byte[1024 * 10];
+            int len = 0;
+            long accumulationSize = 0L;
+            while ((len = dataInputStream.read(bytes)) != -1) {
+                System.out.println(len);
+                rw.write(bytes, 0, len);
+                accumulationSize += len;
+            }
+            System.out.println("文件传输结束");
+            fileMsg.setEndPoint(accumulationSize);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
-        Result result = new Result();
-        boolean b = fileMsgService.CacheFileMsg(fileMsg);
-        if (b) {
-            result.setCode(Code.SEND_OFFLINE_FILE_MSG_SUCCESS);
-            contentInput.appendText(fileMsg.getSenderId() + "该用户缓存文件信息成功\n");
-        } else {
-            result.setCode(Code.SEND_OFFLINE_TEXT_MSG_FAIL);
-            contentInput.appendText(fileMsg.getSenderId() + "该用户缓存信息失败\n");
-        }
-        return result;
-
-
+        fileMsgService.CacheFileMsg(fileMsg);
     }
-
-
 }

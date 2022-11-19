@@ -68,3 +68,7 @@
 #fileChoiceButton:hover {
     -fx-background-color: #f1f1f1;
 }
+
+#msgListView .list-cell:selected {
+    -fx-background-color: white;
+}

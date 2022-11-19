@@ -7,18 +7,18 @@
 <?import javafx.scene.layout.VBox?>
 
 <AnchorPane fx:id="mainPane" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.client.controller.MsgCell">
-   <children>
-      <VBox layoutY="-2.0">
-         <children>
-            <HBox spacing="10.0">
-               <children>
-                  <ImageView fx:id="senderImage" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true" />
-                  <Label fx:id="userName" text="ID" />
-                  <Label fx:id="sendTime" text="time" />
-               </children>
-            </HBox>
-            <Label fx:id="sendText" text="Label" />
-         </children>
-      </VBox>
-   </children>
+    <children>
+        <VBox layoutY="-2.0">
+            <children>
+                <HBox spacing="10.0">
+                    <children>
+                        <ImageView fx:id="senderImage" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true" />
+                        <Label fx:id="userName" text="ID" textFill="#141414" />
+                        <Label fx:id="sendTime" text="time" textFill="#1b1b1b" />
+                    </children>
+                </HBox>
+                <Label fx:id="sendContent" textFill="#111111" />
+            </children>
+        </VBox>
+    </children>
 </AnchorPane>
