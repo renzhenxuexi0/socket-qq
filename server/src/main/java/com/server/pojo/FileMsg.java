@@ -13,4 +13,5 @@ public class FileMsg {
     private Integer receiveId;
     private Long startPoint;
     private Long endPoint;
+    private Integer sign;
 }

@@ -1,14 +1,13 @@
 package com.client.controller;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.client.config.ProgressStageConfig;
 import com.client.pojo.*;
 import com.client.service.FileMsgService;
 import com.client.service.TextMsgService;
 import com.client.service.UserService;
-import com.client.utils.GetFileIcon;
 import com.client.utils.MsgMemory;
+import com.client.utils.SendFile;
 import com.client.utils.UserMemory;
 import com.jfoenix.controls.JFXButton;
 import de.felixroske.jfxsupport.FXMLController;
@@ -19,7 +18,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
-import javafx.scene.image.WritableImage;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
@@ -30,8 +28,8 @@ import org.kordamp.ikonli.fontawesome.FontAwesome;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.io.*;
-import java.net.Socket;
+import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -70,7 +68,9 @@ public class ChatInterfaceController implements Initializable {
     @Autowired
     private UserService userService;
 
-    private File msgFile;
+    private File testMsgLog;
+
+    private File fileMsgLog;
 
     @FXML
     private Button minWindow;
@@ -83,10 +83,20 @@ public class ChatInterfaceController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        msgFile = new File(System.getProperty("user.home") + "\\.socket\\msg.txt");
-        if (!msgFile.exists()) {
+        testMsgLog = new File(System.getProperty("user.home") + "\\.socket\\testMsgLog.txt");
+        fileMsgLog = new File(System.getProperty("user.home") + "\\.socket\\fileMsgLog.txt");
+
+        if (!testMsgLog.exists()) {
             try {
-                msgFile.createNewFile();
+                testMsgLog.createNewFile();
+            } catch (IOException e) {
+                log.error(e.toString());
+            }
+        }
+
+        if (!fileMsgLog.exists()) {
+            try {
+                fileMsgLog.createNewFile();
             } catch (IOException e) {
                 log.error(e.toString());
             }
@@ -123,7 +133,7 @@ public class ChatInterfaceController implements Initializable {
                         textMsg.setReceiveId(UserMemory.talkUser.getId());
                         textMsg.setContent(text);
 
-                        FileUtils.writeStringToFile(msgFile, JSON.toJSONString(textMsg) + "\n", "UTF-8", true);
+                        FileUtils.writeStringToFile(testMsgLog, JSON.toJSONString(textMsg) + "\n", "UTF-8", true);
                         result.setObject(textMsg);
 
                         if (1 == (UserMemory.talkUser.getLogin())) {
@@ -147,6 +157,7 @@ public class ChatInterfaceController implements Initializable {
                         Platform.runLater(() -> {
                             try {
                                 if (Code.SEND_OFFLINE_TEXT_MSG_SUCCESS.equals(result2.getCode())) {
+                                    inputArea.setText("");
                                     SendMsg sendMsg = new SendMsg();
                                     sendMsg.setMsg(textMsg);
                                     sendMsg.setType(0);
@@ -194,138 +205,7 @@ public class ChatInterfaceController implements Initializable {
         );
 
         File aimFile = fileChooser.showOpenDialog(primaryStage);
-        if (aimFile.isFile()) {
-            SendMsg sendMsg = new SendMsg();
-            sendMsg.setType(1);
 
-            FileMsgVBox fileMsgVBox = new FileMsgVBox();
-            sendMsg.setVBox(fileMsgVBox.fileMsgVBox(true, aimFile.getName()));
-            // 获取文件图标
-            WritableImage fileIcon = GetFileIcon.getFileIcon(aimFile);
-            fileMsgVBox.setFileImage(fileIcon);
-
-            Date date = new Date();//获得当前时间
-            String msgTime = simpleDateFormat.format(date);//将当前时间转换成特定格式的时间字符串，这样便可以插入到数据库中
-
-            FileMsg fileMsg = new FileMsg();
-            fileMsg.setMessageTime(msgTime);
-            fileMsg.setSenderId(UserMemory.myUser.getId());
-            fileMsg.setReceiveId(UserMemory.talkUser.getId());
-            fileMsg.setFileName(aimFile.getName());
-
-            sendMsg.setMsg(fileMsg);
-
-            fileMsgVBox.setHyperlink1OnAction(event -> poolExecutor.execute(() -> {
-                try {
-                    Socket socket = poolExecutor.submit(() -> {
-                        Socket socket2 = null;
-                        try {
-                            socket2 = fileMsgService.sendOfflineFileMsg();
-                        } catch (Exception e) {
-                            log.error(e.toString());
-                        }
-                        return socket2;
-                    }).get();
-
-                    poolExecutor.execute(() -> {
-                        long length = 0;
-                        PrintStream socketPrintStream = null;
-                        DataOutputStream socketOutputStream = null;
-                        File logFile = null;
-                        try {
-                            // 文件总大小
-                            length = aimFile.length();
-
-                            // 一些流的封装
-                            OutputStream os = socket.getOutputStream();
-                            InputStream is = socket.getInputStream();
-
-                            // 读写文本消息的流
-                            socketPrintStream = new PrintStream(os);
-                            BufferedReader socketReader = new BufferedReader(new InputStreamReader(is));
-
-                            // 发送文件流，字节缓冲流即可
-                            socketOutputStream = new DataOutputStream(socket.getOutputStream());
-
-
-                            logFile = new File(System.getProperty("user.home") + "\\.socket\\" + aimFile.getName().split("\\.")[0] + ".log");
-                            if (!logFile.exists()) {
-                                logFile.createNewFile();
-                            }
-                            try (
-                                    // 操作日志文件
-                                    BufferedReader logFileReader = new BufferedReader(new FileReader(logFile));
-                                    PrintWriter logFileWriter = new PrintWriter(logFile);
-                                    // 读目标文件
-                                    RandomAccessFile randomAccessAimFile = new RandomAccessFile(aimFile, "r")) {
-                                // 文件操作的流(单线程模式传文件)
-                                // 1.创建或读取日志文件记录发送点位
-
-                                // 读取上次传送的位置
-                                String s = logFileReader.readLine();
-                                long pos;
-                                if (s != null) {
-                                    pos = Long.parseLong(s);
-                                } else {
-                                    pos = 0L;
-                                }
-                                // 发送 开始发送
-                                Result resultStart = new Result();
-                                resultStart.setCode(Code.SEND_OFFLINE_FILE_MSG);
-                                fileMsg.setStartPoint(pos);
-                                resultStart.setObject(fileMsg);
-                                socketPrintStream.println(JSON.toJSONString(resultStart, SerializerFeature.WriteMapNullValue));
-
-                                // 设置读取的起始位置
-                                randomAccessAimFile.seek(pos);
-                                // 开始传输文件
-                                byte[] bytes = new byte[1024 * 10];
-                                int len = 0;
-                                long accumulationSize = 0L;
-                                while ((len = randomAccessAimFile.read(bytes)) != -1) {
-                                    socketOutputStream.write(bytes, 0, len);
-                                    accumulationSize += len;
-                                    logFileWriter.println(accumulationSize);
-
-                                    long finalAccumulationSize = accumulationSize;
-                                    long finalLength = length;
-                                    Platform.runLater(() -> fileMsgVBox.setProgressBarProgress((double) finalAccumulationSize / (double) finalLength));
-                                    // 暂停 停止传输
-                                }
-                                System.out.println("结束传输");
-                                socket.close();
-                            } catch (Exception e) {
-                                log.error(e.toString());
-                                e.printStackTrace();
-                            }
-                        } catch (IOException e) {
-                            log.error(e.toString());
-                        }
-
-                    });
-
-                    Platform.runLater(() -> {
-                        try {
-                            // 发送成功弹窗 显示服务器返回的信息
-                            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                            alert.showAndWait();
-                        } catch (Exception e) {
-                            log.error(e.toString());
-                        }
-                    });
-                } catch (Exception e) {
-                    Alert alert = new Alert(Alert.AlertType.ERROR, "未知错误");
-                    alert.show();
-                    log.error(e.toString());
-                    e.printStackTrace();
-                }
-            }));
-            MsgMemory.sendMsgList.add(sendMsg);
-            MsgMemory.sendMsgListSort(simpleDateFormat);
-            msgListView.setItems(FXCollections.observableArrayList(MsgMemory.sendMsgList));
-        } else {
-            Alert alert = new Alert(Alert.AlertType.ERROR, "非文件！");
-            alert.show();
-        }
+        poolExecutor.execute(() -> SendFile.sendFileMsg(aimFile, simpleDateFormat, poolExecutor, fileMsgService, fileMsgLog, msgListView));
     }
 }

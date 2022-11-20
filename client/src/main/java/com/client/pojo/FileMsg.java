@@ -15,4 +15,5 @@ public class FileMsg extends Msg {
     private Integer receiveId;
     private Long startPoint;
     private Long endPoint;
+    private Integer sign;
 }

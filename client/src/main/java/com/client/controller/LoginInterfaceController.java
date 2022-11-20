@@ -4,10 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.client.ClientApp;
 import com.client.config.ProgressStageConfig;
-import com.client.pojo.Code;
-import com.client.pojo.Result;
-import com.client.pojo.TextMsg;
-import com.client.pojo.User;
+import com.client.pojo.*;
 import com.client.service.UserService;
 import com.client.utils.DragUtil;
 import com.client.utils.UserMemory;
@@ -31,6 +28,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
 import org.kordamp.ikonli.fontawesome.FontAwesome;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,9 +39,7 @@ import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.net.URL;
 import java.nio.file.Files;
-import java.util.Arrays;
-import java.util.Properties;
-import java.util.ResourceBundle;
+import java.util.*;
 import java.util.concurrent.ThreadPoolExecutor;
 
 @FXMLController
@@ -122,8 +118,18 @@ public class LoginInterfaceController implements Initializable {
                                     // 解析数据
                                     JSONObject jsonObject = JSON.parseObject(result2.getObject().toString());
                                     UserMemory.myUser = JSON.parseObject(jsonObject.get("myUser").toString(), User.class);
-                                    UserMemory.users = JSON.parseArray(jsonObject.get("users").toString(), User.class);
+
+                                    List<User> allUser = JSON.parseArray(jsonObject.get("users").toString(), User.class);
+                                    List<User> allUser2 = new ArrayList<>();
+                                    allUser.forEach(user2 -> {
+                                        if (!user2.getId().equals(UserMemory.myUser.getId())) {
+                                            allUser2.add(user2);
+                                        }
+                                    });
+                                    UserMemory.users = allUser2;
+
                                     UserMemory.textMsgList = JSON.parseArray(jsonObject.get("textMsg").toString(), TextMsg.class);
+                                    UserMemory.fileMsgList = JSON.parseArray(jsonObject.get("fileMsg").toString(), FileMsg.class);
 
                                     // 登录成功保存账户密码
                                     Properties properties = new Properties();
@@ -194,6 +200,15 @@ public class LoginInterfaceController implements Initializable {
         RequiredFieldValidator accountValidator = new RequiredFieldValidator();
 
         file = new File(System.getProperty("user.home") + "\\.socket\\user.properties");
+
+        try {
+            File file1 = new File("System.getProperty(user.home)" + "\\.socket\\downloadFile");
+            if (!file1.exists()) {
+                FileUtils.forceMkdir(file1);
+            }
+        } catch (IOException e) {
+            log.error(e.toString());
+        }
 
         if (file.exists()) {
             try {

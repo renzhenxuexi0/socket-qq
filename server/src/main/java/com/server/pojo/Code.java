@@ -46,15 +46,10 @@ public class Code {
     public static final Integer SEND_FILE_MSG_FAIL = 5005;
 
 
-    //发送离线文件信息
+    // 开始发送离线文件
     public static final Integer SEND_OFFLINE_FILE_MSG = 6001;
-    // 发送完成离线文件
-    public static final Integer SEND_COMPLETED_OFFLINE_FILE_MSG = 6002;
-    // 发送离线文件信息成功
-    public static final Integer SEND_OFFLINE_FILE_MSG_SUCCESS = 6003;
-    // 发送离线文件信息失败
-    public static final Integer SEND_OFFLINE_FILE_MSG_FAIL = 6004;
-
+    // 接收离线文件
+    public static final Integer RECEIVE_OFFLINE_FILE_MSG = 6002;
 
     // 获取所有用户信息
     public static final Integer GET_ALL_USERS = 7001;

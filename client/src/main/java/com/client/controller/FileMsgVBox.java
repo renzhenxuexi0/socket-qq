@@ -1,5 +1,6 @@
 package com.client.controller;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
@@ -23,6 +24,7 @@ public class FileMsgVBox {
 
     private ImageView fileImage;
 
+    private Label describeLabel;
 
     public VBox fileMsgVBox(boolean isMe, String fileName) {
         VBox vBox = new VBox();
@@ -73,7 +75,9 @@ public class FileMsgVBox {
             hBox1.getChildren().addAll(fileImage, fileNameLabel);
         }
 
-        vBox.getChildren().addAll(hBox1, progressBar, hBox2);
+        describeLabel = new Label("");
+
+        vBox.getChildren().addAll(hBox1, progressBar, hBox2, describeLabel);
         return vBox;
     }
 
@@ -93,4 +97,11 @@ public class FileMsgVBox {
         fileImage.setImage(image);
     }
 
+    public void setProgressBarState(String info) {
+        Platform.runLater(() -> {
+            progressBar.setVisible(true);
+            describeLabel.setText(info);
+        });
+
+    }
 }

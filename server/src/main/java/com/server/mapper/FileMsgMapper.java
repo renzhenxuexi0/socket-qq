@@ -11,4 +11,6 @@ public interface FileMsgMapper {
     void addFileMsg(FileMsg fileMsg);
 
     List<FileMsg> selectByReceiveId(@Param("receiveId") Integer receiveId);
+
+    void updateSignById(@Param("sign") Integer sign, @Param("id") Integer id);
 }

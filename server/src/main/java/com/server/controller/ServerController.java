@@ -114,7 +114,10 @@ public class ServerController {
                             ps.println(JSON.toJSONString(result));
                         } else if (Code.SEND_OFFLINE_FILE_MSG.equals(code)) {
                             FileMsg fileMsg = JSON.parseObject(jsonObject.getString("object"), FileMsg.class);
-                            sendOffLineFileMsg(fileMsg, is);
+                            receiveFileMsg(fileMsg, is);
+                        } else if (Code.RECEIVE_OFFLINE_FILE_MSG.equals(code)) {
+                            FileMsg fileMsg = JSON.parseObject(jsonObject.getString("object"), FileMsg.class);
+                            sendFileMsg(fileMsg, socket);
                         } else {
                             Result result = new Result();
                             result.setMsg("未知错误");
@@ -166,10 +169,11 @@ public class ServerController {
 
             // 查找关于自己的离线信息
             List<TextMsg> aboutReceiveTextMsg = textMsgService.findAboutReceiveTextMsg(user2.getId());
-//            List<FileMsg> aboutReceiveFileMsg = fileMsgService.findAboutReceiveFileMsg(user2.getId());
+            List<FileMsg> aboutReceiveFileMsg = fileMsgService.findAboutReceiveFileMsg(user2.getId());
 
             HashMap<String, Object> allContent = new HashMap<>();
             allContent.put("textMsg", aboutReceiveTextMsg);
+            allContent.put("fileMsg", aboutReceiveFileMsg);
             allContent.put("users", UserMemory.users);
             allContent.put("myUser", user2);
 
@@ -218,7 +222,7 @@ public class ServerController {
         return result;
     }
 
-    void sendOffLineFileMsg(FileMsg fileMsg, InputStream inputStream) {
+    void receiveFileMsg(FileMsg fileMsg, InputStream inputStream) {
         String[] split = fileMsg.getFileName().split("\\.");
         String nameSuffix = split[split.length - 1];
         File file = new File(System.getProperty("user.home") + "\\.serverSocketFiles\\" + System.currentTimeMillis() + "." + nameSuffix);
@@ -241,12 +245,35 @@ public class ServerController {
             int len = 0;
             long accumulationSize = 0L;
             while ((len = dataInputStream.read(bytes)) != -1) {
-                System.out.println(len);
                 rw.write(bytes, 0, len);
                 accumulationSize += len;
             }
             System.out.println("文件传输结束");
             fileMsg.setEndPoint(accumulationSize);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        fileMsgService.CacheFileMsg(fileMsg);
+    }
+
+    void sendFileMsg(FileMsg fileMsg, Socket socket) {
+
+        File file = new File(fileMsg.getFileAddress());
+
+        try (RandomAccessFile rw = new RandomAccessFile(file, "r")) {
+            rw.seek(fileMsg.getStartPoint());
+            DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
+            byte[] bytes = new byte[1024 * 10];
+            int len = 0;
+            long accumulationSize = 0L;
+            while ((len = rw.read(bytes)) != -1) {
+                dataOutputStream.write(bytes, 0, len);
+                dataOutputStream.flush();
+                accumulationSize += len;
+            }
+            socket.close();
+            fileMsgService.updateFileMsgSign(1, fileMsg.getId());
+            System.out.println("文件传输结束");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

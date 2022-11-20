@@ -2,7 +2,6 @@ package com.server.service;
 
 import com.server.pojo.FileMsg;
 
-
 import java.util.List;
 
 public interface FileMsgService {
@@ -20,4 +19,6 @@ public interface FileMsgService {
      * @return
      */
     List<FileMsg> findAboutReceiveFileMsg(Integer receiveId);
+
+    void updateFileMsgSign(Integer sign, Integer id);
 }

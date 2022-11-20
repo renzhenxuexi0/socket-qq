@@ -13,6 +13,9 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Configuration
 @EnableScheduling
 @Slf4j
@@ -29,7 +32,15 @@ public class MultiThreadScheduleTask {
         result3.setCode(Code.GET_ALL_USERS);
         try {
             Result result4 = userService.getAllUser(result3);
-            UserMemory.users = JSON.parseArray(result4.getObject().toString(), User.class);
+
+            List<User> allUser = JSON.parseArray(result4.getObject().toString(), User.class);
+            List<User> allUser2 = new ArrayList<>();
+            allUser.forEach(user -> {
+                if (!user.getId().equals(UserMemory.myUser.getId())) {
+                    allUser2.add(user);
+                }
+            });
+            UserMemory.users = allUser2;
         } catch (Exception e) {
             log.error(e.toString());
         }

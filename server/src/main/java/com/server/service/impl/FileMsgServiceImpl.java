@@ -1,7 +1,6 @@
 package com.server.service.impl;
 
 import com.server.mapper.FileMsgMapper;
-
 import com.server.pojo.FileMsg;
 import com.server.service.FileMsgService;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +27,11 @@ public class FileMsgServiceImpl implements FileMsgService {
 
     public List<FileMsg> findAboutReceiveFileMsg(Integer receiveId) {
         return fileMsgMapper.selectByReceiveId(receiveId);
+    }
+
+    @Override
+    public void updateFileMsgSign(Integer sign, Integer id) {
+        fileMsgMapper.updateSignById(sign, id);
     }
 
 

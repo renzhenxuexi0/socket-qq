@@ -19,6 +19,12 @@
         values (#{messageTime}, #{fileName}, #{fileAddress}, #{senderId}, #{receiveId}, #{startPoint}, #{endPoint})
     </insert>
 
+    <update id="updateSignById">
+        update tbl_file_msg
+        set sign=#{sign}
+        where id = #{id}
+    </update>
+
     <select id="selectByReceiveId" resultMap="fileMsgResultMap">
         select *
         from tbl_file_msg
