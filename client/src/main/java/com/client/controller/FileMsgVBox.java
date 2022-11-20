@@ -104,4 +104,12 @@ public class FileMsgVBox {
         });
 
     }
+
+    public Hyperlink getHyperlink1() {
+        return hyperlink1;
+    }
+
+    public Hyperlink getHyperlink2() {
+        return hyperlink2;
+    }
 }
