@@ -174,6 +174,7 @@ public class ServerController implements Initializable {
                 // 查找关于自己的离线信息
                 List<TextMsg> aboutReceiveTextMsg = textMsgService.findAboutReceiveOrSenderIdTextMsg(user2.getId());
                 List<FileMsg> aboutReceiveFileMsg = fileMsgService.findAboutReceiveOrSenderIdFileMsg(user2.getId());
+                System.out.println(aboutReceiveTextMsg);
 
                 HashMap<String, Object> allContent = new HashMap<>();
                 allContent.put("textMsg", aboutReceiveTextMsg);

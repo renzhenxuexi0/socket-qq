@@ -8,7 +8,6 @@ import com.client.service.FileMsgService;
 import com.client.service.UserService;
 import com.client.utils.*;
 import com.client.view.ChatView;
-import com.jfoenix.controls.JFXTextField;
 import de.felixroske.jfxsupport.FXMLController;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -62,8 +61,6 @@ public class UserInterfaceController implements Initializable, ApplicationContex
     public Button closeWindow;
     @FXML
     public ImageView backgroundImage;
-    @FXML
-    public JFXTextField findUserTextField;
 
     @Autowired
     private FileMsgService fileMsgService;
@@ -73,7 +70,6 @@ public class UserInterfaceController implements Initializable, ApplicationContex
 
     private ApplicationContext applicationContext;
 
-    private Stage newStage;
     @Autowired
     private SimpleDateFormat simpleDateFormat;
 
@@ -124,7 +120,7 @@ public class UserInterfaceController implements Initializable, ApplicationContex
         MsgMemory.sendMsgList = new ArrayList<>();
         UserMemory.textMsgList.forEach(textMsg -> {
             if ((UserMemory.myUser.getId().equals(textMsg.getSenderId()) &&
-                    UserMemory.talkUser.getId().equals(textMsg.getReceiveId()))
+                    UserMemory.talkUser.getId().equals(textMsg.getReceiverId()))
                     || UserMemory.talkUser.getId().equals(textMsg.getSenderId())) {
                 SendMsg sendMsg = new SendMsg();
                 sendMsg.setImage(headImage);
@@ -200,7 +196,7 @@ public class UserInterfaceController implements Initializable, ApplicationContex
 
                 MsgMemory.sendMsgList.add(sendMsg);
             } else if (UserMemory.myUser.getId().equals(fileMsg.getSenderId()) &&
-                    UserMemory.talkUser.getId().equals(fileMsg.getReceiveId())) {
+                    UserMemory.talkUser.getId().equals(fileMsg.getReceiverId())) {
                 creatSendMsg(headImage, fileMsg);
             }
         });
@@ -264,7 +260,7 @@ public class UserInterfaceController implements Initializable, ApplicationContex
                                 String[] jsons1 = FileUtils.readFileToString(textMsgLog, "UTF-8").split("\n");
                                 for (String json : jsons1) {
                                     TextMsg textMsg = JSON.parseObject(json, TextMsg.class);
-                                    if (Objects.equals(textMsg.getReceiveId(), UserMemory.talkUser.getId())) {
+                                    if (Objects.equals(textMsg.getReceiverId(), UserMemory.talkUser.getId())) {
                                         SendMsg sendMsg = new SendMsg();
                                         sendMsg.setImage(image);
                                         sendMsg.setMsg(textMsg);
@@ -282,7 +278,7 @@ public class UserInterfaceController implements Initializable, ApplicationContex
                                 String[] jsons2 = FileUtils.readFileToString(fileMsgLog, "UTF-8").split("\n");
                                 for (String json : jsons2) {
                                     FileMsg fileMsg = JSON.parseObject(json, FileMsg.class);
-                                    if (Objects.equals(fileMsg.getReceiveId(), UserMemory.talkUser.getId())) {
+                                    if (Objects.equals(fileMsg.getReceiverId(), UserMemory.talkUser.getId())) {
                                         creatSendMsg(image, fileMsg);
                                     }
                                 }
@@ -340,6 +336,8 @@ public class UserInterfaceController implements Initializable, ApplicationContex
                                 Result result2 = new Result();
                                 result2.setCode(Code.SEND_TEXT_MSG_SUCCESS);
                                 ps.println(JSON.toJSONString(result2));
+                            } else if (Code.SEND_FILE_MSG.equals(code)) {
+
                             }
                         } catch (IOException e) {
                             throw new RuntimeException(e);

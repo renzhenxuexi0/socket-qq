@@ -30,7 +30,6 @@ public class GetResultUtil {
 
             String json = JSON.toJSONString(result, SerializerFeature.WriteMapNullValue);
 
-            System.out.println(json);
             ps.println(json);
             ps.flush();
             // 服务端返回的信息

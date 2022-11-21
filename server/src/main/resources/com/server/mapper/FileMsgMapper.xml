@@ -8,7 +8,7 @@
         <result column="file_name" property="fileName"/>
         <result column="message_time" property="messageTime"/>
         <result column="sender_id" property="senderId"/>
-        <result column="receive_id" property="receiveId"/>
+        <result column="receiver_id" property="receiverId"/>
         <result column="file_address" property="fileAddress"/>
         <result column="start_point" property="startPoint"/>
         <result column="end_point" property="endPoint"/>

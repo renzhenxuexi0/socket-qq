@@ -73,16 +73,19 @@ public class UserService implements DisposableBean {
 
         List<TextMsg> textMsgList = new ArrayList<>();
         File textLogFile = new File(System.getProperty("user.home") + "\\.socket\\" + UserMemory.myUser.getAccount() + "\\textMsgLog.txt");
+
+        String[] textLog = FileUtils.readFileToString(textLogFile, StandardCharsets.UTF_8).split("\n");
         if (textLogFile.exists()) {
-            String[] textLog = FileUtils.readFileToString(textLogFile, StandardCharsets.UTF_8).split("\n");
             for (String s : textLog) {
-                if (s.equals("")) {
+                if (!s.equals("")) {
                     textMsgList.add(JSON.parseObject(s, TextMsg.class));
                 }
             }
 
             BufferedWriter textLogWriter = new BufferedWriter(new FileWriter(textLogFile, false));
             textLogWriter.write("");
+            textLogWriter.flush();
+            textLogWriter.close();
         }
 
 
@@ -91,13 +94,15 @@ public class UserService implements DisposableBean {
         if (fileLogFile.exists()) {
             String[] fileLog = FileUtils.readFileToString(fileLogFile, StandardCharsets.UTF_8).split("\n");
             for (String s : fileLog) {
-                if (s.equals("")) {
+                if (!s.equals("")) {
                     fileMsgList.add(JSON.parseObject(s, FileMsg.class));
                 }
             }
 
             BufferedWriter fileLogWriter = new BufferedWriter(new FileWriter(fileLogFile, false));
             fileLogWriter.write("");
+            fileLogWriter.flush();
+            fileLogWriter.close();
         }
 
         HashMap<String, Object> stringObjectHashMap = new HashMap<>();

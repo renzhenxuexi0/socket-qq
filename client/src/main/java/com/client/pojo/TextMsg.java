@@ -10,5 +10,5 @@ public class TextMsg extends Msg {
     private String messageTime;
     private String content;
     private Integer senderId;
-    private Integer receiveId;
+    private Integer receiverId;
 }

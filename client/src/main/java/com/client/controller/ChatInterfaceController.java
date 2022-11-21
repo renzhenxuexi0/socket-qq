@@ -26,13 +26,14 @@ import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
 import org.kordamp.ikonli.fontawesome.FontAwesome;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.File;
-import java.io.PrintWriter;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -105,7 +106,7 @@ public class ChatInterfaceController implements Initializable {
                         Result result = new Result();
                         textMsg.setMessageTime(msgTime);
                         textMsg.setSenderId(UserMemory.myUser.getId());
-                        textMsg.setReceiveId(UserMemory.talkUser.getId());
+                        textMsg.setReceiverId(UserMemory.talkUser.getId());
                         textMsg.setContent(text);
                         result.setObject(textMsg);
 
@@ -123,16 +124,13 @@ public class ChatInterfaceController implements Initializable {
                             }).get();
 
                             Platform.runLater(() -> {
-                                try (
-                                        PrintWriter textMsgLogPrintWriter
-                                                = new PrintWriter(System.getProperty("user.home") + "\\.socket\\"
-                                                + UserMemory.myUser.getAccount()
-                                                + "\\textMsgLog.txt")
-                                ) {
+                                try {
                                     if (Code.SEND_TEXT_MSG_SUCCESS.equals(result2.getCode())) {
+
+                                        FileUtils.writeStringToFile(new File(System.getProperty("user.home") + "\\.socket\\" +
+                                                UserMemory.myUser.getAccount() + "\\textMsgLog.txt"), JSON.toJSONString(textMsg) +
+                                                "\n", StandardCharsets.UTF_8, true);
                                         resetChatInterface(textMsg);
-                                        textMsgLogPrintWriter.println(JSON.toJSONString(textMsg));
-                                        textMsgLogPrintWriter.flush();
                                     } else {
                                         // 发送失败 弹出错误窗口
                                         Alert alert = new Alert(Alert.AlertType.ERROR, result2.getMsg());
