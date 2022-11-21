@@ -37,7 +37,6 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
-import lombok.var;
 import org.apache.commons.io.FileUtils;
 import org.kordamp.ikonli.fontawesome.FontAwesome;
 import org.kordamp.ikonli.javafx.FontIcon;
@@ -369,31 +368,6 @@ public class UserInterfaceController implements Initializable, ApplicationContex
 
     }
 
-    @FXML
-    void groupChat(ActionEvent event) {
-
-        try {
-            Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("fxml/group.fxml")));
-            List<JFXCheckBox> jfxCheckBoxes = new ArrayList<>();
-
-            UserMemory.users.forEach(user -> {
-                JFXCheckBox jfxCheckBox = new JFXCheckBox(user.getUsername());
-                jfxCheckBoxes.add(jfxCheckBox);
-            });
-            Checkbox allGroup= (JFXCheckBox) root.lookup("#allGroup");
-            allGroup.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                    jfxCheckBoxes.forEach(jfxCheckBox -> {
-                        jfxCheckBox.setSelected(true);
-                    });
-                }
-            });
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
@@ -417,6 +391,4 @@ public class UserInterfaceController implements Initializable, ApplicationContex
         fileMsgVBox.setProgressBarState("已经发送完离线信息");
         MsgMemory.sendMsgList.add(sendMsg);
     }
-
-
 }

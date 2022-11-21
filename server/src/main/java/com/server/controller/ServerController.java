@@ -100,7 +100,7 @@ public class ServerController implements Initializable {
                             Result register = register(user);
                             ps.println(JSON.toJSONString(register));
                         } else if (Code.USER_LOGIN.equals(code)) {
-                            User user = JSON.parseObject(jsonObject.getString("object").toString(), User.class);
+                            User user = JSON.parseObject(jsonObject.getString("object"), User.class);
                             Result login = login(user, socket.getInetAddress());
                             ps.println(JSON.toJSONString(login));
                         } else if (Code.GET_ALL_USERS.equals(code)) {
@@ -109,7 +109,7 @@ public class ServerController implements Initializable {
                         } else if (Code.OFF_LINE.equals(code)) {
                             JSONObject jsonObject2 = JSON.parseObject(jsonObject.getString("object"));
                             offLine(jsonObject2);
-                            ps.println("");
+                            ps.println();
                         } else if (Code.SEND_OFFLINE_TEXT_MSG.equals(code)) {
                             TextMsg textMsg = JSON.parseObject(jsonObject.getString("object"), TextMsg.class);
                             Result result = sendOffLineTextMsg(textMsg);
@@ -174,6 +174,7 @@ public class ServerController implements Initializable {
                 // 查找关于自己的离线信息
                 List<TextMsg> aboutReceiveTextMsg = textMsgService.findAboutReceiveOrSenderIdTextMsg(user2.getId());
                 List<FileMsg> aboutReceiveFileMsg = fileMsgService.findAboutReceiveOrSenderIdFileMsg(user2.getId());
+                System.out.println(aboutReceiveTextMsg);
 
                 HashMap<String, Object> allContent = new HashMap<>();
                 allContent.put("textMsg", aboutReceiveTextMsg);
