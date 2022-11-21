@@ -19,11 +19,27 @@ public class FileMsgService {
     private int socketPort;
 
     /**
+     * 离线信息的socket
+     *
      * @return 返回result对象
      */
     public Socket sendOfflineFileMsg() {
         try {
             return new Socket(socketIP, socketPort);
+        } catch (Exception e) {
+            log.error(e.toString());
+        }
+        return null;
+    }
+
+    /**
+     * 发送在线信息的socket
+     *
+     * @return
+     */
+    public Socket sendOfflineFileMsg(String ip, Integer port) {
+        try {
+            return new Socket(ip, port);
         } catch (Exception e) {
             log.error(e.toString());
         }

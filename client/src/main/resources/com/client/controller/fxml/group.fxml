@@ -2,22 +2,27 @@
 
 <?import com.jfoenix.controls.JFXButton?>
 <?import com.jfoenix.controls.JFXCheckBox?>
+<?import com.jfoenix.controls.JFXTextArea?>
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<GridPane fx:id="GPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" prefHeight="400.0" prefWidth="550.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.client.controller.GroupChat">
+<GridPane fx:id="GPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" prefHeight="400.0" prefWidth="550.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.client.controller.GroupChatController">
   <columnConstraints>
     <ColumnConstraints hgrow="SOMETIMES" maxWidth="556.0" minWidth="10.0" prefWidth="515.0" />
   </columnConstraints>
   <rowConstraints>
     <RowConstraints />
-      <RowConstraints maxHeight="378.0" minHeight="10.0" prefHeight="342.0" vgrow="SOMETIMES" />
-      <RowConstraints maxHeight="76.0" minHeight="1.0" prefHeight="28.0" vgrow="SOMETIMES" />
+      <RowConstraints maxHeight="378.0" minHeight="10.0" prefHeight="137.0" vgrow="SOMETIMES" />
+      <RowConstraints maxHeight="378.0" minHeight="10.0" prefHeight="205.0" vgrow="SOMETIMES" />
+      <RowConstraints maxHeight="76.0" minHeight="1.0" prefHeight="45.0" vgrow="SOMETIMES" />
   </rowConstraints>
    <children>
       <HBox alignment="CENTER" prefHeight="37.0" prefWidth="347.0" spacing="375.0">
@@ -26,9 +31,9 @@
             <JFXCheckBox fx:id="allGroup" prefHeight="18.0" prefWidth="55.0" text="全选" />
          </children>
       </HBox>
-      <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="425.0" GridPane.rowIndex="2">
+      <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="425.0" GridPane.rowIndex="3">
          <children>
-            <JFXButton fx:id="sendGroup" ripplerFill="#47ccff" text="确认发送" />
+            <JFXButton fx:id="sendGroup" onAction="#sendTextMsg" ripplerFill="#47ccff" text="确认发送" />
             <JFXButton fx:id="cancelGroup" ripplerFill="#74ccff" text="取消" />
          </children>
       </HBox>
@@ -37,5 +42,23 @@
             <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
          </padding>
       </FlowPane>
+      <VBox prefHeight="202.0" prefWidth="533.0" style="-fx-background-color: white;" GridPane.rowIndex="2">
+         <children>
+            <AnchorPane>
+               <children>
+                  <JFXButton fx:id="fileChoiceButtonGroup" buttonType="RAISED" onAction="#choiceFileEvent" ripplerFill="#e1e1e1" text="Button" />
+               </children>
+            </AnchorPane>
+            <AnchorPane style="-fx-background-color: white;">
+               <children>
+                  <JFXTextArea fx:id="inputAreaGroup" prefHeight="179.0" prefWidth="550.0" wrapText="true">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </JFXTextArea>
+               </children>
+            </AnchorPane>
+         </children>
+      </VBox>
    </children>
 </GridPane>

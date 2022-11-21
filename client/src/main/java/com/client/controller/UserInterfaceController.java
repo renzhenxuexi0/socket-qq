@@ -50,6 +50,7 @@ import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.*;
@@ -342,6 +343,14 @@ public class UserInterfaceController implements Initializable, ApplicationContex
                                 Result result2 = new Result();
                                 result2.setCode(Code.SEND_TEXT_MSG_SUCCESS);
                                 ps.println(JSON.toJSONString(result2));
+                                FileUtils.writeStringToFile(textMsgLog, JSON.toJSONString(textMsg) +
+                                        "\n", StandardCharsets.UTF_8, true);
+                            } else if (Code.SEND_FILE_MSG.equals(code)) {
+                                FileMsg fileMsg = JSON.parseObject(jsonObject.getString("object"), FileMsg.class);
+                                receiveFileMsg(fileMsg, is);
+                                FileUtils.writeStringToFile(fileMsgLog, JSON.toJSONString(fileMsg) +
+                                        "\n", StandardCharsets.UTF_8, true);
+                                UserMemory.fileMsgList.add(fileMsg);
                             }
                         } catch (IOException e) {
                             throw new RuntimeException(e);
@@ -349,10 +358,42 @@ public class UserInterfaceController implements Initializable, ApplicationContex
                     });
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error(e.toString());
             }
         });
 
+    }
+
+    private void receiveFileMsg(FileMsg fileMsg, InputStream inputStream) {
+        String[] split = fileMsg.getFileName().split("\\.");
+        String nameSuffix = split[split.length - 1];
+        File file = new File(System.getProperty("user.home") + "\\.socketDownload\\" + fileMsg.getFileName() + "." + nameSuffix);
+        if (!file.exists()) {
+            File parentFile = file.getParentFile();
+            try {
+                if (!parentFile.exists()) {
+                    parentFile.mkdirs();
+                }
+                file.createNewFile();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        try (RandomAccessFile rw = new RandomAccessFile(file, "rw")) {
+            rw.seek(fileMsg.getStartPoint());
+            DataInputStream dataInputStream = new DataInputStream(inputStream);
+            byte[] bytes = new byte[1024 * 10];
+            int len;
+            long accumulationSize = 0L;
+            while ((len = dataInputStream.read(bytes)) != -1) {
+                rw.write(bytes, 0, len);
+                accumulationSize += len;
+            }
+            System.out.println("文件传输结束");
+            fileMsg.setEndPoint(accumulationSize);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
