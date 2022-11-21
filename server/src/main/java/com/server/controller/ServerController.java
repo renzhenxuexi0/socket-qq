@@ -104,8 +104,8 @@ public class ServerController {
                             Result allUser = getAllUser();
                             ps.println(JSON.toJSONString(allUser));
                         } else if (Code.OFF_LINE.equals(code)) {
-                            User user = JSON.parseObject(jsonObject.getString("object"), User.class);
-                            offLine(user);
+                            JSONObject jsonObject2 = JSON.parseObject(jsonObject.getString("object"));
+                            offLine(jsonObject2);
                             ps.println("");
                         } else if (Code.SEND_OFFLINE_TEXT_MSG.equals(code)) {
                             TextMsg textMsg = JSON.parseObject(jsonObject.getString("object"), TextMsg.class);
@@ -206,14 +206,22 @@ public class ServerController {
         UserMemory.users = userService.selectAllUser();
     }
 
-    void offLine(User user) {
+    void offLine(JSONObject jsonObject) {
+        User user = JSON.parseObject(jsonObject.getString("myUser"), User.class);
+        List<TextMsg> textMsgList = JSON.parseArray(jsonObject.getString("textMsg"), TextMsg.class);
+        List<FileMsg> fileMsgList = JSON.parseArray(jsonObject.getString("fileMsg"), FileMsg.class);
         userService.updateLogin(user.getId(), 0);
+        textMsgList.forEach(textMsg -> textMsgService.cacheTextMsg(textMsg));
+//        fileMsgList.forEach(fileMsg -> {
+//            fileMsgService.cacheFileMsg(fileMsg);
+//        });
+
         contentInput.appendText(user.getUsername() + "下线\n");
     }
 
     Result sendOffLineTextMsg(TextMsg textMsg) {
         Result result = new Result();
-        boolean b = textMsgService.CacheTextMsg(textMsg);
+        boolean b = textMsgService.cacheTextMsg(textMsg);
         if (b) {
             result.setCode(Code.SEND_OFFLINE_TEXT_MSG_SUCCESS);
             contentInput.appendText(textMsg.getSenderId() + "该用户缓存信息成功\n");
@@ -255,7 +263,7 @@ public class ServerController {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        fileMsgService.CacheFileMsg(fileMsg);
+        fileMsgService.cacheFileMsg(fileMsg);
     }
 
     void sendFileMsg(FileMsg fileMsg, Socket socket) {
@@ -279,6 +287,6 @@ public class ServerController {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        fileMsgService.CacheFileMsg(fileMsg);
+        fileMsgService.cacheFileMsg(fileMsg);
     }
 }

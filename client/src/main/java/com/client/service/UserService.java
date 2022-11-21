@@ -8,6 +8,8 @@ import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+
 @Service
 public class UserService implements DisposableBean {
     @Value("${socket.ip}")
@@ -56,7 +58,11 @@ public class UserService implements DisposableBean {
     public void destroy() {
         Result result = new Result();
         result.setCode(Code.OFF_LINE);
-        result.setObject(UserMemory.myUser);
+        HashMap<String, Object> stringObjectHashMap = new HashMap<>();
+        stringObjectHashMap.put("myUser", UserMemory.myUser);
+        stringObjectHashMap.put("textMsg", UserMemory.textMsgList);
+        stringObjectHashMap.put("fileMsg", UserMemory.fileMsgList);
+        result.setObject(stringObjectHashMap);
         System.out.println(result);
         userOffLine(result);
     }

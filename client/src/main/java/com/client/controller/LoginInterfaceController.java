@@ -118,7 +118,6 @@ public class LoginInterfaceController implements Initializable {
                                     // 解析数据
                                     JSONObject jsonObject = JSON.parseObject(result2.getObject().toString());
                                     UserMemory.myUser = JSON.parseObject(jsonObject.get("myUser").toString(), User.class);
-
                                     List<User> allUser = JSON.parseArray(jsonObject.get("users").toString(), User.class);
                                     List<User> allUser2 = new ArrayList<>();
                                     allUser.forEach(user2 -> {

@@ -15,7 +15,7 @@ public class FileMsgServiceImpl implements FileMsgService {
     @Autowired
     private FileMsgMapper fileMsgMapper;
 
-    public boolean CacheFileMsg(FileMsg fileMsg) {
+    public boolean cacheFileMsg(FileMsg fileMsg) {
         try {
             fileMsgMapper.addFileMsg(fileMsg);
             return true;
