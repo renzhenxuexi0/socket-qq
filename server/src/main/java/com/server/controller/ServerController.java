@@ -255,7 +255,7 @@ public class ServerController implements Initializable {
             rw.seek(fileMsg.getStartPoint());
             DataInputStream dataInputStream = new DataInputStream(inputStream);
             byte[] bytes = new byte[1024 * 10];
-            int len = 0;
+            int len;
             long accumulationSize = 0L;
             while ((len = dataInputStream.read(bytes)) != -1) {
                 rw.write(bytes, 0, len);
@@ -277,7 +277,7 @@ public class ServerController implements Initializable {
             rw.seek(fileMsg.getStartPoint());
             DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
             byte[] bytes = new byte[1024 * 10];
-            int len = 0;
+            int len;
             long accumulationSize = 0L;
             while ((len = rw.read(bytes)) != -1) {
                 dataOutputStream.write(bytes, 0, len);

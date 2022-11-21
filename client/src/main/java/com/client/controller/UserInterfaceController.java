@@ -101,7 +101,7 @@ public class UserInterfaceController implements Initializable, ApplicationContex
     @Autowired
     private UserService userService;
 
-    @Scheduled(cron = "0/5 * * * * ?")
+    @Scheduled(cron = "0/2 * * * * ?")
     void buildUserList() {
         if (UserMemory.users != null) {
             ObservableList<User> userList = FXCollections.observableArrayList(UserMemory.users);
@@ -109,7 +109,7 @@ public class UserInterfaceController implements Initializable, ApplicationContex
         }
     }
 
-    @Scheduled(cron = "0/3 * * * * ?")
+    @Scheduled(cron = "0/2 * * * * ?")
     void updateMsgListView() {
         if (chatInterface.primaryStage.isShowing() && MsgMemory.sendMsgList != null) {
             setUpMsgListView(headImage, getClass().getResource("fileImage/unknownFile.png"));
@@ -143,57 +143,52 @@ public class UserInterfaceController implements Initializable, ApplicationContex
                 FileMsgVBox fileMsgVBox = new FileMsgVBox();
                 sendMsg.setVBox(fileMsgVBox.fileMsgVBox(false, fileMsg.getFileName()));
                 fileMsgVBox.setFileImage(new Image(String.valueOf(resource)));
-                fileMsgVBox.setHyperlink1OnAction(event1 -> {
-                    threadPoolExecutor.execute(new Runnable() {
-                        @Override
-                        public void run() {
-                            Socket socket = fileMsgService.sendOfflineFileMsg();
-                            if (socket != null) {
+                fileMsgVBox.setHyperlink1OnAction(event1 -> threadPoolExecutor.execute(() -> {
+                    Socket socket = fileMsgService.sendOfflineFileMsg();
+                    if (socket != null) {
+                        try {
+                            PrintStream socketPrintStream = new PrintStream(socket.getOutputStream());
+                            Result result1 = new Result();
+                            result1.setCode(Code.RECEIVE_OFFLINE_FILE_MSG);
+                            result1.setObject(fileMsg);
+                            socketPrintStream.println(JSON.toJSONString(result1));
+                            System.out.println(result1);
+                            File file = new File(System.getProperty("user.home") + "\\.socket\\downloadFile\\" + fileMsg.getFileName());
+                            if (!file.exists()) {
                                 try {
-                                    PrintStream socketPrintStream = new PrintStream(socket.getOutputStream());
-                                    Result result1 = new Result();
-                                    result1.setCode(Code.RECEIVE_OFFLINE_FILE_MSG);
-                                    result1.setObject(fileMsg);
-                                    socketPrintStream.println(JSON.toJSONString(result1));
-                                    System.out.println(result1);
-                                    File file = new File(System.getProperty("user.home") + "\\.socket\\downloadFile\\" + fileMsg.getFileName());
-                                    if (!file.exists()) {
-                                        try {
-                                            file.createNewFile();
-                                        } catch (IOException e) {
-                                            throw new RuntimeException(e);
-                                        }
-                                    }
-
-                                    try (RandomAccessFile rw = new RandomAccessFile(file, "rw")) {
-                                        long length = fileMsg.getEndPoint() - fileMsg.getStartPoint();
-                                        rw.seek(fileMsg.getStartPoint());
-                                        DataInputStream dataInputStream = new DataInputStream(socket.getInputStream());
-                                        byte[] bytes = new byte[1024 * 10];
-                                        int len = 0;
-                                        long accumulationSize = 0L;
-                                        while ((len = dataInputStream.read(bytes)) != -1) {
-                                            rw.write(bytes, 0, len);
-                                            accumulationSize += len;
-                                            double schedule = (double) accumulationSize / (double) (length);
-                                            Platform.runLater(() -> fileMsgVBox.setProgressBarProgress(schedule));
-                                        }
-                                        if (accumulationSize == length) {
-                                            fileMsgVBox.setProgressBarState("接受完成");
-                                            WritableImage fileIcon = GetFileIcon.getFileIcon(file);
-                                            Platform.runLater(() -> fileMsgVBox.setFileImage(fileIcon));
-                                        }
-                                    } catch (IOException e) {
-                                        e.printStackTrace();
-                                    }
-
+                                    file.createNewFile();
                                 } catch (IOException e) {
-                                    e.printStackTrace();
+                                    throw new RuntimeException(e);
                                 }
                             }
+
+                            try (RandomAccessFile rw = new RandomAccessFile(file, "rw")) {
+                                long length = fileMsg.getEndPoint() - fileMsg.getStartPoint();
+                                rw.seek(fileMsg.getStartPoint());
+                                DataInputStream dataInputStream = new DataInputStream(socket.getInputStream());
+                                byte[] bytes = new byte[1024 * 10];
+                                int len;
+                                long accumulationSize = 0L;
+                                while ((len = dataInputStream.read(bytes)) != -1) {
+                                    rw.write(bytes, 0, len);
+                                    accumulationSize += len;
+                                    double schedule = (double) accumulationSize / (double) (length);
+                                    Platform.runLater(() -> fileMsgVBox.setProgressBarProgress(schedule));
+                                }
+                                if (accumulationSize == length) {
+                                    fileMsgVBox.setProgressBarState("接受完成");
+                                    WritableImage fileIcon = GetFileIcon.getFileIcon(file);
+                                    Platform.runLater(() -> fileMsgVBox.setFileImage(fileIcon));
+                                }
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+
+                        } catch (IOException e) {
+                            e.printStackTrace();
                         }
-                    });
-                });
+                    }
+                }));
 
                 fileMsgVBox.setHyperlink2OnAction(event12 -> {
                     try {
