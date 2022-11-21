@@ -10,6 +10,7 @@ import com.server.utils.UserMemory;
 import de.felixroske.jfxsupport.FXMLController;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,13 +21,15 @@ import java.io.*;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
+import java.util.ResourceBundle;
 import java.util.concurrent.ThreadPoolExecutor;
 
 @FXMLController
 @EnableScheduling
-public class ServerController {
+public class ServerController implements Initializable {
     // 自动注入线程池
     @Autowired
     private ThreadPoolExecutor pool;
@@ -288,5 +291,9 @@ public class ServerController {
             throw new RuntimeException(e);
         }
         fileMsgService.cacheFileMsg(fileMsg);
+    }
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
     }
 }

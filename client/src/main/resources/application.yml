@@ -9,6 +9,9 @@ socket:
   ip: 127.0.0.1
   port: 8080
 
+client:
+  port: 8081
+
 logging:
   config: classpath:logback-spring.xml
   level:

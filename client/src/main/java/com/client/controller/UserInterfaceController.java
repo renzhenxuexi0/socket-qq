@@ -33,6 +33,7 @@ import org.kordamp.ikonli.fontawesome.FontAwesome;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -83,6 +84,9 @@ public class UserInterfaceController implements Initializable, ApplicationContex
 
     private File textMsgLog;
     private File fileMsgLog;
+
+    @Value("${client.port}")
+    private Integer clientPort;
 
     @FXML
     private Label userName;
@@ -317,7 +321,7 @@ public class UserInterfaceController implements Initializable, ApplicationContex
 
 
         threadPoolExecutor.execute(() -> {
-            try (ServerSocket serverSocket = new ServerSocket(8081)) {
+            try (ServerSocket serverSocket = new ServerSocket(clientPort)) {
                 // 判读线程是否调用Interrupted，给线程打上中止标记 打上就退出循环
                 while (!Thread.currentThread().isInterrupted()) {
                     Socket socket = serverSocket.accept();
