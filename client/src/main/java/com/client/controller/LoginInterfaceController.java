@@ -151,7 +151,7 @@ public class LoginInterfaceController implements Initializable {
                                     }
                                     properties.list(new PrintStream(file));
 
-                                    primaryStage.setHeight(600);
+                                    primaryStage.setHeight(650);
                                     primaryStage.setWidth(307);
                                     primaryStage.setTitle("IMO");
                                     ClientApp.showView(UserView.class);

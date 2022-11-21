@@ -8,33 +8,30 @@ import com.client.service.FileMsgService;
 import com.client.service.UserService;
 import com.client.utils.*;
 import com.client.view.ChatView;
-import com.jfoenix.controls.JFXButton;
-import com.jfoenix.controls.JFXCheckBox;
-import com.jfoenix.controls.JFXTextField;
+import com.jfoenix.animation.alert.JFXAlertAnimation;
+import com.jfoenix.controls.*;
 import de.felixroske.jfxsupport.FXMLController;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
-import javafx.scene.control.*;
 import javafx.scene.control.Button;
+import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
@@ -54,21 +51,14 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.URL;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
-import java.util.ResourceBundle;
+import java.util.*;
 import java.util.concurrent.ThreadPoolExecutor;
 
 @FXMLController
 @Slf4j
 @EnableScheduling
 public class UserInterfaceController implements Initializable, ApplicationContextAware {
-
-
-
-
 
 
     @FXML
@@ -138,9 +128,7 @@ public class UserInterfaceController implements Initializable, ApplicationContex
     private void setUpMsgListView(Image headImage, URL resource) {
         MsgMemory.sendMsgList = new ArrayList<>();
         UserMemory.textMsgList.forEach(textMsg -> {
-            if ((UserMemory.myUser.getId().equals(textMsg.getSenderId()) &&
-                    UserMemory.talkUser.getId().equals(textMsg.getReceiveId()))
-                    || UserMemory.talkUser.getId().equals(textMsg.getSenderId())) {
+            if ((UserMemory.myUser.getId().equals(textMsg.getSenderId()) && UserMemory.talkUser.getId().equals(textMsg.getReceiverId())) || UserMemory.talkUser.getId().equals(textMsg.getSenderId())) {
                 SendMsg sendMsg = new SendMsg();
                 sendMsg.setImage(headImage);
                 sendMsg.setMsg(textMsg);
@@ -214,8 +202,7 @@ public class UserInterfaceController implements Initializable, ApplicationContex
                 });
 
                 MsgMemory.sendMsgList.add(sendMsg);
-            } else if (UserMemory.myUser.getId().equals(fileMsg.getSenderId()) &&
-                    UserMemory.talkUser.getId().equals(fileMsg.getReceiveId())) {
+            } else if (UserMemory.myUser.getId().equals(fileMsg.getSenderId()) && UserMemory.talkUser.getId().equals(fileMsg.getReceiverId())) {
                 creatSendMsg(headImage, fileMsg);
             }
         });
@@ -279,7 +266,7 @@ public class UserInterfaceController implements Initializable, ApplicationContex
                                 String[] jsons1 = FileUtils.readFileToString(textMsgLog, "UTF-8").split("\n");
                                 for (String json : jsons1) {
                                     TextMsg textMsg = JSON.parseObject(json, TextMsg.class);
-                                    if (Objects.equals(textMsg.getReceiveId(), UserMemory.talkUser.getId())) {
+                                    if (Objects.equals(textMsg.getReceiverId(), UserMemory.talkUser.getId())) {
                                         SendMsg sendMsg = new SendMsg();
                                         sendMsg.setImage(image);
                                         sendMsg.setMsg(textMsg);
@@ -297,7 +284,7 @@ public class UserInterfaceController implements Initializable, ApplicationContex
                                 String[] jsons2 = FileUtils.readFileToString(fileMsgLog, "UTF-8").split("\n");
                                 for (String json : jsons2) {
                                     FileMsg fileMsg = JSON.parseObject(json, FileMsg.class);
-                                    if (Objects.equals(fileMsg.getReceiveId(), UserMemory.talkUser.getId())) {
+                                    if (Objects.equals(fileMsg.getReceiverId(), UserMemory.talkUser.getId())) {
                                         creatSendMsg(image, fileMsg);
                                     }
                                 }
@@ -320,7 +307,7 @@ public class UserInterfaceController implements Initializable, ApplicationContex
         userHead.setImage(image);
         buildUserList();
         primaryStage = ClientApp.getStage();
-        minWindow.setOnAction(event -> primaryStage.setIconified(true)); /* 最小化 */
+        minWindow.setOnAction(event -> primaryStage.setIconified(true));
 
         closeWindow.setOnAction((event) -> {
             primaryStage.close();
@@ -390,5 +377,50 @@ public class UserInterfaceController implements Initializable, ApplicationContex
         fileMsgVBox.setProgressBarProgress(100);
         fileMsgVBox.setProgressBarState("已经发送完离线信息");
         MsgMemory.sendMsgList.add(sendMsg);
+    }
+
+    public void groupChat(ActionEvent actionEvent) {
+        try {
+            Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("fxml/group.fxml")));
+
+            FlowPane fPane = (FlowPane) root.lookup("#FPane");
+            JFXCheckBox allGroup = (JFXCheckBox) root.lookup("#allGroup");
+            JFXButton cancelGroup = (JFXButton) root.lookup("#cancelGroup");
+            UserMemory.groupUser = new ArrayList<>();
+            List<JFXCheckBox> jfxCheckBoxes = new ArrayList<>();
+            UserMemory.users.forEach(user -> {
+                JFXCheckBox jfxCheckBox = new JFXCheckBox(user.getUsername());
+                jfxCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+                    if (newValue) {
+                        UserMemory.groupUser.add(user);
+                    } else {
+                        UserMemory.groupUser.remove(user);
+                    }
+                });
+                jfxCheckBoxes.add(jfxCheckBox);
+                fPane.getChildren().add(jfxCheckBox);
+            });
+
+            allGroup.selectedProperty().addListener((observable, oldValue, newValue) -> {
+                if (newValue) {
+                    jfxCheckBoxes.forEach(jfxCheckBox -> jfxCheckBox.setSelected(true));
+                } else {
+                    jfxCheckBoxes.forEach(jfxCheckBox -> jfxCheckBox.setSelected(false));
+                }
+            });
+
+            JFXDialogLayout jfxDialogLayout = new JFXDialogLayout();
+            jfxDialogLayout.setBody(root);
+            JFXAlert<Void> alert = new JFXAlert<>();
+            alert.setOverlayClose(true);
+            alert.setAnimation(JFXAlertAnimation.NO_ANIMATION);
+            alert.setContent(jfxDialogLayout);
+            alert.initModality(Modality.WINDOW_MODAL);
+            cancelGroup.setOnAction((event) -> alert.close());
+            alert.showAndWait();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

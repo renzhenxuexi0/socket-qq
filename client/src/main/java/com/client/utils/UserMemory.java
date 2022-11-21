@@ -25,4 +25,7 @@ public class UserMemory {
 
     // 文件信息
     public static List<FileMsg> fileMsgList;
+
+    // 群发所选用户
+    public static List<User> groupUser;
 }
