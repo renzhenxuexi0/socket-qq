@@ -7,13 +7,12 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 @Slf4j
 public class MsgMemory {
-    public static List<SendMsg> sendMsgList = new ArrayList<>();
+    public static List<SendMsg> sendMsgList;
 
     public static void sendMsgListSort(SimpleDateFormat simpleDateFormat) {
         sendMsgList.sort((o1, o2) -> {

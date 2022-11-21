@@ -74,12 +74,11 @@ public class SendFile {
                         try (
                                 // 操作日志文件
                                 BufferedReader logFileReader = new BufferedReader(new FileReader(logFile));
-                                PrintWriter logFileWriter = new PrintWriter(logFile);
+                                PrintWriter logFileWriter = new PrintWriter(new FileWriter(fileMsgLog), false);
                                 // 读目标文件
                                 RandomAccessFile randomAccessAimFile = new RandomAccessFile(aimFile, "r")) {
                             // 文件操作的流(单线程模式传文件)
                             // 1.创建或读取日志文件记录发送点位
-
                             // 读取上次传送的位置
                             String s = logFileReader.readLine();
                             long pos;
@@ -105,7 +104,7 @@ public class SendFile {
                                 socketOutputStream.write(bytes, 0, len);
                                 accumulationSize += len;
                                 logFileWriter.println(accumulationSize);
-
+                                logFileWriter.flush();
                                 double schedule = (double) accumulationSize / (double) length;
                                 Platform.runLater(() -> fileMsgVBox.setProgressBarProgress(schedule));
                                 // 暂停 停止传输

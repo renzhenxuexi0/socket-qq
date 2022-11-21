@@ -5,9 +5,10 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -16,14 +17,11 @@ public abstract class UserCell extends BaseCell<User> implements Initializable {
 
     @FXML
     public AnchorPane mainPane;
+
     @FXML
-    public Label dateLabel;
-    @FXML
-    private ImageView headImage;
+    public Circle stateCircle;
     @FXML
     private Label usernameLabel;
-    @FXML
-    private Label msgLabel;
 
     /**
      * 构造表上某一列的视图
@@ -36,6 +34,11 @@ public abstract class UserCell extends BaseCell<User> implements Initializable {
     @Override
     public void bindData(User item) {
         usernameLabel.setText(item.getUsername());
+        if (item.getLogin().equals(1)) {
+            stateCircle.setFill(Color.rgb(72, 255, 0));
+        } else {
+            stateCircle.setFill(Color.valueOf("#cdcdcd"));
+        }
     }
 
     public abstract EventHandler<? super MouseEvent> setOnclickBox();

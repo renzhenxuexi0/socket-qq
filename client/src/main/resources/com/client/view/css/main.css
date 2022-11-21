@@ -70,5 +70,5 @@
 }
 
 #msgListView .list-cell:selected {
-    -fx-background-color: white;
+    -fx-background-color: #F5F5F5;
 }

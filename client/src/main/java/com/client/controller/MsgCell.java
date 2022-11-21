@@ -13,15 +13,12 @@ import javafx.scene.layout.AnchorPane;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.URL;
-import java.text.SimpleDateFormat;
 import java.util.ResourceBundle;
 
 @Slf4j
 public class MsgCell extends BaseCell<SendMsg> implements Initializable {
     @FXML
     private AnchorPane mainPane;
-
-    private SimpleDateFormat simpleDateFormat;
 
     @FXML
     private ImageView senderImage;
@@ -44,6 +41,7 @@ public class MsgCell extends BaseCell<SendMsg> implements Initializable {
     }
 
     public void bindData(SendMsg item) {
+        senderImage.setImage(item.getImage());
         if (item.getType() == 0) {
             TextMsg msg = (TextMsg) item.getMsg();
             sendContent.setText(msg.getContent());
@@ -51,6 +49,7 @@ public class MsgCell extends BaseCell<SendMsg> implements Initializable {
             if (msg.getSenderId().equals(UserMemory.myUser.getId())) {
                 mainPane.setNodeOrientation(NodeOrientation.RIGHT_TO_LEFT);
                 userName.setText(UserMemory.myUser.getUsername());
+                sendContent.setStyle("-fx-background-color:  #95EC69; -fx-border-radius: 45; -fx-background-radius: 45;");
             } else {
                 userName.setText(UserMemory.talkUser.getUsername());
             }
@@ -72,6 +71,5 @@ public class MsgCell extends BaseCell<SendMsg> implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     }
 }

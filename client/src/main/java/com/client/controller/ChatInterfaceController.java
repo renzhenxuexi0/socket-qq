@@ -2,7 +2,10 @@ package com.client.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.client.config.ProgressStageConfig;
-import com.client.pojo.*;
+import com.client.pojo.Code;
+import com.client.pojo.Result;
+import com.client.pojo.SendMsg;
+import com.client.pojo.TextMsg;
 import com.client.service.FileMsgService;
 import com.client.service.TextMsgService;
 import com.client.service.UserService;
@@ -146,7 +149,6 @@ public class ChatInterfaceController implements Initializable {
                             Result result3 = null;
                             try {
                                 result3 = textMsgService.sendTextMsgByServer(result);
-                                UserMemory.users = JSON.parseArray(result3.getObject().toString(), User.class);
                             } catch (Exception e) {
                                 log.error(e.toString());
                                 e.printStackTrace();
