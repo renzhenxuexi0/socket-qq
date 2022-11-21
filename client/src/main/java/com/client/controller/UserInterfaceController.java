@@ -248,7 +248,7 @@ public class UserInterfaceController implements Initializable, ApplicationContex
             public EventHandler<? super MouseEvent> setOnclickBox() {
                 Image image = new Image(String.valueOf(getClass().getResource("headImage/head.gif")));
                 return (EventHandler<MouseEvent>) event -> {
-                    if (event.getClickCount() == 2 && event.getButton().name().equals("PRIMARY")) {
+                    if (event.getClickCount() == 2 && "PRIMARY".equals(event.getButton().name())) {
                         chatInterface.inputArea.setText("");
                         UserMemory.talkUser = userListView.getSelectionModel().getSelectedItem();
                         chatInterface.userName.setText(userListView.getSelectionModel().getSelectedItem().getUsername());

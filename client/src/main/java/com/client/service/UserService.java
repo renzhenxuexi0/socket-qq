@@ -77,7 +77,7 @@ public class UserService implements DisposableBean {
         String[] textLog = FileUtils.readFileToString(textLogFile, StandardCharsets.UTF_8).split("\n");
         if (textLogFile.exists()) {
             for (String s : textLog) {
-                if (!s.equals("")) {
+                if (!"".equals(s)) {
                     textMsgList.add(JSON.parseObject(s, TextMsg.class));
                 }
             }
@@ -94,7 +94,7 @@ public class UserService implements DisposableBean {
         if (fileLogFile.exists()) {
             String[] fileLog = FileUtils.readFileToString(fileLogFile, StandardCharsets.UTF_8).split("\n");
             for (String s : fileLog) {
-                if (!s.equals("")) {
+                if (!"".equals(s)) {
                     fileMsgList.add(JSON.parseObject(s, FileMsg.class));
                 }
             }

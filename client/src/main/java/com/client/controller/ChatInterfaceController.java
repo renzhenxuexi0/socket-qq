@@ -41,6 +41,9 @@ import java.util.ResourceBundle;
 import java.util.concurrent.ThreadPoolExecutor;
 
 
+/**
+ * @author Administrator
+ */
 @FXMLController
 @Slf4j
 public class ChatInterfaceController implements Initializable {
@@ -82,7 +85,8 @@ public class ChatInterfaceController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        minWindow.setOnAction(event -> primaryStage.setIconified(true)); /* 最小化 */
+        // 最小化
+        minWindow.setOnAction(event -> primaryStage.setIconified(true));
         closeWindow.setOnAction(event -> primaryStage.close());
         FontIcon fontIcon = new FontIcon(FontAwesome.FOLDER_O);
         fontIcon.setIconColor(Color.valueOf("#868A98FF"));
@@ -93,7 +97,7 @@ public class ChatInterfaceController implements Initializable {
 
     public void sendTextMsg(ActionEvent mouseEvent) {
         String text = inputArea.getText();
-        if (!text.equals("")) {
+        if (!"".equals(text)) {
             Task<Void> task = new Task<Void>() {
                 @Override
                 protected Void call() throws Exception {
