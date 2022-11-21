@@ -373,6 +373,7 @@ public class UserInterfaceController implements Initializable, ApplicationContex
         hyperlink2.setText("");
         hyperlink2.setVisited(true);
         fileMsgVBox.setProgressBarProgress(100);
+        fileMsgVBox.setProgressBarState("已经发送完离线信息");
         MsgMemory.sendMsgList.add(sendMsg);
     }
 }

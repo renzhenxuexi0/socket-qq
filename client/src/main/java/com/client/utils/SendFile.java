@@ -110,7 +110,7 @@ public class SendFile {
                                 fileMsg.setEndPoint(accumulationSize + pos);
 
                                 if (accumulationSize == length) {
-                                    fileMsgVBox.setProgressBarState("发送完成");
+                                    fileMsgVBox.setProgressBarState("已经发送完离线信息");
                                     UserMemory.fileMsgList.add(fileMsg);
                                 }
 

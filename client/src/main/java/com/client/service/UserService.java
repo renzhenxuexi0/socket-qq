@@ -1,14 +1,25 @@
 package com.client.service;
 
+import com.alibaba.fastjson.JSON;
 import com.client.pojo.Code;
+import com.client.pojo.FileMsg;
 import com.client.pojo.Result;
+import com.client.pojo.TextMsg;
 import com.client.utils.GetResultUtil;
 import com.client.utils.UserMemory;
+import lombok.SneakyThrows;
+import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 @Service
 public class UserService implements DisposableBean {
@@ -54,14 +65,45 @@ public class UserService implements DisposableBean {
         GetResultUtil.getResult(result, socketIP, socketPort);
     }
 
+    @SneakyThrows
     @Override
     public void destroy() {
         Result result = new Result();
         result.setCode(Code.OFF_LINE);
+
+        List<TextMsg> textMsgList = new ArrayList<>();
+        File textLogFile = new File(System.getProperty("user.home") + "\\.socket\\" + UserMemory.myUser.getAccount() + "\\textMsgLog.txt");
+        if (textLogFile.exists()) {
+            String[] textLog = FileUtils.readFileToString(textLogFile, StandardCharsets.UTF_8).split("\n");
+            for (String s : textLog) {
+                if (s.equals("")) {
+                    textMsgList.add(JSON.parseObject(s, TextMsg.class));
+                }
+            }
+
+            BufferedWriter textLogWriter = new BufferedWriter(new FileWriter(textLogFile, false));
+            textLogWriter.write("");
+        }
+
+
+        List<FileMsg> fileMsgList = new ArrayList<>();
+        File fileLogFile = new File(System.getProperty("user.home") + "\\.socket\\" + UserMemory.myUser.getAccount() + "\\fileMsgLog.txt");
+        if (fileLogFile.exists()) {
+            String[] fileLog = FileUtils.readFileToString(fileLogFile, StandardCharsets.UTF_8).split("\n");
+            for (String s : fileLog) {
+                if (s.equals("")) {
+                    fileMsgList.add(JSON.parseObject(s, FileMsg.class));
+                }
+            }
+
+            BufferedWriter fileLogWriter = new BufferedWriter(new FileWriter(fileLogFile, false));
+            fileLogWriter.write("");
+        }
+
         HashMap<String, Object> stringObjectHashMap = new HashMap<>();
         stringObjectHashMap.put("myUser", UserMemory.myUser);
-        stringObjectHashMap.put("textMsg", UserMemory.textMsgList);
-        stringObjectHashMap.put("fileMsg", UserMemory.fileMsgList);
+        stringObjectHashMap.put("textMsg", textMsgList);
+        stringObjectHashMap.put("fileMsg", fileMsgList);
         result.setObject(stringObjectHashMap);
         System.out.println(result);
         userOffLine(result);

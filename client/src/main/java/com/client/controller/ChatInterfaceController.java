@@ -1,5 +1,6 @@
 package com.client.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.client.config.ProgressStageConfig;
 import com.client.pojo.Code;
 import com.client.pojo.Result;
@@ -30,6 +31,7 @@ import org.kordamp.ikonli.javafx.FontIcon;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.File;
+import java.io.PrintWriter;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -79,13 +81,8 @@ public class ChatInterfaceController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-
-
         minWindow.setOnAction(event -> primaryStage.setIconified(true)); /* 最小化 */
-        closeWindow.setOnAction(event -> {
-            primaryStage.close();
-        });
-
+        closeWindow.setOnAction(event -> primaryStage.close());
         FontIcon fontIcon = new FontIcon(FontAwesome.FOLDER_O);
         fontIcon.setIconColor(Color.valueOf("#868A98FF"));
         fontIcon.setIconSize(18);
@@ -126,9 +123,16 @@ public class ChatInterfaceController implements Initializable {
                             }).get();
 
                             Platform.runLater(() -> {
-                                try {
+                                try (
+                                        PrintWriter textMsgLogPrintWriter
+                                                = new PrintWriter(System.getProperty("user.home") + "\\.socket\\"
+                                                + UserMemory.myUser.getAccount()
+                                                + "\\textMsgLog.txt")
+                                ) {
                                     if (Code.SEND_TEXT_MSG_SUCCESS.equals(result2.getCode())) {
                                         resetChatInterface(textMsg);
+                                        textMsgLogPrintWriter.println(JSON.toJSONString(textMsg));
+                                        textMsgLogPrintWriter.flush();
                                     } else {
                                         // 发送失败 弹出错误窗口
                                         Alert alert = new Alert(Alert.AlertType.ERROR, result2.getMsg());
