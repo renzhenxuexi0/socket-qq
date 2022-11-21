@@ -33,7 +33,7 @@
       </HBox>
       <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="425.0" GridPane.rowIndex="3">
          <children>
-            <JFXButton fx:id="sendGroup" onAction="#sendTextMsg" ripplerFill="#47ccff" text="确认发送" />
+            <JFXButton fx:id="sendGroup" ripplerFill="#47ccff" text="确认发送" />
             <JFXButton fx:id="cancelGroup" ripplerFill="#74ccff" text="取消" />
          </children>
       </HBox>

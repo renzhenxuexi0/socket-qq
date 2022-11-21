@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.client.ClientApp;
 import com.client.pojo.*;
 import com.client.service.FileMsgService;
+import com.client.service.TextMsgService;
 import com.client.service.UserService;
 import com.client.utils.*;
 import com.client.view.ChatView;
@@ -14,16 +15,17 @@ import de.felixroske.jfxsupport.FXMLController;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
+import javafx.scene.control.*;
 import javafx.scene.control.Button;
-import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
+import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
@@ -75,6 +77,8 @@ public class UserInterfaceController implements Initializable, ApplicationContex
     private FileMsgService fileMsgService;
 
     @Autowired
+    private TextMsgService textMsgService;
+    @Autowired
     private ChatInterfaceController chatInterface;
 
     private ApplicationContext applicationContext;
@@ -84,7 +88,7 @@ public class UserInterfaceController implements Initializable, ApplicationContex
     private SimpleDateFormat simpleDateFormat;
 
     @Autowired
-    private ThreadPoolExecutor threadPoolExecutor;
+    private ThreadPoolExecutor poolExecutor;
     @FXML
     private Pane userPane;
 
@@ -147,7 +151,7 @@ public class UserInterfaceController implements Initializable, ApplicationContex
                 FileMsgVBox fileMsgVBox = new FileMsgVBox();
                 sendMsg.setVBox(fileMsgVBox.fileMsgVBox(false, fileMsg.getFileName()));
                 fileMsgVBox.setFileImage(new Image(String.valueOf(resource)));
-                fileMsgVBox.setHyperlink1OnAction(event1 -> threadPoolExecutor.execute(() -> {
+                fileMsgVBox.setHyperlink1OnAction(event1 -> poolExecutor.execute(() -> {
                     Socket socket = fileMsgService.sendOfflineFileMsg();
                     if (socket != null) {
                         try {
@@ -318,12 +322,12 @@ public class UserInterfaceController implements Initializable, ApplicationContex
         DragUtil.addDragListener(primaryStage, Collections.singletonList(userPane));
 
 
-        threadPoolExecutor.execute(() -> {
+        poolExecutor.execute(() -> {
             try (ServerSocket serverSocket = new ServerSocket(clientPort)) {
                 // 判读线程是否调用Interrupted，给线程打上中止标记 打上就退出循环
                 while (!Thread.currentThread().isInterrupted()) {
                     Socket socket = serverSocket.accept();
-                    threadPoolExecutor.execute(() -> {
+                    poolExecutor.execute(() -> {
                         // 流的封装
                         OutputStream os;//字节输出流抽象类
                         try {
@@ -427,6 +431,103 @@ public class UserInterfaceController implements Initializable, ApplicationContex
             FlowPane fPane = (FlowPane) root.lookup("#FPane");
             JFXCheckBox allGroup = (JFXCheckBox) root.lookup("#allGroup");
             JFXButton cancelGroup = (JFXButton) root.lookup("#cancelGroup");
+            JFXButton sendGroup = (JFXButton) root.lookup("#sendGroup");
+            TextArea inputAreaGroup = (TextArea) root.lookup("#inputAreaGroup");
+            sendGroup.setOnAction(event -> {
+                String text = inputAreaGroup.getText();
+                if (!"".equals(text)) {
+                    for (User user : UserMemory.groupUser) {
+                        Task<Void> task = new Task<Void>() {
+
+                            @Override
+                            protected Void call() throws Exception {
+
+                                try {
+                                    Date date = new Date();//获得当前时间
+                                    String msgTime = simpleDateFormat.format(date);//将当前时间转换成特定格式的时间字符串，这样便可以插入到数据库中
+
+                                    TextMsg textMsg = new TextMsg();
+                                    Result result = new Result();
+                                    textMsg.setMessageTime(msgTime);
+                                    textMsg.setSenderId(UserMemory.myUser.getId());
+                                    textMsg.setReceiverId(user.getId());
+                                    textMsg.setContent(text);
+                                    result.setObject(textMsg);
+                                    if (1 == (UserMemory.talkUser.getLogin())) {
+                                        result.setCode(Code.SEND_TEXT_MSG);
+                                        Result result2 = poolExecutor.submit(() -> {
+                                            Result result3 = null;
+                                            try {
+                                                result3 = textMsgService.sendTextMsgByClient(result, user.getIp(), 8081);
+                                            } catch (Exception e) {
+                                                log.error(e.toString());
+                                                e.printStackTrace();
+                                            }
+                                            return result3;
+                                        }).get();
+
+                                        Platform.runLater(() -> {
+                                            try {
+                                                if (Code.SEND_TEXT_MSG_SUCCESS.equals(result2.getCode())) {
+                                                    resetChatInterface(textMsg, inputAreaGroup);
+                                                } else {
+                                                    // 发送失败 弹出错误窗口
+                                                    Alert alert = new Alert(Alert.AlertType.ERROR, result2.getMsg());
+                                                    alert.show();
+                                                    // 失败的话得重新输入
+                                                }
+                                            } catch (Exception e) {
+                                                log.error(e.toString());
+                                                e.printStackTrace();
+                                            }
+                                        });
+
+                                    } else {
+                                        result.setCode(Code.SEND_OFFLINE_TEXT_MSG);
+                                        Result result2 = poolExecutor.submit(() -> {
+                                            Result result3 = null;
+                                            try {
+                                                result3 = textMsgService.sendTextMsgByServer(result);
+                                            } catch (Exception e) {
+                                                log.error(e.toString());
+                                                e.printStackTrace();
+                                            }
+                                            return result3;
+                                        }).get();
+                                        System.out.println(result2);
+                                        Platform.runLater(() -> {
+                                            try {
+                                                if (Code.SEND_OFFLINE_TEXT_MSG_SUCCESS.equals(result2.getCode())) {
+                                                    resetChatInterface(textMsg, inputAreaGroup);
+                                                } else {
+                                                    // 发送失败 弹出错误窗口
+                                                    Alert alert = new Alert(Alert.AlertType.ERROR, result2.getMsg());
+                                                    alert.show();
+                                                    // 失败的话得重新输入
+                                                }
+                                            } catch (Exception e) {
+                                                log.error(e.toString());
+                                                e.printStackTrace();
+                                            }
+                                        });
+
+                                    }
+
+                                } catch (Exception e) {
+                                    Alert alert = new Alert(Alert.AlertType.ERROR, "未知错误");
+                                    alert.show();
+                                    log.error(e.toString());
+                                    e.printStackTrace();
+                                }
+                                return null;
+                            }
+                        };
+                        poolExecutor.submit(task);
+                    }
+                }
+            });
+
+
             UserMemory.groupUser = new ArrayList<>();
             List<JFXCheckBox> jfxCheckBoxes = new ArrayList<>();
             UserMemory.users.forEach(user -> {
@@ -463,5 +564,10 @@ public class UserInterfaceController implements Initializable, ApplicationContex
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private void resetChatInterface(TextMsg textMsg, TextArea inputAreaGroup) {
+        inputAreaGroup.setText("");
+        UserMemory.textMsgList.add(textMsg);
     }
 }

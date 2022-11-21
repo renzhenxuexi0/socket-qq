@@ -99,9 +99,8 @@ public class ChatInterfaceController implements Initializable {
                 @Override
                 protected Void call() throws Exception {
                     try {
-                        DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//注意月和小时的格式为两个大写字母
                         Date date = new Date();//获得当前时间
-                        String msgTime = df.format(date);//将当前时间转换成特定格式的时间字符串，这样便可以插入到数据库中
+                        String msgTime = simpleDateFormat.format(date);//将当前时间转换成特定格式的时间字符串，这样便可以插入到数据库中
 
                         TextMsg textMsg = new TextMsg();
                         Result result = new Result();
