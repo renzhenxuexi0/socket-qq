@@ -8,26 +8,36 @@ import com.client.service.FileMsgService;
 import com.client.service.UserService;
 import com.client.utils.*;
 import com.client.view.ChatView;
+import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXCheckBox;
 import com.jfoenix.controls.JFXTextField;
 import de.felixroske.jfxsupport.FXMLController;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.control.*;
 import javafx.scene.control.Button;
-import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
+import lombok.var;
 import org.apache.commons.io.FileUtils;
 import org.kordamp.ikonli.fontawesome.FontAwesome;
 import org.kordamp.ikonli.javafx.FontIcon;
@@ -47,6 +57,7 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -55,6 +66,11 @@ import java.util.concurrent.ThreadPoolExecutor;
 @Slf4j
 @EnableScheduling
 public class UserInterfaceController implements Initializable, ApplicationContextAware {
+
+
+
+
+
 
     @FXML
     public Button minWindow;
@@ -353,6 +369,31 @@ public class UserInterfaceController implements Initializable, ApplicationContex
 
     }
 
+    @FXML
+    void groupChat(ActionEvent event) {
+
+        try {
+            Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("fxml/group.fxml")));
+            List<JFXCheckBox> jfxCheckBoxes = new ArrayList<>();
+
+            UserMemory.users.forEach(user -> {
+                JFXCheckBox jfxCheckBox = new JFXCheckBox(user.getUsername());
+                jfxCheckBoxes.add(jfxCheckBox);
+            });
+            Checkbox allGroup= (JFXCheckBox) root.lookup("#allGroup");
+            allGroup.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                    jfxCheckBoxes.forEach(jfxCheckBox -> {
+                        jfxCheckBox.setSelected(true);
+                    });
+                }
+            });
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
@@ -376,4 +417,6 @@ public class UserInterfaceController implements Initializable, ApplicationContex
         fileMsgVBox.setProgressBarState("已经发送完离线信息");
         MsgMemory.sendMsgList.add(sendMsg);
     }
+
+
 }
