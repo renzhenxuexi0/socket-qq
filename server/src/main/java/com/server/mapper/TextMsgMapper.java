@@ -11,5 +11,5 @@ public interface TextMsgMapper {
 
     void addTextMsg(TextMsg textMsg);
 
-    List<TextMsg> selectByReceiveId(@Param("receiveId") Integer receiveId);
+    List<TextMsg> selectByReceiveIdOrSenderId(@Param("id") Integer id);
 }

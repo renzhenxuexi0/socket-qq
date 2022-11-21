@@ -17,6 +17,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
 import java.io.*;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashMap;
@@ -95,13 +96,11 @@ public class ServerController {
                             User user = JSON.parseObject(jsonObject.getString("object"), User.class);
                             Result register = register(user);
                             ps.println(JSON.toJSONString(register));
-                        }
-                        if (Code.USER_LOGIN.equals(code)) {
+                        } else if (Code.USER_LOGIN.equals(code)) {
                             User user = JSON.parseObject(jsonObject.getString("object").toString(), User.class);
-                            Result login = login(user);
+                            Result login = login(user, socket.getInetAddress());
                             ps.println(JSON.toJSONString(login));
-                        }
-                        if (Code.GET_ALL_USERS.equals(code)) {
+                        } else if (Code.GET_ALL_USERS.equals(code)) {
                             Result allUser = getAllUser();
                             ps.println(JSON.toJSONString(allUser));
                         } else if (Code.OFF_LINE.equals(code)) {
@@ -151,36 +150,40 @@ public class ServerController {
         return result;
     }
 
-    Result login(User user) {
+    Result login(User user, InetAddress inetAddress) {
         User user2 = userService.userLogin(user);
-
-        UserMemory.users = userService.selectAllUser();
-
         //判断是否成功
         Result result = new Result();
-
         if (user2 != null) {
-            // 设置登录状态
-            userService.updateLogin(user2.getId(), 1);
+            if (user2.getLogin().equals(1)) {
+                result.setCode(Code.LOGIN_FAIL);
+                result.setMsg("账号已经登录了");
+            } else {
+                UserMemory.users = userService.selectAllUser();
+                // 设置登录状态
+                userService.updateLogin(user2.getId(), 1);
+                userService.updateIp(user2.getId(), inetAddress.getHostAddress());
 
-            //返回数据给客户端
-            result.setCode(Code.LOGIN_SUCCESS);
-            result.setMsg("登录成功");
+                //返回数据给客户端
+                result.setCode(Code.LOGIN_SUCCESS);
+                result.setMsg("登录成功");
 
-            // 查找关于自己的离线信息
-            List<TextMsg> aboutReceiveTextMsg = textMsgService.findAboutReceiveTextMsg(user2.getId());
-            List<FileMsg> aboutReceiveFileMsg = fileMsgService.findAboutReceiveFileMsg(user2.getId());
+                // 查找关于自己的离线信息
+                List<TextMsg> aboutReceiveTextMsg = textMsgService.findAboutReceiveOrSenderIdTextMsg(user2.getId());
+                List<FileMsg> aboutReceiveFileMsg = fileMsgService.findAboutReceiveOrSenderIdFileMsg(user2.getId());
 
-            HashMap<String, Object> allContent = new HashMap<>();
-            allContent.put("textMsg", aboutReceiveTextMsg);
-            allContent.put("fileMsg", aboutReceiveFileMsg);
-            allContent.put("users", UserMemory.users);
-            allContent.put("myUser", user2);
+                HashMap<String, Object> allContent = new HashMap<>();
+                allContent.put("textMsg", aboutReceiveTextMsg);
+                allContent.put("fileMsg", aboutReceiveFileMsg);
+                allContent.put("users", UserMemory.users);
+                allContent.put("myUser", user2);
 
 
-            result.setObject(allContent);
+                result.setObject(allContent);
 
-            contentInput.appendText(user2.getUsername() + "登录成功\n");
+                contentInput.appendText(user2.getUsername() + "登录成功\n");
+            }
+
         } else {
             result.setCode(Code.LOGIN_FAIL);
             result.setMsg("登录失败");
@@ -192,7 +195,6 @@ public class ServerController {
     Result getAllUser() {
         Result result = new Result();
         result.setObject(UserMemory.users);
-        contentInput.appendText("所有用户信息:\n" + UserMemory.users.toString() + "\n");
         return result;
     }
 

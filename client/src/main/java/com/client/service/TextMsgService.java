@@ -22,4 +22,8 @@ public class TextMsgService {
     public Result sendTextMsgByServer(Result result) {
         return GetResultUtil.getResult(result, socketIP, socketPort);
     }
+
+    public Result sendTextMsgByClient(Result result, String ip, Integer port) {
+        return GetResultUtil.getResult(result, ip, port);
+    }
 }

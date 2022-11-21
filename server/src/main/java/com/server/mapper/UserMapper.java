@@ -35,5 +35,13 @@ public interface UserMapper {
      * @param id
      * @param login
      */
-    void updateLogin(@Param("id") Integer id, @Param("login") Integer login);
+    void updateLoginById(@Param("id") Integer id, @Param("login") Integer login);
+
+    /**
+     * 更新ip地址
+     *
+     * @param id
+     * @param ip
+     */
+    void updateIpById(@Param("id") Integer id, @Param("ip") String ip);
 }

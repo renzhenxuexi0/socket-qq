@@ -10,7 +10,7 @@ import java.util.List;
 public interface FileMsgMapper {
     void addFileMsg(FileMsg fileMsg);
 
-    List<FileMsg> selectByReceiveId(@Param("receiveId") Integer receiveId);
+    List<FileMsg> selectByReceiveIdOrSenderId(@Param("id") Integer id);
 
     void updateSignById(@Param("sign") Integer sign, @Param("id") Integer id);
 }

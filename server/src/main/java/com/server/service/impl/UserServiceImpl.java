@@ -33,6 +33,11 @@ public class UserServiceImpl implements UserService {
     }
 
     public void updateLogin(Integer id, Integer login) {
-        userMapper.updateLogin(id, login);
+        userMapper.updateLoginById(id, login);
+    }
+
+    @Override
+    public void updateIp(Integer id, String ip) {
+        userMapper.updateIpById(id, ip);
     }
 }

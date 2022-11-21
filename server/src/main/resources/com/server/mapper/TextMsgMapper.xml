@@ -14,10 +14,11 @@
         values (#{messageTime}, #{content}, #{senderId}, #{receiveId})
     </insert>
 
-    <select id="selectByReceiveId" resultMap="textMsgResultMap">
+    <select id="selectByReceiveIdOrSenderId" resultMap="textMsgResultMap">
         select *
-        from tbl_text_msg
-        where receiver_id = #{receiveId}
+        from tbl_file_msg
+        where receiver_id = #{id}
+           or sender_id = #{id}
     </select>
 
 </mapper>

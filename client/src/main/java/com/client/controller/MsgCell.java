@@ -46,7 +46,7 @@ public class MsgCell extends BaseCell<SendMsg> implements Initializable {
             TextMsg msg = (TextMsg) item.getMsg();
             sendContent.setText(msg.getContent());
             sendTime.setText(msg.getMessageTime());
-            if (msg.getSenderId().equals(UserMemory.myUser.getId())) {
+            if (UserMemory.myUser.getId().equals(msg.getSenderId())) {
                 mainPane.setNodeOrientation(NodeOrientation.RIGHT_TO_LEFT);
                 userName.setText(UserMemory.myUser.getUsername());
                 sendContent.setStyle("-fx-background-color:  #95EC69; -fx-border-radius: 45; -fx-background-radius: 45;");
@@ -54,11 +54,13 @@ public class MsgCell extends BaseCell<SendMsg> implements Initializable {
                 userName.setText(UserMemory.talkUser.getUsername());
             }
         } else {
+            sendContent.setText("");
             FileMsg msg = (FileMsg) item.getMsg();
             sendTime.setText(msg.getMessageTime());
             if (msg.getSenderId().equals(UserMemory.myUser.getId())) {
                 mainPane.setNodeOrientation(NodeOrientation.RIGHT_TO_LEFT);
                 userName.setText(UserMemory.myUser.getUsername());
+                sendContent.setStyle("-fx-background-color:  #95EC69; -fx-border-radius: 45; -fx-background-radius: 45;");
             } else {
                 userName.setText(UserMemory.talkUser.getUsername());
             }

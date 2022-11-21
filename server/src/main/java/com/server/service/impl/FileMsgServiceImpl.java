@@ -25,9 +25,11 @@ public class FileMsgServiceImpl implements FileMsgService {
         return false;
     }
 
-    public List<FileMsg> findAboutReceiveFileMsg(Integer receiveId) {
-        return fileMsgMapper.selectByReceiveId(receiveId);
+    @Override
+    public List<FileMsg> findAboutReceiveOrSenderIdFileMsg(Integer id) {
+        return fileMsgMapper.selectByReceiveIdOrSenderId(id);
     }
+
 
     @Override
     public void updateFileMsgSign(Integer sign, Integer id) {

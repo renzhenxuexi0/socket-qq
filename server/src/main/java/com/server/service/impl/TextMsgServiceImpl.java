@@ -28,7 +28,8 @@ public class TextMsgServiceImpl implements TextMsgService {
     }
 
     @Override
-    public List<TextMsg> findAboutReceiveTextMsg(Integer receiveId) {
-        return textMsgMapper.selectByReceiveId(receiveId);
+    public List<TextMsg> findAboutReceiveOrSenderIdTextMsg(Integer id) {
+        return textMsgMapper.selectByReceiveIdOrSenderId(id);
     }
+
 }

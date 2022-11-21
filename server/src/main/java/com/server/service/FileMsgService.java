@@ -15,10 +15,10 @@ public interface FileMsgService {
     /**
      * 查找关于接受者的信息
      *
-     * @param receiveId
+     * @param id
      * @return
      */
-    List<FileMsg> findAboutReceiveFileMsg(Integer receiveId);
+    List<FileMsg> findAboutReceiveOrSenderIdFileMsg(Integer id);
 
     void updateFileMsgSign(Integer sign, Integer id);
 }

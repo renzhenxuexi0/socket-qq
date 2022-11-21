@@ -76,6 +76,7 @@ public class FileMsgVBox {
         }
 
         describeLabel = new Label("");
+        describeLabel.setTextFill(Color.valueOf("#111111"));
 
         vBox.getChildren().addAll(hBox1, progressBar, hBox2, describeLabel);
         return vBox;

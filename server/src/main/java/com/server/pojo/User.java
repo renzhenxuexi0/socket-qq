@@ -10,4 +10,5 @@ public class User {
     private String account;
     private String password;
     private Integer login;
+    private String ip;
 }

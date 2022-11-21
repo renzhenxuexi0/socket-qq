@@ -1,6 +1,5 @@
 package com.client.controller;
 
-import com.alibaba.fastjson.JSON;
 import com.client.config.ProgressStageConfig;
 import com.client.pojo.Code;
 import com.client.pojo.Result;
@@ -26,13 +25,11 @@ import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.FileUtils;
 import org.kordamp.ikonli.fontawesome.FontAwesome;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -71,10 +68,6 @@ public class ChatInterfaceController implements Initializable {
     @Autowired
     private UserService userService;
 
-    private File testMsgLog;
-
-    private File fileMsgLog;
-
     @FXML
     private Button minWindow;
     @FXML
@@ -86,24 +79,6 @@ public class ChatInterfaceController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        testMsgLog = new File(System.getProperty("user.home") + "\\.socket\\testMsgLog.txt");
-        fileMsgLog = new File(System.getProperty("user.home") + "\\.socket\\fileMsgLog.txt");
-
-        if (!testMsgLog.exists()) {
-            try {
-                testMsgLog.createNewFile();
-            } catch (IOException e) {
-                log.error(e.toString());
-            }
-        }
-
-        if (!fileMsgLog.exists()) {
-            try {
-                fileMsgLog.createNewFile();
-            } catch (IOException e) {
-                log.error(e.toString());
-            }
-        }
 
 
         minWindow.setOnAction(event -> primaryStage.setIconified(true)); /* 最小化 */
@@ -135,49 +110,67 @@ public class ChatInterfaceController implements Initializable {
                         textMsg.setSenderId(UserMemory.myUser.getId());
                         textMsg.setReceiveId(UserMemory.talkUser.getId());
                         textMsg.setContent(text);
-
-                        FileUtils.writeStringToFile(testMsgLog, JSON.toJSONString(textMsg) + "\n", "UTF-8", true);
                         result.setObject(textMsg);
 
                         if (1 == (UserMemory.talkUser.getLogin())) {
                             result.setCode(Code.SEND_TEXT_MSG);
+                            Result result2 = poolExecutor.submit(() -> {
+                                Result result3 = null;
+                                try {
+                                    result3 = textMsgService.sendTextMsgByClient(result, UserMemory.talkUser.getIp(), 8081);
+                                } catch (Exception e) {
+                                    log.error(e.toString());
+                                    e.printStackTrace();
+                                }
+                                return result3;
+                            }).get();
+
+                            Platform.runLater(() -> {
+                                try {
+                                    if (Code.SEND_TEXT_MSG_SUCCESS.equals(result2.getCode())) {
+                                        resetChatInterface(textMsg);
+                                    } else {
+                                        // 发送失败 弹出错误窗口
+                                        Alert alert = new Alert(Alert.AlertType.ERROR, result2.getMsg());
+                                        alert.show();
+                                        // 失败的话得重新输入
+                                    }
+                                } catch (Exception e) {
+                                    log.error(e.toString());
+                                    e.printStackTrace();
+                                }
+                            });
+
                         } else {
                             result.setCode(Code.SEND_OFFLINE_TEXT_MSG);
-                        }
-
-                        Result result2 = poolExecutor.submit(() -> {
-                            Result result3 = null;
-                            try {
-                                result3 = textMsgService.sendTextMsgByServer(result);
-                            } catch (Exception e) {
-                                log.error(e.toString());
-                                e.printStackTrace();
-                            }
-                            return result3;
-                        }).get();
-
-                        Platform.runLater(() -> {
-                            try {
-                                if (Code.SEND_OFFLINE_TEXT_MSG_SUCCESS.equals(result2.getCode())) {
-                                    inputArea.setText("");
-                                    SendMsg sendMsg = new SendMsg();
-                                    sendMsg.setMsg(textMsg);
-                                    sendMsg.setType(0);
-                                    MsgMemory.sendMsgList.add(sendMsg);
-                                    MsgMemory.sendMsgListSort(simpleDateFormat);
-                                    msgListView.setItems(FXCollections.observableArrayList(MsgMemory.sendMsgList));
-                                } else {
-                                    // 发送失败 弹出错误窗口
-                                    Alert alert = new Alert(Alert.AlertType.ERROR, result2.getMsg());
-                                    alert.show();
-                                    // 失败的话得重新输入
+                            Result result2 = poolExecutor.submit(() -> {
+                                Result result3 = null;
+                                try {
+                                    result3 = textMsgService.sendTextMsgByServer(result);
+                                } catch (Exception e) {
+                                    log.error(e.toString());
+                                    e.printStackTrace();
                                 }
-                            } catch (Exception e) {
-                                log.error(e.toString());
-                                e.printStackTrace();
-                            }
-                        });
+                                return result3;
+                            }).get();
 
+                            Platform.runLater(() -> {
+                                try {
+                                    if (Code.SEND_OFFLINE_TEXT_MSG_SUCCESS.equals(result2.getCode())) {
+                                        resetChatInterface(textMsg);
+                                    } else {
+                                        // 发送失败 弹出错误窗口
+                                        Alert alert = new Alert(Alert.AlertType.ERROR, result2.getMsg());
+                                        alert.show();
+                                        // 失败的话得重新输入
+                                    }
+                                } catch (Exception e) {
+                                    log.error(e.toString());
+                                    e.printStackTrace();
+                                }
+                            });
+
+                        }
                     } catch (Exception e) {
                         Alert alert = new Alert(Alert.AlertType.ERROR, "未知错误");
                         alert.show();
@@ -187,6 +180,7 @@ public class ChatInterfaceController implements Initializable {
                     return null;
                 }
             };
+
             progressStageConfig.setParent(primaryStage);
             progressStageConfig.setText("发送中");
             progressStageConfig.setWork(task);
@@ -199,6 +193,17 @@ public class ChatInterfaceController implements Initializable {
 
     }
 
+    private void resetChatInterface(TextMsg textMsg) {
+        inputArea.setText("");
+        UserMemory.textMsgList.add(textMsg);
+        SendMsg sendMsg = new SendMsg();
+        sendMsg.setMsg(textMsg);
+        sendMsg.setType(0);
+        MsgMemory.sendMsgList.add(sendMsg);
+        MsgMemory.sendMsgListSort(simpleDateFormat);
+        msgListView.setItems(FXCollections.observableArrayList(MsgMemory.sendMsgList));
+    }
+
     public void choiceFileEvent(ActionEvent actionEvent) {
         fileChooser.setTitle("请选择你想要的文件");
 
@@ -208,6 +213,6 @@ public class ChatInterfaceController implements Initializable {
 
         File aimFile = fileChooser.showOpenDialog(primaryStage);
 
-        poolExecutor.execute(() -> SendFile.sendFileMsg(aimFile, simpleDateFormat, poolExecutor, fileMsgService, fileMsgLog, msgListView));
+        poolExecutor.execute(() -> SendFile.sendFileMsg(aimFile, simpleDateFormat, poolExecutor, fileMsgService, msgListView));
     }
 }

@@ -18,8 +18,8 @@ public interface TextMsgService {
     /**
      * 查找关于接受者的信息
      *
-     * @param receiveId
+     * @param id
      * @return
      */
-    List<TextMsg> findAboutReceiveTextMsg(Integer receiveId);
+    List<TextMsg> findAboutReceiveOrSenderIdTextMsg(Integer id);
 }

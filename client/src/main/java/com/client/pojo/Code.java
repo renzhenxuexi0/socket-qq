@@ -51,8 +51,10 @@ public class Code {
     // 接收离线文件
     public static final Integer RECEIVE_OFFLINE_FILE_MSG = 6002;
 
+
     // 获取所有用户信息
     public static final Integer GET_ALL_USERS = 7001;
+
 
     // 下线
     public static final Integer OFF_LINE = 8001;

@@ -41,4 +41,12 @@ public interface UserService {
      * @return
      */
     void updateLogin(Integer id, Integer login);
+
+    /**
+     * 更新用户id
+     *
+     * @param id
+     * @param ip
+     */
+    void updateIp(Integer id, String ip);
 }

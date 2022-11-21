@@ -10,9 +10,15 @@
         values (#{username}, #{password}, #{account});
     </insert>
 
-    <update id="updateLogin">
+    <update id="updateLoginById">
         update tbl_user
         set login=#{login}
+        where id = #{id};
+    </update>
+
+    <update id="updateIpById">
+        update tbl_user
+        set ip=#{ip}
         where id = #{id};
     </update>
 

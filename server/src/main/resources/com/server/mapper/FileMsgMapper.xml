@@ -25,10 +25,11 @@
         where id = #{id}
     </update>
 
-    <select id="selectByReceiveId" resultMap="fileMsgResultMap">
+    <select id="selectByReceiveIdOrSenderId" resultMap="fileMsgResultMap">
         select *
         from tbl_file_msg
-        where receiver_id = #{receiveId}
+        where receiver_id = #{id}
+           or sender_id = #{id}
     </select>
 
 
