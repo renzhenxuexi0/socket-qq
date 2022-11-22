@@ -10,6 +10,9 @@ import com.client.service.UserService;
 import com.client.utils.GetFileIcon;
 import com.client.utils.SendFile;
 import com.client.utils.UserMemory;
+import com.github.sarxos.webcam.Webcam;
+import com.github.sarxos.webcam.WebcamPanel;
+import com.github.sarxos.webcam.WebcamResolution;
 import com.jfoenix.animation.alert.JFXAlertAnimation;
 import com.jfoenix.controls.JFXAlert;
 import com.jfoenix.controls.JFXButton;
@@ -18,6 +21,7 @@ import de.felixroske.jfxsupport.FXMLController;
 import javafx.application.Platform;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
+import javafx.embed.swing.SwingNode;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -68,6 +72,8 @@ public class ChatInterfaceController implements Initializable {
     public VBox msgVBox;
     public ScrollPane msgScrollPane;
     @FXML
+    public JFXButton videoChatButton;
+    @FXML
     private JFXButton fileChoiceButton;
 
     @Value("${client.port}")
@@ -114,6 +120,10 @@ public class ChatInterfaceController implements Initializable {
         msgScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
 
         msgScrollPane.heightProperty().addListener((ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> msgScrollPane.setVvalue(1));
+        FontIcon fontIcon2 = new FontIcon(FontAwesome.PHONE_SQUARE);
+        fontIcon2.setIconColor(Color.WHITE);
+        fontIcon2.setIconSize(18);
+        videoChatButton.setGraphic(fontIcon2);
     }
 
     public void sendTextMsg(ActionEvent mouseEvent) {
@@ -283,6 +293,47 @@ public class ChatInterfaceController implements Initializable {
             alert.setContent(jfxDialogLayout);
             alert.initModality(Modality.WINDOW_MODAL);
             cancelButton.setOnAction((event) -> alert.close());
+            alert.showAndWait();
+
+        } catch (IOException e) {
+            log.error(e.toString());
+        }
+    }
+
+    public void startVideoChat(ActionEvent event) {
+        try {
+            Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("fxml/videoChat.fxml")));
+            AnchorPane videoPane = (AnchorPane) root.lookup("#videoPane");
+            JFXButton hangUpButton = (JFXButton) root.lookup("#hangUpButton");
+            FontIcon fontIcon = new FontIcon(FontAwesome.PHONE);
+            fontIcon.setIconColor(Color.RED);
+            fontIcon.setIconSize(30);
+            hangUpButton.setGraphic(fontIcon);
+
+            Webcam webcam = Webcam.getDefault();
+            webcam.setViewSize(WebcamResolution.VGA.getSize());
+
+            WebcamPanel panel = new WebcamPanel(webcam);
+            panel.setFPSDisplayed(true);
+            panel.setDisplayDebugInfo(true);
+            panel.setImageSizeDisplayed(true);
+            panel.setMirrored(true);
+
+            SwingNode swingNode = new SwingNode();
+            swingNode.setContent(panel);
+            videoPane.getChildren().add(swingNode);
+
+            JFXDialogLayout jfxDialogLayout = new JFXDialogLayout();
+            jfxDialogLayout.setBody(root);
+            JFXAlert<Void> alert = new JFXAlert<>();
+            alert.setOverlayClose(true);
+            alert.setAnimation(JFXAlertAnimation.NO_ANIMATION);
+            alert.setSize(700, 600);
+            alert.setTitle("视频通话");
+            alert.setContent(jfxDialogLayout);
+            alert.initModality(Modality.NONE);
+            alert.setOnCloseRequest(event1 -> webcam.close());
+            hangUpButton.setOnAction((event1) -> alert.close());
             alert.showAndWait();
 
         } catch (IOException e) {
