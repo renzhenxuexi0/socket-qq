@@ -303,8 +303,13 @@ public class ChatInterfaceController implements Initializable {
     public void startVideoChat(ActionEvent event) {
         try {
             Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("fxml/videoChat.fxml")));
-            AnchorPane videoPane = (AnchorPane) root.lookup("#videoPane");
+
+            AnchorPane talkVideoPane = (AnchorPane) root.lookup("#talkVideoPane");
+            Label talkUsernameLabel = (Label) root.lookup("#talkUsernameLabel");
+            Label myUsernameLabel = (Label) root.lookup("#myUsernameLabel");
+            AnchorPane myVideoPane = (AnchorPane) root.lookup("#myVideoPane");
             JFXButton hangUpButton = (JFXButton) root.lookup("#hangUpButton");
+
             FontIcon fontIcon = new FontIcon(FontAwesome.PHONE);
             fontIcon.setIconColor(Color.RED);
             fontIcon.setIconSize(30);
@@ -320,22 +325,22 @@ public class ChatInterfaceController implements Initializable {
             panel.setMirrored(true);
 
             SwingNode swingNode = new SwingNode();
+            myUsernameLabel.setText(UserMemory.myUser.getUsername());
             swingNode.setContent(panel);
-            videoPane.getChildren().add(swingNode);
+            myVideoPane.getChildren().add(swingNode);
 
             JFXDialogLayout jfxDialogLayout = new JFXDialogLayout();
             jfxDialogLayout.setBody(root);
             JFXAlert<Void> alert = new JFXAlert<>();
             alert.setOverlayClose(true);
             alert.setAnimation(JFXAlertAnimation.NO_ANIMATION);
-            alert.setSize(700, 600);
+            alert.setSize(1280, 680);
             alert.setTitle("视频通话");
             alert.setContent(jfxDialogLayout);
             alert.initModality(Modality.NONE);
             alert.setOnCloseRequest(event1 -> webcam.close());
             hangUpButton.setOnAction((event1) -> alert.close());
             alert.showAndWait();
-
         } catch (IOException e) {
             log.error(e.toString());
         }

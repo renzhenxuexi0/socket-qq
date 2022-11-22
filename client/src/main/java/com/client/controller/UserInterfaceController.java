@@ -310,7 +310,7 @@ public class UserInterfaceController implements Initializable, ApplicationContex
                         chatInterface.userName.setText(userListView.getSelectionModel().getSelectedItem().getUsername());
 
                         setUpMsgListView(image, getClass().getResource("fileImage/unknownFile.png"));
-
+                        chatInterface.primaryStage.setTitle("对" + UserMemory.talkUser.getUsername() + "的聊天框");
                         chatInterface.primaryStage.show();
                     }
                 };

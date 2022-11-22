@@ -151,7 +151,7 @@ public class LoginInterfaceController implements Initializable {
 
                                     primaryStage.setHeight(650);
                                     primaryStage.setWidth(307);
-                                    primaryStage.setTitle("IMO");
+                                    primaryStage.setTitle(UserMemory.myUser.getUsername() + "的IMO");
                                     ClientApp.showView(UserView.class);
                                 } else {
                                     // 登录失败 弹出错误窗口
