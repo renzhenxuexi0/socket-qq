@@ -17,7 +17,7 @@ public class TextMsgServiceImpl implements TextMsgService {
     private TextMsgMapper textMsgMapper;
 
     @Override
-    public boolean cacheTextMsg(TextMsg textMsg) {
+    public boolean addTextMsg(TextMsg textMsg) {
         try {
             textMsgMapper.addTextMsg(textMsg);
             return true;

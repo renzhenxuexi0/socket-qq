@@ -32,13 +32,6 @@
     -fx-text-fill: white; /* 字体颜色 */
 }
 
-.error-text {
-    -fx-font-size: 12px;
-    -fx-font-weight: bold;
-    -fx-text-fill: red;
-    -fx-font-family: "Microsoft YaHei";
-}
-
 
 #userListView {
     -fx-background-color: #ffffff;
@@ -67,8 +60,4 @@
 
 #fileChoiceButton:hover {
     -fx-background-color: #f1f1f1;
-}
-
-#msgListView .list-cell:selected {
-    -fx-background-color: #F5F5F5;
 }

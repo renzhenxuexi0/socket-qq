@@ -10,7 +10,7 @@ public interface FileMsgService {
      *
      * @param fileMsg
      */
-    boolean cacheFileMsg(FileMsg fileMsg);
+    boolean addFileMsg(FileMsg fileMsg);
 
     /**
      * 查找关于接受者的信息

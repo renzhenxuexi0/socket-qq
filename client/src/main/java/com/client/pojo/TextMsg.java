@@ -1,11 +1,9 @@
 package com.client.pojo;
 
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 @Data
-@EqualsAndHashCode(callSuper = false)
-public class TextMsg extends Msg {
+public class TextMsg {
     private Integer id;
     private String messageTime;
     private String content;

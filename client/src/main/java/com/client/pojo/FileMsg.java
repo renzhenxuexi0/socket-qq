@@ -2,11 +2,9 @@ package com.client.pojo;
 
 
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 @Data
-@EqualsAndHashCode(callSuper = false)
-public class FileMsg extends Msg {
+public class FileMsg {
     private Integer id;
     private String fileName;
     private String messageTime;
@@ -16,4 +14,6 @@ public class FileMsg extends Msg {
     private Long startPoint;
     private Long endPoint;
     private Integer sign;
+    private Integer online;
+    private Long size;
 }

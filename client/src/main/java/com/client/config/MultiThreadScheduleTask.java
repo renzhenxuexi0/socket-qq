@@ -39,7 +39,13 @@ public class MultiThreadScheduleTask {
                 if (!user.getId().equals(UserMemory.myUser.getId())) {
                     allUser2.add(user);
                 }
+                if (UserMemory.talkUser != null) {
+                    if (UserMemory.talkUser.getId().equals(user.getId())) {
+                        UserMemory.talkUser = user;
+                    }
+                }
             });
+
             UserMemory.users = allUser2;
         } catch (Exception e) {
             log.error(e.toString());

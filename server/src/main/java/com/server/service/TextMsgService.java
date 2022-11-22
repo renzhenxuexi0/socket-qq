@@ -13,7 +13,7 @@ public interface TextMsgService {
      *
      * @param textMsg
      */
-    boolean cacheTextMsg(TextMsg textMsg);
+    boolean addTextMsg(TextMsg textMsg);
 
     /**
      * 查找关于接受者的信息

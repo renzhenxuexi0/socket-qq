@@ -8,6 +8,7 @@ import com.client.pojo.TextMsg;
 import com.client.utils.GetResultUtil;
 import com.client.utils.UserMemory;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 
 @Service
+@Slf4j
 public class UserService implements DisposableBean {
     @Value("${socket.ip}")
     private String socketIP;
@@ -110,7 +112,7 @@ public class UserService implements DisposableBean {
         stringObjectHashMap.put("textMsg", textMsgList);
         stringObjectHashMap.put("fileMsg", fileMsgList);
         result.setObject(stringObjectHashMap);
-        System.out.println(result);
+        log.info("下线成功");
         userOffLine(result);
     }
 }

@@ -5,6 +5,7 @@ import javafx.scene.image.WritableImage;
 import lombok.extern.slf4j.Slf4j;
 import sun.awt.shell.ShellFolder;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -20,7 +21,10 @@ public class GetFileIcon {
             Graphics2D g = im.createGraphics();
             g.drawImage(icon, 0, 0, null);
             g.dispose();
-            return SwingFXUtils.toFXImage(im, null);
+            WritableImage writableImage = SwingFXUtils.toFXImage(im, null);
+            ImageIO.write(SwingFXUtils.fromFXImage(writableImage, null), "png",
+                    new File(System.getProperty("user.home") + "\\.socket\\" + UserMemory.myUser.getAccount() + "\\" + file.getName() + ".png"));
+            return writableImage;
         } catch (Exception e) {
             log.error(e.toString());
         }

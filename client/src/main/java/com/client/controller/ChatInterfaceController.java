@@ -3,37 +3,49 @@ package com.client.controller;
 import com.client.config.ProgressStageConfig;
 import com.client.pojo.Code;
 import com.client.pojo.Result;
-import com.client.pojo.SendMsg;
 import com.client.pojo.TextMsg;
 import com.client.service.FileMsgService;
 import com.client.service.TextMsgService;
 import com.client.service.UserService;
-import com.client.utils.MsgMemory;
+import com.client.utils.GetFileIcon;
 import com.client.utils.SendFile;
 import com.client.utils.UserMemory;
+import com.jfoenix.animation.alert.JFXAlertAnimation;
+import com.jfoenix.controls.JFXAlert;
 import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXDialogLayout;
 import de.felixroske.jfxsupport.FXMLController;
 import javafx.application.Platform;
-import javafx.collections.FXCollections;
+import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.NodeOrientation;
+import javafx.scene.Parent;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.image.WritableImage;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
 import org.kordamp.ikonli.fontawesome.FontAwesome;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.concurrent.ThreadPoolExecutor;
 
@@ -51,10 +63,15 @@ public class ChatInterfaceController implements Initializable {
     public Stage primaryStage;
     @FXML
     public AnchorPane headPane;
+
     @FXML
-    public ListView<SendMsg> msgListView;
+    public VBox msgVBox;
+    public ScrollPane msgScrollPane;
     @FXML
     private JFXButton fileChoiceButton;
+
+    @Value("${client.port}")
+    private Integer clientPort;
 
     @Autowired
     private FileMsgService fileMsgService;
@@ -80,8 +97,11 @@ public class ChatInterfaceController implements Initializable {
 
     private FileChooser fileChooser;
 
+    private Image headImage;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        headImage = new Image(String.valueOf(getClass().getResource("headImage/head.gif")));
         // 最小化
         minWindow.setOnAction(event -> primaryStage.setIconified(true));
         closeWindow.setOnAction(event -> primaryStage.close());
@@ -90,6 +110,10 @@ public class ChatInterfaceController implements Initializable {
         fontIcon.setIconSize(18);
         fileChoiceButton.setGraphic(fontIcon);
         fileChooser = new FileChooser();
+        msgScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        msgScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
+
+        msgScrollPane.heightProperty().addListener((ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> msgScrollPane.setVvalue(1));
     }
 
     public void sendTextMsg(ActionEvent mouseEvent) {
@@ -115,7 +139,7 @@ public class ChatInterfaceController implements Initializable {
                             Result result2 = poolExecutor.submit(() -> {
                                 Result result3 = null;
                                 try {
-                                    result3 = textMsgService.sendTextMsgByClient(result, UserMemory.talkUser.getIp(), 8081);
+                                    result3 = textMsgService.sendTextMsgByClient(result, UserMemory.talkUser.getIp(), clientPort);
                                 } catch (Exception e) {
                                     log.error(e.toString());
                                     e.printStackTrace();
@@ -127,6 +151,20 @@ public class ChatInterfaceController implements Initializable {
                                 try {
                                     if (Code.SEND_TEXT_MSG_SUCCESS.equals(result2.getCode())) {
                                         resetChatInterface(textMsg);
+                                        Image image = new Image(String.valueOf(getClass().getResource("headImage/head.gif")));
+                                        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("fxml/msgCell.fxml")));
+                                        Label userName = (Label) root.lookup("#userName");
+                                        Label sendTime = (Label) root.lookup("#sendTime");
+                                        Label sendContent = (Label) root.lookup("#sendContent");
+                                        ImageView senderImage = (ImageView) root.lookup("#senderImage");
+
+                                        userName.setText(UserMemory.myUser.getUsername());
+                                        sendTime.setText(textMsg.getMessageTime());
+                                        senderImage.setImage(image);
+                                        sendContent.setText(textMsg.getContent());
+
+                                        root.setNodeOrientation(NodeOrientation.RIGHT_TO_LEFT);
+                                        msgVBox.getChildren().add(root);
                                     } else {
                                         // 发送失败 弹出错误窗口
                                         Alert alert = new Alert(Alert.AlertType.ERROR, result2.getMsg());
@@ -156,6 +194,20 @@ public class ChatInterfaceController implements Initializable {
                                 try {
                                     if (Code.SEND_OFFLINE_TEXT_MSG_SUCCESS.equals(result2.getCode())) {
                                         resetChatInterface(textMsg);
+                                        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("fxml/msgCell.fxml")));
+                                        Label userName = (Label) root.lookup("#userName");
+                                        Label sendTime = (Label) root.lookup("#sendTime");
+                                        Label sendContent = (Label) root.lookup("#sendContent");
+                                        ImageView senderImage = (ImageView) root.lookup("#senderImage");
+
+                                        sendContent.setStyle("-fx-background-color:  #95EC69; -fx-border-radius: 45; -fx-background-radius: 45;");
+                                        userName.setText(UserMemory.myUser.getUsername());
+                                        sendTime.setText(textMsg.getMessageTime());
+                                        senderImage.setImage(headImage);
+                                        sendContent.setText(textMsg.getContent());
+
+                                        root.setNodeOrientation(NodeOrientation.RIGHT_TO_LEFT);
+                                        msgVBox.getChildren().add(root);
                                     } else {
                                         // 发送失败 弹出错误窗口
                                         Alert alert = new Alert(Alert.AlertType.ERROR, result2.getMsg());
@@ -178,11 +230,7 @@ public class ChatInterfaceController implements Initializable {
                     return null;
                 }
             };
-
-            progressStageConfig.setParent(primaryStage);
-            progressStageConfig.setText("发送中");
-            progressStageConfig.setWork(task);
-            progressStageConfig.show();
+            poolExecutor.submit(task);
         } else {
             Alert alert = new Alert(Alert.AlertType.ERROR, "发送的消息不能为空！");
             alert.show();
@@ -194,12 +242,6 @@ public class ChatInterfaceController implements Initializable {
     private void resetChatInterface(TextMsg textMsg) {
         inputArea.setText("");
         UserMemory.textMsgList.add(textMsg);
-        SendMsg sendMsg = new SendMsg();
-        sendMsg.setMsg(textMsg);
-        sendMsg.setType(0);
-        MsgMemory.sendMsgList.add(sendMsg);
-        MsgMemory.sendMsgListSort(simpleDateFormat);
-        msgListView.setItems(FXCollections.observableArrayList(MsgMemory.sendMsgList));
     }
 
     public void choiceFileEvent(ActionEvent actionEvent) {
@@ -210,7 +252,41 @@ public class ChatInterfaceController implements Initializable {
         );
 
         File aimFile = fileChooser.showOpenDialog(primaryStage);
+        WritableImage fileIcon = GetFileIcon.getFileIcon(aimFile);
 
-        poolExecutor.execute(() -> SendFile.sendFileMsg(aimFile, simpleDateFormat, poolExecutor, fileMsgService, msgListView));
+        try {
+            Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("fxml/sendFile.fxml")));
+            Label fileNameLabel = (Label) root.lookup("#fileNameLabel");
+            ImageView fileImageView = (ImageView) root.lookup("#fileImageView");
+            JFXButton sendFileButton = (JFXButton) root.lookup("#sendFileButton");
+            JFXButton cancelButton = (JFXButton) root.lookup("#cancelButton");
+            ProgressBar sendProgressBar = (ProgressBar) root.lookup("#sendProgressBar");
+            Label progressLabel = (Label) root.lookup("#progressLabel");
+            Label sendStateLabel = (Label) root.lookup("#sendStateLabel");
+
+            fileNameLabel.setText(aimFile.getName());
+            fileImageView.setImage(fileIcon);
+            sendFileButton.setOnAction(event -> {
+                if (UserMemory.talkUser.getLogin().equals(1)) {
+                    poolExecutor.execute(() -> SendFile.sendFileMsg(aimFile, simpleDateFormat, poolExecutor, fileMsgService, clientPort, sendProgressBar, progressLabel, sendStateLabel, headImage, msgVBox));
+                } else {
+                    poolExecutor.execute(() -> SendFile.sendFileMsg(aimFile, simpleDateFormat, poolExecutor, fileMsgService, sendProgressBar, progressLabel, sendStateLabel, headImage, msgVBox));
+                }
+            });
+
+            JFXDialogLayout jfxDialogLayout = new JFXDialogLayout();
+            jfxDialogLayout.setBody(root);
+            JFXAlert<Void> alert = new JFXAlert<>(primaryStage);
+            alert.setOverlayClose(true);
+            alert.setAnimation(JFXAlertAnimation.CENTER_ANIMATION);
+            alert.setTitle("发送文件");
+            alert.setContent(jfxDialogLayout);
+            alert.initModality(Modality.WINDOW_MODAL);
+            cancelButton.setOnAction((event) -> alert.close());
+            alert.showAndWait();
+
+        } catch (IOException e) {
+            log.error(e.toString());
+        }
     }
 }

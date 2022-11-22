@@ -23,7 +23,7 @@
     </update>
 
     <select id="selectAll" resultType="com.server.pojo.User">
-        select id, username, account, login
+        select id, username, account, login, ip
         from tbl_user;
     </select>
 

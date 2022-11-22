@@ -15,8 +15,10 @@
     </resultMap>
 
     <insert id="addFileMsg">
-        insert into tbl_file_msg(message_time, file_name, file_address, sender_id, receiver_id, start_point, end_point)
-        values (#{messageTime}, #{fileName}, #{fileAddress}, #{senderId}, #{receiveId}, #{startPoint}, #{endPoint})
+        insert into tbl_file_msg(message_time, file_name, file_address, sender_id, receiver_id, start_point, end_point,
+                                 sign, online, size)
+        values (#{messageTime}, #{fileName}, #{fileAddress}, #{senderId}, #{receiverId}, #{startPoint}, #{endPoint},
+                #{sign}, #{online}, #{size})
     </insert>
 
     <update id="updateSignById">

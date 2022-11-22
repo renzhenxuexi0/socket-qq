@@ -11,7 +11,7 @@
     </resultMap>
     <insert id="addTextMsg">
         insert into tbl_text_msg(message_time, content, sender_id, receiver_id)
-        values (#{messageTime}, #{content}, #{senderId}, #{receiveId})
+        values (#{messageTime}, #{content}, #{senderId}, #{receiverId})
     </insert>
 
     <select id="selectByReceiveIdOrSenderId" resultMap="textMsgResultMap">

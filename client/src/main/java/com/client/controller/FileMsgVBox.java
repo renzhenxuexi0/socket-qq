@@ -24,10 +24,16 @@ public class FileMsgVBox {
 
     private ImageView fileImage;
 
+    private VBox vBox;
+
     private Label describeLabel;
 
-    public VBox fileMsgVBox(boolean isMe, String fileName) {
-        VBox vBox = new VBox();
+    private boolean isAccomplish;
+
+    public VBox fileMsgVBox(boolean isAccomplish, String fileName) {
+        this.isAccomplish = isAccomplish;
+
+        vBox = new VBox();
         vBox.setAlignment(Pos.CENTER);
         vBox.setStyle("-fx-background-color: white");
 
@@ -45,6 +51,19 @@ public class FileMsgVBox {
         fileNameLabel.setLayoutY(39);
         fileNameLabel.setFont(Font.font(14));
         fileNameLabel.setTextFill(Color.valueOf("#111111"));
+        fileNameLabel.setWrapText(true);
+
+        describeLabel = new Label("");
+        describeLabel.setTextFill(Color.valueOf("#111111"));
+
+        hBox1.getChildren().addAll(fileImage, fileNameLabel);
+
+        hyperlink1 = new Hyperlink();
+        hyperlink1.setText("接受");
+        hyperlink1.setTextFill(Color.valueOf("#111111"));
+        hyperlink2 = new Hyperlink();
+        hyperlink2.setText("打开文件所在位置");
+        hyperlink2.setTextFill(Color.valueOf("#111111"));
 
         progressBar = new ProgressBar();
         progressBar.setMaxHeight(10);
@@ -53,32 +72,12 @@ public class FileMsgVBox {
         progressBar.setPrefWidth(240);
         progressBar.setProgress(0.0);
 
-        HBox hBox2 = new HBox();
-        hBox2.setAlignment(Pos.CENTER_LEFT);
-        if (isMe) {
-            hyperlink1 = new Hyperlink();
-            hyperlink1.setText("发送");
-            hyperlink1.setTextFill(Color.valueOf("#111111"));
-            hyperlink2 = new Hyperlink();
-            hyperlink2.setText("取消");
-            hyperlink2.setTextFill(Color.valueOf("#111111"));
-            hBox2.getChildren().addAll(hyperlink1, hyperlink2);
-            hBox1.getChildren().addAll(fileNameLabel, fileImage);
+        if (!isAccomplish) {
+            vBox.getChildren().addAll(hBox1, progressBar, hyperlink1, describeLabel);
         } else {
-            hyperlink1 = new Hyperlink();
-            hyperlink1.setText("接受");
-            hyperlink1.setTextFill(Color.valueOf("#111111"));
-            hyperlink2 = new Hyperlink();
-            hyperlink2.setText("打开文件所在位置");
-            hyperlink2.setTextFill(Color.valueOf("#111111"));
-            hBox2.getChildren().addAll(hyperlink1, hyperlink2);
-            hBox1.getChildren().addAll(fileImage, fileNameLabel);
+            vBox.getChildren().addAll(hBox1, progressBar, describeLabel);
         }
 
-        describeLabel = new Label("");
-        describeLabel.setTextFill(Color.valueOf("#111111"));
-
-        vBox.getChildren().addAll(hBox1, progressBar, hBox2, describeLabel);
         return vBox;
     }
 
@@ -100,10 +99,13 @@ public class FileMsgVBox {
 
     public void setProgressBarState(String info) {
         Platform.runLater(() -> {
-            progressBar.setVisible(true);
             describeLabel.setText(info);
+            vBox.getChildren().remove(progressBar);
+            if (!isAccomplish) {
+                vBox.getChildren().remove(hyperlink1);
+                vBox.getChildren().add(2, hyperlink2);
+            }
         });
-
     }
 
     public Hyperlink getHyperlink1() {

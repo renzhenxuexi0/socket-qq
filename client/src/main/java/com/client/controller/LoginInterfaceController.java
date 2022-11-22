@@ -130,8 +130,6 @@ public class LoginInterfaceController implements Initializable {
                                     UserMemory.textMsgList = JSON.parseArray(jsonObject.get("textMsg").toString(), TextMsg.class);
                                     UserMemory.fileMsgList = JSON.parseArray(jsonObject.get("fileMsg").toString(), FileMsg.class);
 
-                                    System.out.println(UserMemory.textMsgList);
-
                                     // 登录成功保存账户密码
                                     Properties properties = new Properties();
                                     properties.put("user.account", account);

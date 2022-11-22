@@ -89,7 +89,6 @@ public class ServerController implements Initializable {
                         BufferedReader bfr = new BufferedReader(reader);//从字符流中读取文本，缓存
 
                         JSONObject jsonObject = JSON.parseObject(bfr.readLine());
-                        System.out.println(jsonObject);
 
                         // 数据传给服务层
                         Integer code = Integer.valueOf(jsonObject.getString("code"));
@@ -174,7 +173,6 @@ public class ServerController implements Initializable {
                 // 查找关于自己的离线信息
                 List<TextMsg> aboutReceiveTextMsg = textMsgService.findAboutReceiveOrSenderIdTextMsg(user2.getId());
                 List<FileMsg> aboutReceiveFileMsg = fileMsgService.findAboutReceiveOrSenderIdFileMsg(user2.getId());
-                System.out.println(aboutReceiveTextMsg);
 
                 HashMap<String, Object> allContent = new HashMap<>();
                 allContent.put("textMsg", aboutReceiveTextMsg);
@@ -215,17 +213,16 @@ public class ServerController implements Initializable {
         List<TextMsg> textMsgList = JSON.parseArray(jsonObject.getString("textMsg"), TextMsg.class);
         List<FileMsg> fileMsgList = JSON.parseArray(jsonObject.getString("fileMsg"), FileMsg.class);
         userService.updateLogin(user.getId(), 0);
-        textMsgList.forEach(textMsg -> textMsgService.cacheTextMsg(textMsg));
-//        fileMsgList.forEach(fileMsg -> {
-//            fileMsgService.cacheFileMsg(fileMsg);
-//        });
+
+        textMsgList.forEach(textMsg -> textMsgService.addTextMsg(textMsg));
+        fileMsgList.forEach(fileMsg -> fileMsgService.addFileMsg(fileMsg));
 
         contentInput.appendText(user.getUsername() + "下线\n");
     }
 
     Result sendOffLineTextMsg(TextMsg textMsg) {
         Result result = new Result();
-        boolean b = textMsgService.cacheTextMsg(textMsg);
+        boolean b = textMsgService.addTextMsg(textMsg);
         if (b) {
             result.setCode(Code.SEND_OFFLINE_TEXT_MSG_SUCCESS);
             contentInput.appendText(textMsg.getSenderId() + "该用户缓存信息成功\n");
@@ -257,17 +254,17 @@ public class ServerController implements Initializable {
             DataInputStream dataInputStream = new DataInputStream(inputStream);
             byte[] bytes = new byte[1024 * 10];
             int len;
-            long accumulationSize = 0L;
+            long accumulationSize = fileMsg.getStartPoint();
             while ((len = dataInputStream.read(bytes)) != -1) {
                 rw.write(bytes, 0, len);
                 accumulationSize += len;
             }
-            System.out.println("文件传输结束");
+            contentInput.appendText("接受文件" + fileMsg.getFileName() + "成功\n");
             fileMsg.setEndPoint(accumulationSize);
+            fileMsgService.addFileMsg(fileMsg);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        fileMsgService.cacheFileMsg(fileMsg);
     }
 
     void sendFileMsg(FileMsg fileMsg, Socket socket) {
@@ -279,19 +276,16 @@ public class ServerController implements Initializable {
             DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
             byte[] bytes = new byte[1024 * 10];
             int len;
-            long accumulationSize = 0L;
             while ((len = rw.read(bytes)) != -1) {
                 dataOutputStream.write(bytes, 0, len);
                 dataOutputStream.flush();
-                accumulationSize += len;
             }
             socket.close();
             fileMsgService.updateFileMsgSign(1, fileMsg.getId());
-            System.out.println("文件传输结束");
+            contentInput.appendText("发送文件" + fileMsg.getFileName() + "成功\n");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        fileMsgService.cacheFileMsg(fileMsg);
     }
 
     @Override

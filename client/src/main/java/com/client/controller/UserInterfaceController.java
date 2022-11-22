@@ -7,7 +7,10 @@ import com.client.pojo.*;
 import com.client.service.FileMsgService;
 import com.client.service.TextMsgService;
 import com.client.service.UserService;
-import com.client.utils.*;
+import com.client.utils.DragUtil;
+import com.client.utils.GetFileIcon;
+import com.client.utils.ShowNewViewUtil;
+import com.client.utils.UserMemory;
 import com.client.view.ChatView;
 import com.jfoenix.animation.alert.JFXAlertAnimation;
 import com.jfoenix.controls.*;
@@ -21,11 +24,12 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.NodeOrientation;
 import javafx.scene.Parent;
-import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
@@ -119,97 +123,136 @@ public class UserInterfaceController implements Initializable, ApplicationContex
         }
     }
 
-    @Scheduled(cron = "0/2 * * * * ?")
-    void updateMsgListView() {
-        if (chatInterface.primaryStage.isShowing() && MsgMemory.sendMsgList != null) {
-            setUpMsgListView(headImage, getClass().getResource("fileImage/unknownFile.png"));
-            Platform.runLater(() -> {
-                MsgMemory.sendMsgListSort(simpleDateFormat);
-                chatInterface.msgListView.setItems(FXCollections.observableArrayList(MsgMemory.sendMsgList));
-            });
-        }
-    }
-
     private void setUpMsgListView(Image headImage, URL resource) {
-        MsgMemory.sendMsgList = new ArrayList<>();
         UserMemory.textMsgList.forEach(textMsg -> {
-            if ((UserMemory.myUser.getId().equals(textMsg.getSenderId()) && UserMemory.talkUser.getId().equals(textMsg.getReceiverId())) || UserMemory.talkUser.getId().equals(textMsg.getSenderId())) {
-                SendMsg sendMsg = new SendMsg();
-                sendMsg.setImage(headImage);
-                sendMsg.setMsg(textMsg);
-                sendMsg.setType(0);
-                MsgMemory.sendMsgList.add(sendMsg);
+            try {
+                if (UserMemory.myUser.getId().equals(textMsg.getSenderId()) && UserMemory.talkUser.getId().equals(textMsg.getReceiverId())) {
+
+                    Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("fxml/msgCell.fxml")));
+                    Label userName = (Label) root.lookup("#userName");
+                    Label sendContent = (Label) root.lookup("#sendContent");
+                    Label sendTime = (Label) root.lookup("#sendTime");
+                    ImageView senderImage = (ImageView) root.lookup("#senderImage");
+
+                    userName.setText(UserMemory.myUser.getUsername());
+                    sendContent.setText(textMsg.getContent());
+                    sendContent.setStyle("-fx-background-color:  #95EC69; -fx-border-radius: 45; -fx-background-radius: 45;");
+
+                    sendTime.setText(textMsg.getMessageTime());
+                    senderImage.setImage(headImage);
+
+                    root.setNodeOrientation(NodeOrientation.RIGHT_TO_LEFT);
+                    Platform.runLater(() -> chatInterface.msgVBox.getChildren().add(root));
+                } else if (UserMemory.myUser.getId().equals(textMsg.getReceiverId()) && UserMemory.talkUser.getId().equals(textMsg.getSenderId())) {
+                    Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("fxml/msgCell.fxml")));
+                    Label userName = (Label) root.lookup("#userName");
+                    Label sendTime = (Label) root.lookup("#sendTime");
+                    Label sendContent = (Label) root.lookup("#sendContent");
+                    ImageView senderImage = (ImageView) root.lookup("#senderImage");
+
+                    userName.setText(UserMemory.talkUser.getUsername());
+                    sendTime.setText(textMsg.getMessageTime());
+                    senderImage.setImage(headImage);
+                    sendContent.setText(textMsg.getContent());
+
+                    Platform.runLater(() -> chatInterface.msgVBox.getChildren().add(root));
+                }
+            } catch (Exception e) {
+                throw new RuntimeException(e);
             }
         });
 
         UserMemory.fileMsgList.forEach(fileMsg -> {
-            if (UserMemory.talkUser.getId().equals(fileMsg.getSenderId())) {
-                SendMsg sendMsg = new SendMsg();
-                sendMsg.setMsg(fileMsg);
-                sendMsg.setImage(headImage);
-                sendMsg.setType(1);
-                FileMsgVBox fileMsgVBox = new FileMsgVBox();
-                sendMsg.setVBox(fileMsgVBox.fileMsgVBox(false, fileMsg.getFileName()));
-                fileMsgVBox.setFileImage(new Image(String.valueOf(resource)));
-                fileMsgVBox.setHyperlink1OnAction(event1 -> poolExecutor.execute(() -> {
-                    Socket socket = fileMsgService.sendOfflineFileMsg();
-                    if (socket != null) {
-                        try {
-                            PrintStream socketPrintStream = new PrintStream(socket.getOutputStream());
-                            Result result1 = new Result();
-                            result1.setCode(Code.RECEIVE_OFFLINE_FILE_MSG);
-                            result1.setObject(fileMsg);
-                            socketPrintStream.println(JSON.toJSONString(result1));
-                            System.out.println(result1);
-                            File file = new File(System.getProperty("user.home") + "\\.socket\\downloadFile\\" + fileMsg.getFileName());
-                            if (!file.exists()) {
+            try {
+                if (UserMemory.myUser.getId().equals(fileMsg.getReceiverId()) && UserMemory.talkUser.getId().equals(fileMsg.getSenderId())) {
+                    Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("fxml/msgCell.fxml")));
+                    Label userName = (Label) root.lookup("#userName");
+                    Label sendTime = (Label) root.lookup("#sendTime");
+                    Label sendContent = (Label) root.lookup("#sendContent");
+                    ImageView senderImage = (ImageView) root.lookup("#senderImage");
+
+                    FileMsgVBox fileMsgVBox = new FileMsgVBox();
+                    if (fileMsg.getSign().equals(1)) {
+                        sendContent.setGraphic(fileMsgVBox.fileMsgVBox(true, fileMsg.getFileName()));
+                        sendContent.setGraphicTextGap(0);
+                        fileMsgVBox.setFileImage(new Image(String.valueOf(resource)));
+                        fileMsgVBox.setProgressBarState("已接受离线文件");
+                    } else {
+                        sendContent.setGraphic(fileMsgVBox.fileMsgVBox(false, fileMsg.getFileName()));
+                        sendContent.setGraphicTextGap(0);
+                        fileMsgVBox.setFileImage(new Image(String.valueOf(resource)));
+                        fileMsgVBox.setHyperlink1OnAction(event1 -> poolExecutor.execute(() -> {
+                            Socket socket = fileMsgService.sendOfflineFileMsg();
+                            if (socket != null) {
                                 try {
-                                    file.createNewFile();
+                                    PrintStream socketPrintStream = new PrintStream(socket.getOutputStream());
+                                    Result result1 = new Result();
+                                    result1.setCode(Code.RECEIVE_OFFLINE_FILE_MSG);
+                                    result1.setObject(fileMsg);
+                                    socketPrintStream.println(JSON.toJSONString(result1));
+
+                                    File file = new File(System.getProperty("user.home") + "\\.socket\\downloadFile\\" + fileMsg.getFileName());
+                                    if (!file.exists()) {
+                                        try {
+                                            File parentFile = file.getParentFile();
+                                            if (!parentFile.exists()) {
+                                                parentFile.mkdirs();
+                                            }
+                                            file.createNewFile();
+                                        } catch (IOException e) {
+                                            throw new RuntimeException(e);
+                                        }
+                                    }
+
+                                    try (RandomAccessFile rw = new RandomAccessFile(file, "rw")) {
+                                        long length = fileMsg.getEndPoint() - fileMsg.getStartPoint();
+                                        rw.seek(fileMsg.getStartPoint());
+                                        DataInputStream dataInputStream = new DataInputStream(socket.getInputStream());
+                                        byte[] bytes = new byte[1024 * 10];
+                                        int len;
+                                        long accumulationSize = 0L;
+                                        while ((len = dataInputStream.read(bytes)) != -1) {
+                                            rw.write(bytes, 0, len);
+                                            accumulationSize += len;
+                                            double schedule = (double) accumulationSize / (double) (length);
+                                            Platform.runLater(() -> fileMsgVBox.setProgressBarProgress(schedule));
+                                        }
+                                        if (accumulationSize == length) {
+                                            fileMsgVBox.setProgressBarState("接受完成");
+                                            WritableImage fileIcon = GetFileIcon.getFileIcon(file);
+                                            Platform.runLater(() -> fileMsgVBox.setFileImage(fileIcon));
+                                        }
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
+                                    }
+
                                 } catch (IOException e) {
-                                    throw new RuntimeException(e);
+                                    e.printStackTrace();
                                 }
                             }
+                        }));
+                    }
 
-                            try (RandomAccessFile rw = new RandomAccessFile(file, "rw")) {
-                                long length = fileMsg.getEndPoint() - fileMsg.getStartPoint();
-                                rw.seek(fileMsg.getStartPoint());
-                                DataInputStream dataInputStream = new DataInputStream(socket.getInputStream());
-                                byte[] bytes = new byte[1024 * 10];
-                                int len;
-                                long accumulationSize = 0L;
-                                while ((len = dataInputStream.read(bytes)) != -1) {
-                                    rw.write(bytes, 0, len);
-                                    accumulationSize += len;
-                                    double schedule = (double) accumulationSize / (double) (length);
-                                    Platform.runLater(() -> fileMsgVBox.setProgressBarProgress(schedule));
-                                }
-                                if (accumulationSize == length) {
-                                    fileMsgVBox.setProgressBarState("接受完成");
-                                    WritableImage fileIcon = GetFileIcon.getFileIcon(file);
-                                    Platform.runLater(() -> fileMsgVBox.setFileImage(fileIcon));
-                                }
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-
+                    fileMsgVBox.setHyperlink2OnAction(event2 -> {
+                        try {
+                            Desktop.getDesktop().open(new File(System.getProperty("user.home") + "\\.socket\\downloadFile"));
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
-                    }
-                }));
+                    });
 
-                fileMsgVBox.setHyperlink2OnAction(event12 -> {
-                    try {
-                        Desktop.getDesktop().open(new File("System.getProperty(user.home)" + "\\.socket\\downloadFile"));
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                });
+                    userName.setText(UserMemory.talkUser.getUsername());
+                    sendTime.setText(fileMsg.getMessageTime());
+                    senderImage.setImage(headImage);
 
-                MsgMemory.sendMsgList.add(sendMsg);
-            } else if (UserMemory.myUser.getId().equals(fileMsg.getSenderId()) && UserMemory.talkUser.getId().equals(fileMsg.getReceiverId())) {
-                creatSendMsg(headImage, fileMsg);
+                    Platform.runLater(() -> chatInterface.msgVBox.getChildren().add(root));
+                } else if (UserMemory.myUser.getId().equals(fileMsg.getSenderId()) && UserMemory.talkUser.getId().equals(fileMsg.getReceiverId())) {
+                    creatSendMsg(fileMsg);
+                }
+            } catch (Exception e) {
+                throw new RuntimeException(e);
             }
+
         });
     }
 
@@ -224,7 +267,6 @@ public class UserInterfaceController implements Initializable, ApplicationContex
 
         ChatView view = applicationContext.getBean(ChatView.class);
         chatInterface.primaryStage = ShowNewViewUtil.showView(view, primaryStage);
-        chatInterface.msgListView.setCellFactory(param -> new MsgCell());
         DragUtil.addDragListener(chatInterface.primaryStage, chatInterface.headPane);
 
         textMsgLog = new File(System.getProperty("user.home") + "\\.socket\\" + UserMemory.myUser.getAccount() + "\\textMsgLog.txt");
@@ -261,45 +303,13 @@ public class UserInterfaceController implements Initializable, ApplicationContex
                 return (EventHandler<MouseEvent>) event -> {
                     if (event.getClickCount() == 2 && event.getButton().name().equals("PRIMARY")) {
                         chatInterface.inputArea.setText("");
+                        chatInterface.msgVBox.getChildren().clear();
+
                         UserMemory.talkUser = userListView.getSelectionModel().getSelectedItem();
+
                         chatInterface.userName.setText(userListView.getSelectionModel().getSelectedItem().getUsername());
 
                         setUpMsgListView(image, getClass().getResource("fileImage/unknownFile.png"));
-
-                        if (textMsgLog.exists()) {
-                            try {
-                                String[] jsons1 = FileUtils.readFileToString(textMsgLog, "UTF-8").split("\n");
-                                for (String json : jsons1) {
-                                    TextMsg textMsg = JSON.parseObject(json, TextMsg.class);
-                                    if (Objects.equals(textMsg.getReceiverId(), UserMemory.talkUser.getId())) {
-                                        SendMsg sendMsg = new SendMsg();
-                                        sendMsg.setImage(image);
-                                        sendMsg.setMsg(textMsg);
-                                        sendMsg.setType(0);
-                                        MsgMemory.sendMsgList.add(sendMsg);
-                                    }
-                                }
-                            } catch (Exception e) {
-                                log.error(e.toString());
-                            }
-                        }
-
-                        if (fileMsgLog.exists()) {
-                            try {
-                                String[] jsons2 = FileUtils.readFileToString(fileMsgLog, "UTF-8").split("\n");
-                                for (String json : jsons2) {
-                                    FileMsg fileMsg = JSON.parseObject(json, FileMsg.class);
-                                    if (Objects.equals(fileMsg.getReceiverId(), UserMemory.talkUser.getId())) {
-                                        creatSendMsg(image, fileMsg);
-                                    }
-                                }
-                            } catch (Exception e) {
-                                log.error(e.toString());
-                            }
-                        }
-
-                        MsgMemory.sendMsgListSort(simpleDateFormat);
-                        chatInterface.msgListView.setItems(FXCollections.observableArrayList(MsgMemory.sendMsgList));
 
                         chatInterface.primaryStage.show();
                     }
@@ -328,6 +338,7 @@ public class UserInterfaceController implements Initializable, ApplicationContex
                 while (!Thread.currentThread().isInterrupted()) {
                     Socket socket = serverSocket.accept();
                     poolExecutor.execute(() -> {
+                        log.info("连接成功");
                         // 流的封装
                         OutputStream os;//字节输出流抽象类
                         try {
@@ -349,12 +360,24 @@ public class UserInterfaceController implements Initializable, ApplicationContex
                                 ps.println(JSON.toJSONString(result2));
                                 FileUtils.writeStringToFile(textMsgLog, JSON.toJSONString(textMsg) +
                                         "\n", StandardCharsets.UTF_8, true);
+
+                                Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("fxml/msgCell.fxml")));
+                                Label userName = (Label) root.lookup("#userName");
+                                Label sendTime = (Label) root.lookup("#sendTime");
+                                Label sendContent = (Label) root.lookup("#sendContent");
+                                ImageView senderImage = (ImageView) root.lookup("#senderImage");
+
+                                userName.setText(UserMemory.talkUser.getUsername());
+                                sendTime.setText(textMsg.getMessageTime());
+                                senderImage.setImage(headImage);
+                                sendContent.setText(textMsg.getContent());
+
+                                Platform.runLater(() -> chatInterface.msgVBox.getChildren().add(root));
                             } else if (Code.SEND_FILE_MSG.equals(code)) {
                                 FileMsg fileMsg = JSON.parseObject(jsonObject.getString("object"), FileMsg.class);
-                                receiveFileMsg(fileMsg, is);
+                                receiveFileMsg(fileMsg, is, getClass().getResource("fileImage/unknownFile.png"));
                                 FileUtils.writeStringToFile(fileMsgLog, JSON.toJSONString(fileMsg) +
                                         "\n", StandardCharsets.UTF_8, true);
-                                UserMemory.fileMsgList.add(fileMsg);
                             }
                         } catch (IOException e) {
                             throw new RuntimeException(e);
@@ -368,10 +391,10 @@ public class UserInterfaceController implements Initializable, ApplicationContex
 
     }
 
-    private void receiveFileMsg(FileMsg fileMsg, InputStream inputStream) {
+    private void receiveFileMsg(FileMsg fileMsg, InputStream inputStream, URL resource) {
         String[] split = fileMsg.getFileName().split("\\.");
         String nameSuffix = split[split.length - 1];
-        File file = new File(System.getProperty("user.home") + "\\.socketDownload\\" + fileMsg.getFileName() + "." + nameSuffix);
+        File file = new File(System.getProperty("user.home") + "\\.socketDownload\\" + fileMsg.getFileName());
         if (!file.exists()) {
             File parentFile = file.getParentFile();
             try {
@@ -383,18 +406,68 @@ public class UserInterfaceController implements Initializable, ApplicationContex
                 throw new RuntimeException(e);
             }
         }
+
         try (RandomAccessFile rw = new RandomAccessFile(file, "rw")) {
+            Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("fxml/msgCell.fxml")));
+            Label userName = (Label) root.lookup("#userName");
+            Label sendTime = (Label) root.lookup("#sendTime");
+            Label sendContent = (Label) root.lookup("#sendContent");
+            ImageView senderImage = (ImageView) root.lookup("#senderImage");
+
+            FileMsgVBox fileMsgVBox = new FileMsgVBox();
+
+            sendContent.setGraphic(fileMsgVBox.fileMsgVBox(true, fileMsg.getFileName()));
+            sendContent.setGraphicTextGap(0);
+
+            fileMsgVBox.setFileImage(new Image(String.valueOf(resource)));
+            fileMsgVBox.setHyperlink2OnAction(event2 -> {
+                try {
+                    Desktop.getDesktop().open(new File(System.getProperty("user.home") + "\\.socket\\downloadFile"));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
+
+            User talkUser = null;
+            for (User user : UserMemory.users) {
+                if (user.getId().equals(fileMsg.getSenderId())) {
+                    talkUser = user;
+                }
+            }
+
+            userName.setText(talkUser != null ? talkUser.getUsername() : null);
+            sendTime.setText(fileMsg.getMessageTime());
+            senderImage.setImage(headImage);
+            userName.setText(UserMemory.talkUser.getUsername());
+            sendTime.setText(fileMsg.getMessageTime());
+            senderImage.setImage(headImage);
+
+            Platform.runLater(() -> chatInterface.msgVBox.getChildren().add(root));
+
             rw.seek(fileMsg.getStartPoint());
+            long length = fileMsg.getSize();
             DataInputStream dataInputStream = new DataInputStream(inputStream);
             byte[] bytes = new byte[1024 * 10];
             int len;
-            long accumulationSize = 0L;
+            long accumulationSize = fileMsg.getStartPoint();
             while ((len = dataInputStream.read(bytes)) != -1) {
                 rw.write(bytes, 0, len);
                 accumulationSize += len;
+                double progress = (double) accumulationSize / (double) length;
+                Platform.runLater(() -> {
+                    fileMsgVBox.setProgressBarProgress(progress);
+                });
             }
-            System.out.println("文件传输结束");
+            if (accumulationSize == length) {
+                fileMsgVBox.setProgressBarState("在线文件发送完成");
+            }
+
+            log.info("文件传输结束");
+            fileMsg.setSign(1);
             fileMsg.setEndPoint(accumulationSize);
+            fileMsg.setFileAddress(file.getPath());
+
+
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -405,23 +478,32 @@ public class UserInterfaceController implements Initializable, ApplicationContex
         this.applicationContext = applicationContext;
     }
 
-    private void creatSendMsg(Image image, FileMsg fileMsg) {
-        SendMsg sendMsg = new SendMsg();
-        sendMsg.setImage(image);
-        sendMsg.setMsg(fileMsg);
-        sendMsg.setType(1);
-        FileMsgVBox fileMsgVBox = new FileMsgVBox();
-        sendMsg.setVBox(fileMsgVBox.fileMsgVBox(true, fileMsg.getFileName()));
-        fileMsgVBox.setFileImage(new Image(String.valueOf(getClass().getResource("fileImage/unknownFile.png"))));
-        Hyperlink hyperlink1 = fileMsgVBox.getHyperlink1();
-        hyperlink1.setText("");
-        hyperlink1.setVisited(true);
-        Hyperlink hyperlink2 = fileMsgVBox.getHyperlink2();
-        hyperlink2.setText("");
-        hyperlink2.setVisited(true);
-        fileMsgVBox.setProgressBarProgress(100);
-        fileMsgVBox.setProgressBarState("已经发送完离线信息");
-        MsgMemory.sendMsgList.add(sendMsg);
+    private void creatSendMsg(FileMsg fileMsg) {
+        try {
+            Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("fxml/msgCell.fxml")));
+            Label userName = (Label) root.lookup("#userName");
+            Label sendTime = (Label) root.lookup("#sendTime");
+            Label sendContent = (Label) root.lookup("#sendContent");
+            ImageView senderImage = (ImageView) root.lookup("#senderImage");
+
+            FileMsgVBox fileMsgVBox = new FileMsgVBox();
+            sendContent.setGraphic(fileMsgVBox.fileMsgVBox(true, fileMsg.getFileName()));
+            sendContent.setGraphicTextGap(0);
+            sendContent.setStyle("-fx-background-color:  #95EC69; -fx-border-radius: 45; -fx-background-radius: 45;");
+
+            fileMsgVBox.setFileImage(new Image(String.valueOf(new File(System.getProperty("user.home") + "\\.socket\\"
+                    + UserMemory.myUser.getAccount() + "\\" + fileMsg.getFileName() + ".png").toURI())));
+            fileMsgVBox.setProgressBarState("已经发送完信息");
+
+            userName.setText(UserMemory.talkUser.getUsername());
+            sendTime.setText(fileMsg.getMessageTime());
+            senderImage.setImage(headImage);
+
+            root.setNodeOrientation(NodeOrientation.RIGHT_TO_LEFT);
+            Platform.runLater(() -> chatInterface.msgVBox.getChildren().add(root));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void groupChat(ActionEvent actionEvent) {
@@ -438,10 +520,8 @@ public class UserInterfaceController implements Initializable, ApplicationContex
                 if (!"".equals(text)) {
                     for (User user : UserMemory.groupUser) {
                         Task<Void> task = new Task<Void>() {
-
                             @Override
                             protected Void call() throws Exception {
-
                                 try {
                                     Date date = new Date();//获得当前时间
                                     String msgTime = simpleDateFormat.format(date);//将当前时间转换成特定格式的时间字符串，这样便可以插入到数据库中
@@ -453,14 +533,13 @@ public class UserInterfaceController implements Initializable, ApplicationContex
                                     textMsg.setReceiverId(user.getId());
                                     textMsg.setContent(text);
                                     result.setObject(textMsg);
-                                    if (1 == (UserMemory.talkUser.getLogin())) {
+                                    if (1 == (user.getLogin())) {
                                         result.setCode(Code.SEND_TEXT_MSG);
                                         Result result2 = poolExecutor.submit(() -> {
                                             Result result3 = null;
                                             try {
                                                 result3 = textMsgService.sendTextMsgByClient(result, user.getIp(), 8081);
                                             } catch (Exception e) {
-                                                log.error(e.toString());
                                                 e.printStackTrace();
                                             }
                                             return result3;
@@ -477,7 +556,6 @@ public class UserInterfaceController implements Initializable, ApplicationContex
                                                     // 失败的话得重新输入
                                                 }
                                             } catch (Exception e) {
-                                                log.error(e.toString());
                                                 e.printStackTrace();
                                             }
                                         });
@@ -489,12 +567,10 @@ public class UserInterfaceController implements Initializable, ApplicationContex
                                             try {
                                                 result3 = textMsgService.sendTextMsgByServer(result);
                                             } catch (Exception e) {
-                                                log.error(e.toString());
                                                 e.printStackTrace();
                                             }
                                             return result3;
                                         }).get();
-                                        System.out.println(result2);
                                         Platform.runLater(() -> {
                                             try {
                                                 if (Code.SEND_OFFLINE_TEXT_MSG_SUCCESS.equals(result2.getCode())) {
@@ -506,7 +582,6 @@ public class UserInterfaceController implements Initializable, ApplicationContex
                                                     // 失败的话得重新输入
                                                 }
                                             } catch (Exception e) {
-                                                log.error(e.toString());
                                                 e.printStackTrace();
                                             }
                                         });
@@ -516,7 +591,6 @@ public class UserInterfaceController implements Initializable, ApplicationContex
                                 } catch (Exception e) {
                                     Alert alert = new Alert(Alert.AlertType.ERROR, "未知错误");
                                     alert.show();
-                                    log.error(e.toString());
                                     e.printStackTrace();
                                 }
                                 return null;
@@ -526,7 +600,6 @@ public class UserInterfaceController implements Initializable, ApplicationContex
                     }
                 }
             });
-
 
             UserMemory.groupUser = new ArrayList<>();
             List<JFXCheckBox> jfxCheckBoxes = new ArrayList<>();
