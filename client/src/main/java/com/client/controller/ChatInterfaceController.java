@@ -135,7 +135,7 @@ public class ChatInterfaceController implements Initializable {
 
         msgScrollPane.heightProperty().addListener((ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> msgScrollPane.setVvalue(1));
         FontIcon fontIcon2 = new FontIcon(FontAwesome.PHONE_SQUARE);
-        fontIcon2.setIconColor(Color.valueOf("#CECECEFF"));
+        fontIcon2.setIconColor(Color.valueOf("#00FFE7FF"));
         fontIcon2.setIconSize(18);
         videoChatButton.setGraphic(fontIcon2);
     }
