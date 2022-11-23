@@ -43,6 +43,7 @@ public class Code {
     // 接收离线文件
     public static final Integer RECEIVE_OFFLINE_FILE_MSG = 6002;
 
+
     // 开始视频通话
     public static final Integer START_VIDEO_CHAT = 7001;
     // 同意视频通话
@@ -53,9 +54,13 @@ public class Code {
     // 获取所有用户信息
     public static final Integer GET_ALL_USERS = 8001;
 
+    // 开始群发离线文件
+    public static final Integer SEND_GROUP_OFFLINE_FILE_MSG = 9001;
+    // 接收群发离线文件
+    public static final Integer RECEIVE_GROUP_OFFLINE_FILE_MSG = 9002;
 
     // 下线
-    public static final Integer OFF_LINE = 9001;
+    public static final Integer OFF_LINE = 10001;
 
 
 }

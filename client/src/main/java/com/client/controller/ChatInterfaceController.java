@@ -135,7 +135,7 @@ public class ChatInterfaceController implements Initializable {
 
         msgScrollPane.heightProperty().addListener((ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> msgScrollPane.setVvalue(1));
         FontIcon fontIcon2 = new FontIcon(FontAwesome.PHONE_SQUARE);
-        fontIcon2.setIconColor(Color.WHITE);
+        fontIcon2.setIconColor(Color.valueOf("#CECECEFF"));
         fontIcon2.setIconSize(18);
         videoChatButton.setGraphic(fontIcon2);
     }
@@ -382,7 +382,7 @@ public class ChatInterfaceController implements Initializable {
                 } else {
                     Platform.runLater(() -> {
                         Alert alert1 = new Alert(Alert.AlertType.ERROR, "对方拒绝和你视频");
-                        alert1.setOnCloseRequest(event12 -> alert.close());
+                        alert1.setOnCloseRequest(event2 -> alert.close());
                     });
                 }
             });
@@ -392,7 +392,7 @@ public class ChatInterfaceController implements Initializable {
                 sendVideoThread.interrupt();
             });
 
-            hangUpButton.setOnAction((event1) -> alert.close());
+            hangUpButton.setOnAction(event2 -> alert.close());
 
             alert.showAndWait();
         } catch (IOException e) {
@@ -486,7 +486,7 @@ public class ChatInterfaceController implements Initializable {
                 receiveThread.interrupt();
             });
 
-            hangUpButton.setOnAction((event1) -> alert.close());
+            hangUpButton.setOnAction(event2 -> alert.close());
 
             alert.showAndWait();
         } catch (IOException e) {

@@ -7,10 +7,7 @@ import com.client.pojo.*;
 import com.client.service.FileMsgService;
 import com.client.service.TextMsgService;
 import com.client.service.UserService;
-import com.client.utils.DragUtil;
-import com.client.utils.GetFileIcon;
-import com.client.utils.ShowNewViewUtil;
-import com.client.utils.UserMemory;
+import com.client.utils.*;
 import com.client.view.ChatView;
 import com.jfoenix.animation.alert.JFXAlertAnimation;
 import com.jfoenix.controls.*;
@@ -39,6 +36,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -63,6 +61,7 @@ import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.*;
+import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
 
 @FXMLController
@@ -120,6 +119,8 @@ public class UserInterfaceController implements Initializable, ApplicationContex
 
     @Autowired
     private UserService userService;
+
+    private FileChooser fileChooser;
 
     @Scheduled(cron = "0/2 * * * * ?")
     void buildUserList() {
@@ -265,6 +266,13 @@ public class UserInterfaceController implements Initializable, ApplicationContex
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        fileChooser = new FileChooser();
+        fileChooser.setTitle("请选择你想要的文件");
+
+        fileChooser.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter("All File", "*.*")
+        );
+
         FontIcon fontIcon = new FontIcon(FontAwesome.SEARCH);
         fontIcon.setIconSize(12);
         fontIcon.setIconColor(Color.WHITE);
@@ -565,7 +573,13 @@ public class UserInterfaceController implements Initializable, ApplicationContex
             JFXCheckBox allGroup = (JFXCheckBox) root.lookup("#allGroup");
             JFXButton cancelGroup = (JFXButton) root.lookup("#cancelGroup");
             JFXButton sendGroup = (JFXButton) root.lookup("#sendGroup");
+            JFXButton groupSendFileButton = (JFXButton) root.lookup("#groupSendFileButton");
+            FontIcon fontIcon = new FontIcon(FontAwesome.FOLDER_O);
+            fontIcon.setIconColor(Color.valueOf("#868A98FF"));
+            fontIcon.setIconSize(18);
+            groupSendFileButton.setGraphic(fontIcon);
             TextArea inputAreaGroup = (TextArea) root.lookup("#inputAreaGroup");
+
             sendGroup.setOnAction(event -> {
                 String text = inputAreaGroup.getText();
                 if (!"".equals(text)) {
@@ -652,6 +666,74 @@ public class UserInterfaceController implements Initializable, ApplicationContex
                 }
             });
 
+            groupSendFileButton.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    File aimFile = fileChooser.showOpenDialog(primaryStage);
+                    WritableImage fileIcon = GetFileIcon.getFileIcon(aimFile);
+
+                    try {
+                        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("fxml/sendFile.fxml")));
+                        Label fileNameLabel = (Label) root.lookup("#fileNameLabel");
+                        ImageView fileImageView = (ImageView) root.lookup("#fileImageView");
+                        JFXButton sendFileButton = (JFXButton) root.lookup("#sendFileButton");
+                        JFXButton cancelButton = (JFXButton) root.lookup("#cancelButton");
+                        ProgressBar sendProgressBar = (ProgressBar) root.lookup("#sendProgressBar");
+                        Label progressLabel = (Label) root.lookup("#progressLabel");
+                        Label sendStateLabel = (Label) root.lookup("#sendStateLabel");
+
+
+                        fileNameLabel.setText(aimFile.getName());
+                        fileImageView.setImage(fileIcon);
+                        sendFileButton.setOnAction(event2 -> {
+                            List<User> loginUser = new ArrayList<>();
+                            List<User> noLoginUser = new ArrayList<>();
+                            for (User user : UserMemory.groupUser) {
+                                if (user.getLogin().equals(1)) {
+                                    loginUser.add(user);
+                                } else {
+                                    noLoginUser.add(user);
+                                }
+                            }
+                            List<Future<?>> futureList = new ArrayList<>();
+                            for (User user : loginUser) {
+                                Future<?> submit = poolExecutor.submit(() -> SendFile.sendFileMsg(aimFile, simpleDateFormat, poolExecutor, fileMsgService, clientPort, user));
+                                futureList.add(submit);
+                            }
+                            Future<?> submit = poolExecutor.submit(() -> SendFile.sendFileMsg(aimFile, simpleDateFormat, poolExecutor, fileMsgService, noLoginUser));
+                            futureList.add(submit);
+                            Platform.runLater(() -> {
+                                int length = futureList.size();
+                                for (int i = 0; i < futureList.size(); i++) {
+                                    try {
+                                        futureList.get(i).get();
+                                    } catch (Exception e) {
+                                        throw new RuntimeException(e);
+                                    }
+                                    progressLabel.setText((double) i / (double) length * 100 + "%");
+                                    sendProgressBar.setProgress((double) i / (double) length);
+                                }
+                            });
+                        });
+
+                        JFXDialogLayout jfxDialogLayout = new JFXDialogLayout();
+                        jfxDialogLayout.setBody(root);
+                        JFXAlert<Void> alert = new JFXAlert<>(primaryStage);
+                        alert.setOverlayClose(true);
+                        alert.setAnimation(JFXAlertAnimation.CENTER_ANIMATION);
+                        alert.setTitle("发送文件");
+                        alert.setContent(jfxDialogLayout);
+                        alert.initModality(Modality.WINDOW_MODAL);
+                        cancelButton.setOnAction((event2) -> alert.close());
+                        alert.showAndWait();
+
+                    } catch (IOException e) {
+                        log.error(e.toString());
+                    }
+
+                }
+            });
+
             UserMemory.groupUser = new ArrayList<>();
             List<JFXCheckBox> jfxCheckBoxes = new ArrayList<>();
             UserMemory.users.forEach(user -> {
@@ -682,7 +764,7 @@ public class UserInterfaceController implements Initializable, ApplicationContex
             alert.setAnimation(JFXAlertAnimation.NO_ANIMATION);
             alert.setContent(jfxDialogLayout);
             alert.initModality(Modality.WINDOW_MODAL);
-            cancelGroup.setOnAction((event) -> alert.close());
+            cancelGroup.setOnAction(event -> alert.close());
             alert.showAndWait();
 
         } catch (IOException e) {

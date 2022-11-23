@@ -119,6 +119,9 @@ public class ServerController implements Initializable {
                         } else if (Code.RECEIVE_OFFLINE_FILE_MSG.equals(code)) {
                             FileMsg fileMsg = JSON.parseObject(jsonObject.getString("object"), FileMsg.class);
                             sendFileMsg(fileMsg, socket);
+                        } else if (Code.SEND_GROUP_OFFLINE_FILE_MSG.equals(code)) {
+                            List<FileMsg> fileMsgList = JSON.parseArray(jsonObject.getString("object"), FileMsg.class);
+                            receiveGroupFileMsg(fileMsgList, is);
                         } else {
                             Result result = new Result();
                             result.setMsg("未知错误");
@@ -262,6 +265,47 @@ public class ServerController implements Initializable {
             contentInput.appendText("接受文件" + fileMsg.getFileName() + "成功\n");
             fileMsg.setEndPoint(accumulationSize);
             fileMsgService.addFileMsg(fileMsg);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    void receiveGroupFileMsg(List<FileMsg> fileMsgList, InputStream inputStream) {
+        String[] split = fileMsgList.get(0).getFileName().split("\\.");
+        String nameSuffix = split[split.length - 1];
+        File file = new File(System.getProperty("user.home") + "\\.serverSocketFiles\\" + System.currentTimeMillis() + "." + nameSuffix);
+        for (FileMsg fileMsg : fileMsgList) {
+            fileMsg.setFileAddress(System.getProperty("user.home") + "\\.serverSocketFiles\\" + System.currentTimeMillis() + "." + nameSuffix);
+        }
+
+        if (!file.exists()) {
+            File parentFile = file.getParentFile();
+            try {
+                if (!parentFile.exists()) {
+                    parentFile.mkdirs();
+                }
+                file.createNewFile();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        try (RandomAccessFile rw = new RandomAccessFile(file, "rw")) {
+            Long startPoint = fileMsgList.get(0).getStartPoint();
+            rw.seek(startPoint);
+            DataInputStream dataInputStream = new DataInputStream(inputStream);
+            byte[] bytes = new byte[1024 * 10];
+            int len;
+            long accumulationSize = startPoint;
+            while ((len = dataInputStream.read(bytes)) != -1) {
+                rw.write(bytes, 0, len);
+                accumulationSize += len;
+            }
+            contentInput.appendText("群发文件接受" + fileMsgList.get(0).getFileName() + "成功\n");
+            for (FileMsg fileMsg : fileMsgList) {
+                fileMsg.setEndPoint(accumulationSize);
+                fileMsgService.addFileMsg(fileMsg);
+            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
