@@ -187,7 +187,7 @@ public class SendFile {
                                 FileMsg fileMsg = new FileMsg();
                                 fileMsg.setMessageTime(msgTime);
                                 fileMsg.setSenderId(UserMemory.myUser.getId());
-                                fileMsg.setReceiverId(UserMemory.talkUser.getId());
+                                fileMsg.setReceiverId(user.getId());
                                 fileMsg.setFileName(aimFile.getName());
                                 fileMsg.setStartPoint(pos);
                                 fileMsg.setOnline(0);

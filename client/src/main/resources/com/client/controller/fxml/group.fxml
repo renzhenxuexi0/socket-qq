@@ -46,8 +46,7 @@
             <children>
                 <AnchorPane>
                     <children>
-                        <JFXButton fx:id="fileChoiceButtonGroup" buttonType="RAISED" ripplerFill="#e1e1e1" />
-                  <JFXButton fx:id="groupSendFileButton" buttonType="RAISED" layoutX="55.0" ripplerFill="#b5b5b5" />
+                        <JFXButton fx:id="groupSendFileButton" buttonType="RAISED" ripplerFill="#b5b5b5" />
                     </children>
                 </AnchorPane>
                 <AnchorPane style="-fx-background-color: white;">

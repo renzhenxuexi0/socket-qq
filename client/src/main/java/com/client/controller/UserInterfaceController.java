@@ -179,7 +179,7 @@ public class UserInterfaceController implements Initializable, ApplicationContex
                     ImageView senderImage = (ImageView) root.lookup("#senderImage");
 
                     FileMsgVBox fileMsgVBox = new FileMsgVBox();
-                    if (fileMsg.getSign().equals(1)) {
+                    if (Objects.equals(fileMsg.getSign(), 1)) {
                         sendContent.setGraphic(fileMsgVBox.fileMsgVBox(true, fileMsg.getFileName()));
                         sendContent.setGraphicTextGap(0);
                         fileMsgVBox.setFileImage(new Image(String.valueOf(resource)));
@@ -269,9 +269,7 @@ public class UserInterfaceController implements Initializable, ApplicationContex
         fileChooser = new FileChooser();
         fileChooser.setTitle("请选择你想要的文件");
 
-        fileChooser.getExtensionFilters().add(
-                new FileChooser.ExtensionFilter("All File", "*.*")
-        );
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("All File", "*.*"));
 
         FontIcon fontIcon = new FontIcon(FontAwesome.SEARCH);
         fontIcon.setIconSize(12);
@@ -363,8 +361,7 @@ public class UserInterfaceController implements Initializable, ApplicationContex
                                 Result result2 = new Result();
                                 result2.setCode(Code.SEND_TEXT_MSG_SUCCESS);
                                 ps.println(JSON.toJSONString(result2));
-                                FileUtils.writeStringToFile(textMsgLog, JSON.toJSONString(textMsg) +
-                                        "\n", StandardCharsets.UTF_8, true);
+                                FileUtils.writeStringToFile(textMsgLog, JSON.toJSONString(textMsg) + "\n", StandardCharsets.UTF_8, true);
 
                                 Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("fxml/msgCell.fxml")));
                                 Label userName = (Label) root.lookup("#userName");
@@ -381,8 +378,9 @@ public class UserInterfaceController implements Initializable, ApplicationContex
                             } else if (Code.SEND_FILE_MSG.equals(code)) {
                                 FileMsg fileMsg = JSON.parseObject(jsonObject.getString("object"), FileMsg.class);
                                 receiveFileMsg(fileMsg, is, getClass().getResource("fileImage/unknownFile.png"));
-                                FileUtils.writeStringToFile(fileMsgLog, JSON.toJSONString(fileMsg) +
-                                        "\n", StandardCharsets.UTF_8, true);
+                                log.info("文件传输结束");
+
+                                FileUtils.writeStringToFile(fileMsgLog, JSON.toJSONString(fileMsg) + "\n", StandardCharsets.UTF_8, true);
                             } else if (Code.START_VIDEO_CHAT.equals(code)) {
                                 String username = jsonObject.getString("object");
                                 UserMemory.users.forEach(user -> {
@@ -453,7 +451,7 @@ public class UserInterfaceController implements Initializable, ApplicationContex
     private void receiveFileMsg(FileMsg fileMsg, InputStream inputStream, URL resource) {
         String[] split = fileMsg.getFileName().split("\\.");
         String nameSuffix = split[split.length - 1];
-        File file = new File(System.getProperty("user.home") + "\\.socketDownload\\" + fileMsg.getFileName());
+        File file = new File(System.getProperty("user.home") + "\\.socket" + "downloadFile\\" + fileMsg.getFileName());
         if (!file.exists()) {
             File parentFile = file.getParentFile();
             try {
@@ -521,12 +519,9 @@ public class UserInterfaceController implements Initializable, ApplicationContex
                 fileMsgVBox.setProgressBarState("在线文件发送完成");
             }
 
-            log.info("文件传输结束");
             fileMsg.setSign(1);
             fileMsg.setEndPoint(accumulationSize);
             fileMsg.setFileAddress(file.getPath());
-
-
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -550,8 +545,7 @@ public class UserInterfaceController implements Initializable, ApplicationContex
             sendContent.setGraphicTextGap(0);
             sendContent.setStyle("-fx-background-color:  #95EC69; -fx-border-radius: 45; -fx-background-radius: 45;");
 
-            fileMsgVBox.setFileImage(new Image(String.valueOf(new File(System.getProperty("user.home") + "\\.socket\\"
-                    + UserMemory.myUser.getAccount() + "\\" + fileMsg.getFileName() + ".png").toURI())));
+            fileMsgVBox.setFileImage(new Image(String.valueOf(new File(System.getProperty("user.home") + "\\.socket\\" + UserMemory.myUser.getAccount() + "\\" + fileMsg.getFileName() + ".png").toURI())));
             fileMsgVBox.setProgressBarState("已经发送完信息");
 
             userName.setText(UserMemory.talkUser.getUsername());
@@ -708,23 +702,23 @@ public class UserInterfaceController implements Initializable, ApplicationContex
                                     try {
                                         futureList.get(i).get();
                                     } catch (Exception e) {
-                                        throw new RuntimeException(e);
+                                        log.error(e.toString());
                                     }
-                                    progressLabel.setText((double) i / (double) length * 100 + "%");
-                                    sendProgressBar.setProgress((double) i / (double) length);
+                                    progressLabel.setText((double) (i + 1) / (double) length * 100 + "%");
+                                    sendProgressBar.setProgress((double) (i + 1) / (double) length);
                                 }
                             });
                         });
 
                         JFXDialogLayout jfxDialogLayout = new JFXDialogLayout();
                         jfxDialogLayout.setBody(root);
-                        JFXAlert<Void> alert = new JFXAlert<>(primaryStage);
+                        JFXAlert<Void> alert = new JFXAlert<>();
                         alert.setOverlayClose(true);
-                        alert.setAnimation(JFXAlertAnimation.CENTER_ANIMATION);
+                        alert.setAnimation(JFXAlertAnimation.NO_ANIMATION);
                         alert.setTitle("发送文件");
                         alert.setContent(jfxDialogLayout);
                         alert.initModality(Modality.WINDOW_MODAL);
-                        cancelButton.setOnAction((event2) -> alert.close());
+                        cancelButton.setOnAction(event2 -> alert.close());
                         alert.showAndWait();
 
                     } catch (IOException e) {
