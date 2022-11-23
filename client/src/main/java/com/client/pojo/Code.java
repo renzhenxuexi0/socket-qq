@@ -36,14 +36,6 @@ public class Code {
 
     //发送文件信息
     public static final Integer SEND_FILE_MSG = 5001;
-    // 同意发送在线文件
-    public static final Integer ALLOW_SEND_FILE_MSG = 5002;
-    // 拒绝发送在线文件
-    public static final Integer NOT_ALLOW_SEND_FILE_MSG = 5003;
-    //发送在线文件信息成功
-    public static final Integer SEND_FILE_MSG_SUCCESS = 5004;
-    //发送在线文件信息失败
-    public static final Integer SEND_FILE_MSG_FAIL = 5005;
 
 
     // 开始发送离线文件
@@ -51,13 +43,19 @@ public class Code {
     // 接收离线文件
     public static final Integer RECEIVE_OFFLINE_FILE_MSG = 6002;
 
+    // 开始视频通话
+    public static final Integer START_VIDEO_CHAT = 7001;
+    // 同意视频通话
+    public static final Integer CONSENT_VIDEO_CHAT = 7002;
+    // 拒绝视频通话
+    public static final Integer REFUSE_VIDEO_CHAT = 7003;
 
     // 获取所有用户信息
-    public static final Integer GET_ALL_USERS = 7001;
+    public static final Integer GET_ALL_USERS = 8001;
 
 
     // 下线
-    public static final Integer OFF_LINE = 8001;
+    public static final Integer OFF_LINE = 9001;
 
 
 }

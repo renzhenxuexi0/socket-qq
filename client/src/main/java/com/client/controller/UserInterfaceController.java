@@ -35,10 +35,13 @@ import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.kordamp.ikonli.fontawesome.FontAwesome;
@@ -101,6 +104,9 @@ public class UserInterfaceController implements Initializable, ApplicationContex
 
     @Value("${client.port}")
     private Integer clientPort;
+
+    @Value("${client.udp.port}")
+    private Integer clientUdpPort;
 
     @FXML
     private Label userName;
@@ -302,16 +308,7 @@ public class UserInterfaceController implements Initializable, ApplicationContex
                 Image image = new Image(String.valueOf(getClass().getResource("headImage/head.gif")));
                 return (EventHandler<MouseEvent>) event -> {
                     if (event.getClickCount() == 2 && event.getButton().name().equals("PRIMARY")) {
-                        chatInterface.inputArea.setText("");
-                        chatInterface.msgVBox.getChildren().clear();
-
-                        UserMemory.talkUser = userListView.getSelectionModel().getSelectedItem();
-
-                        chatInterface.userName.setText(userListView.getSelectionModel().getSelectedItem().getUsername());
-
-                        setUpMsgListView(image, getClass().getResource("fileImage/unknownFile.png"));
-                        chatInterface.primaryStage.setTitle("对" + UserMemory.talkUser.getUsername() + "的聊天框");
-                        chatInterface.primaryStage.show();
+                        openChatInterface(image, getClass().getResource("fileImage/unknownFile.png"));
                     }
                 };
             }
@@ -378,6 +375,47 @@ public class UserInterfaceController implements Initializable, ApplicationContex
                                 receiveFileMsg(fileMsg, is, getClass().getResource("fileImage/unknownFile.png"));
                                 FileUtils.writeStringToFile(fileMsgLog, JSON.toJSONString(fileMsg) +
                                         "\n", StandardCharsets.UTF_8, true);
+                            } else if (Code.START_VIDEO_CHAT.equals(code)) {
+                                String username = jsonObject.getString("object");
+                                UserMemory.users.forEach(user -> {
+                                    if (user.getUsername().equals(username)) {
+                                        UserMemory.talkUser = user;
+                                    }
+                                });
+                                Platform.runLater(() -> {
+                                    JFXDialogLayout jfxDialogLayout = new JFXDialogLayout();
+                                    VBox vBox = new VBox();
+                                    vBox.setSpacing(20);
+                                    Label label = new Label(username + "向你发出视频通话是否接听");
+                                    HBox hBox = new HBox();
+                                    hBox.setSpacing(50);
+                                    JFXButton start = new JFXButton("同意");
+                                    JFXButton close = new JFXButton("拒绝");
+                                    hBox.getChildren().addAll(start, close);
+                                    vBox.getChildren().addAll(label, hBox);
+                                    jfxDialogLayout.setBody(vBox);
+                                    JFXAlert<Void> alert = new JFXAlert<>();
+                                    alert.setOverlayClose(true);
+                                    alert.setAnimation(JFXAlertAnimation.NO_ANIMATION);
+                                    alert.setContent(jfxDialogLayout);
+                                    alert.initModality(Modality.WINDOW_MODAL);
+                                    alert.initStyle(StageStyle.TRANSPARENT);
+                                    alert.setTitle("通知");
+                                    start.setOnAction(event -> {
+                                        Result result = new Result();
+                                        result.setCode(Code.CONSENT_VIDEO_CHAT);
+                                        ps.println(JSON.toJSONString(result));
+                                        openChatInterface(image, getClass().getResource("fileImage/unknownFile.png"));
+                                        chatInterface.myVideoChat();
+                                    });
+                                    close.setOnAction((event) -> {
+                                        alert.close();
+                                        Result result = new Result();
+                                        result.setCode(Code.REFUSE_VIDEO_CHAT);
+                                        ps.println(JSON.toJSONString(result));
+                                    });
+                                    alert.showAndWait();
+                                });
                             }
                         } catch (IOException e) {
                             throw new RuntimeException(e);
@@ -389,6 +427,19 @@ public class UserInterfaceController implements Initializable, ApplicationContex
             }
         });
 
+    }
+
+    private void openChatInterface(Image image, URL resource) {
+        chatInterface.inputArea.setText("");
+        chatInterface.msgVBox.getChildren().clear();
+
+        UserMemory.talkUser = userListView.getSelectionModel().getSelectedItem();
+
+        chatInterface.userName.setText(userListView.getSelectionModel().getSelectedItem().getUsername());
+
+        setUpMsgListView(image, resource);
+        chatInterface.primaryStage.setTitle("对" + UserMemory.talkUser.getUsername() + "的聊天框");
+        chatInterface.primaryStage.show();
     }
 
     private void receiveFileMsg(FileMsg fileMsg, InputStream inputStream, URL resource) {

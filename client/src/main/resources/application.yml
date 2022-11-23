@@ -11,6 +11,9 @@ socket:
 
 client:
   port: 8082
+  udp:
+    port: 8082
+
 
 logging:
   config: classpath:logback-spring.xml

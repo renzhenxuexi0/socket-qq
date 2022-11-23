@@ -67,6 +67,10 @@ public class UserService implements DisposableBean {
         GetResultUtil.getResult(result, socketIP, socketPort);
     }
 
+    public Result videoChat(Result result, String ip, Integer port) {
+        return GetResultUtil.getResult(result, ip, port);
+    }
+
     @SneakyThrows
     @Override
     public void destroy() {

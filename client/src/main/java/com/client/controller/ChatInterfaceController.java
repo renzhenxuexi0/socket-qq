@@ -21,6 +21,7 @@ import de.felixroske.jfxsupport.FXMLController;
 import javafx.application.Platform;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.embed.swing.SwingNode;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -39,13 +40,21 @@ import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
+import net.coobird.thumbnailator.Thumbnails;
 import org.kordamp.ikonli.fontawesome.FontAwesome;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -91,6 +100,9 @@ public class ChatInterfaceController implements Initializable {
     @Autowired
     private SimpleDateFormat simpleDateFormat;
 
+    @Value("${client.udp.port}")
+    private Integer clientUdpPort;
+
     @Autowired
     private UserService userService;
 
@@ -102,6 +114,8 @@ public class ChatInterfaceController implements Initializable {
     private Button sendButton;
 
     private FileChooser fileChooser;
+
+    private Thread sendVideoThread;
 
     private Image headImage;
 
@@ -326,6 +340,7 @@ public class ChatInterfaceController implements Initializable {
 
             SwingNode swingNode = new SwingNode();
             myUsernameLabel.setText(UserMemory.myUser.getUsername());
+            talkUsernameLabel.setText(UserMemory.talkUser.getUsername());
             swingNode.setContent(panel);
             myVideoPane.getChildren().add(swingNode);
 
@@ -338,8 +353,141 @@ public class ChatInterfaceController implements Initializable {
             alert.setTitle("视频通话");
             alert.setContent(jfxDialogLayout);
             alert.initModality(Modality.NONE);
-            alert.setOnCloseRequest(event1 -> webcam.close());
+
+            sendVideoThread = new Thread(() -> {
+                try (DatagramSocket datagramSocket = new DatagramSocket()) {
+                    while (Thread.currentThread().isInterrupted()) {
+                        BufferedImage image = webcam.getImage();
+                        if (image != null) {
+                            BufferedImage bufferedImage = Thumbnails.of(image).scale(0.5).asBufferedImage();
+                            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                            ImageIO.write(bufferedImage, "JPEG", byteArrayOutputStream);
+                            byte[] bytes = byteArrayOutputStream.toByteArray();
+                            DatagramPacket packet = new DatagramPacket(bytes, bytes.length, InetAddress.getByName(UserMemory.talkUser.getIp()), clientUdpPort);
+                            datagramSocket.send(packet);
+                        }
+                    }
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+
+            poolExecutor.execute(() -> {
+                Result result = new Result();
+                result.setCode(Code.START_VIDEO_CHAT);
+                result.setObject(UserMemory.myUser.getUsername());
+                Result result2 = userService.videoChat(result, UserMemory.talkUser.getIp(), clientPort);
+                if (Code.CONSENT_VIDEO_CHAT.equals(result2.getCode())) {
+                    sendVideoThread.start();
+                } else {
+                    Platform.runLater(() -> {
+                        Alert alert1 = new Alert(Alert.AlertType.ERROR, "对方拒绝和你视频");
+                        alert1.setOnCloseRequest(event12 -> alert.close());
+                    });
+                }
+            });
+
+            alert.setOnCloseRequest(event1 -> {
+                webcam.close();
+                sendVideoThread.interrupt();
+            });
+
             hangUpButton.setOnAction((event1) -> alert.close());
+
+            alert.showAndWait();
+        } catch (IOException e) {
+            log.error(e.toString());
+        }
+    }
+
+    public void myVideoChat() {
+        try {
+            Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("fxml/videoChat.fxml")));
+
+            AnchorPane talkVideoPane = (AnchorPane) root.lookup("#talkVideoPane");
+            Label talkUsernameLabel = (Label) root.lookup("#talkUsernameLabel");
+            Label myUsernameLabel = (Label) root.lookup("#myUsernameLabel");
+            AnchorPane myVideoPane = (AnchorPane) root.lookup("#myVideoPane");
+            JFXButton hangUpButton = (JFXButton) root.lookup("#hangUpButton");
+
+            FontIcon fontIcon = new FontIcon(FontAwesome.PHONE);
+            fontIcon.setIconColor(Color.RED);
+            fontIcon.setIconSize(30);
+            hangUpButton.setGraphic(fontIcon);
+
+            Webcam webcam = Webcam.getDefault();
+            webcam.setViewSize(WebcamResolution.VGA.getSize());
+
+            WebcamPanel panel = new WebcamPanel(webcam);
+            panel.setFPSDisplayed(true);
+            panel.setDisplayDebugInfo(true);
+            panel.setImageSizeDisplayed(true);
+            panel.setMirrored(true);
+
+            SwingNode swingNode = new SwingNode();
+            myUsernameLabel.setText(UserMemory.myUser.getUsername());
+            talkUsernameLabel.setText(UserMemory.talkUser.getUsername());
+            swingNode.setContent(panel);
+            myVideoPane.getChildren().add(swingNode);
+
+            JFXDialogLayout jfxDialogLayout = new JFXDialogLayout();
+            jfxDialogLayout.setBody(root);
+            JFXAlert<Void> alert = new JFXAlert<>();
+            alert.setOverlayClose(true);
+            alert.setAnimation(JFXAlertAnimation.NO_ANIMATION);
+            alert.setSize(1280, 680);
+            alert.setTitle("视频通话");
+            alert.setContent(jfxDialogLayout);
+            alert.initModality(Modality.NONE);
+
+            Thread mySendThread = new Thread(() -> {
+                try (DatagramSocket datagramSocket = new DatagramSocket()) {
+                    while (Thread.currentThread().isInterrupted()) {
+                        BufferedImage image = webcam.getImage();
+                        if (image != null) {
+                            BufferedImage bufferedImage = Thumbnails.of(image).scale(0.5).asBufferedImage();
+                            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                            ImageIO.write(bufferedImage, "JPEG", byteArrayOutputStream);
+                            byte[] bytes = byteArrayOutputStream.toByteArray();
+                            DatagramPacket packet = new DatagramPacket(bytes, bytes.length, InetAddress.getByName(UserMemory.talkUser.getIp()), clientUdpPort);
+                            datagramSocket.send(packet);
+                        }
+                    }
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+            mySendThread.start();
+
+            Thread receiveThread = new Thread(() -> {
+                try (DatagramSocket datagramSocket = new DatagramSocket(clientUdpPort)) {
+                    ImageView imageView = new ImageView();
+                    WritableImage writableImage = new WritableImage(640, 480);
+                    imageView.setImage(writableImage);
+                    talkVideoPane.getChildren().add(imageView);
+                    while (Thread.currentThread().isInterrupted()) {
+                        byte[] bytes = new byte[1024 * 64];
+                        DatagramPacket packet = new DatagramPacket(bytes, bytes.length);
+                        datagramSocket.receive(packet);
+                        BufferedImage image = ImageIO.read(new ByteArrayInputStream(bytes, 0, packet.getLength()));
+                        SwingFXUtils.toFXImage(image, writableImage);
+                        Platform.runLater(() -> imageView.setImage(writableImage));
+                    }
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+            receiveThread.start();
+
+
+            alert.setOnCloseRequest(event1 -> {
+                webcam.close();
+                mySendThread.interrupt();
+                receiveThread.interrupt();
+            });
+
+            hangUpButton.setOnAction((event1) -> alert.close());
+
             alert.showAndWait();
         } catch (IOException e) {
             log.error(e.toString());
