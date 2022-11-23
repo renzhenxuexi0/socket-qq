@@ -5,15 +5,20 @@ import de.felixroske.jfxsupport.AbstractJavaFxApplicationSupport;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Objects;
+import java.util.concurrent.ThreadPoolExecutor;
 
 @SpringBootApplication
 public class ClientApp extends AbstractJavaFxApplicationSupport {
+
+    @Autowired
+    private ThreadPoolExecutor threadPoolExecutor;
 
     public static void main(String[] args) {
         launch(ClientApp.class, LoginView.class, args);
@@ -23,6 +28,7 @@ public class ClientApp extends AbstractJavaFxApplicationSupport {
     @Override
     public void stop() throws Exception {
         super.stop();
+        threadPoolExecutor.shutdownNow();
     }
 
     @Override

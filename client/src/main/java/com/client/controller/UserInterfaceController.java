@@ -377,6 +377,12 @@ public class UserInterfaceController implements Initializable, ApplicationContex
                                 Platform.runLater(() -> chatInterface.msgVBox.getChildren().add(root));
                             } else if (Code.SEND_FILE_MSG.equals(code)) {
                                 FileMsg fileMsg = JSON.parseObject(jsonObject.getString("object"), FileMsg.class);
+                                UserMemory.users.forEach(user -> {
+                                    if (user.getId().equals(fileMsg.getSenderId())) {
+                                        UserMemory.talkUser = user;
+                                    }
+                                });
+                                openChatInterface(image, getClass().getResource("fileImage/unknownFile.png"));
                                 receiveFileMsg(fileMsg, is, getClass().getResource("fileImage/unknownFile.png"));
                                 log.info("文件传输结束");
 
@@ -412,7 +418,7 @@ public class UserInterfaceController implements Initializable, ApplicationContex
                                         result.setCode(Code.CONSENT_VIDEO_CHAT);
                                         ps.println(JSON.toJSONString(result));
                                         openChatInterface(image, getClass().getResource("fileImage/unknownFile.png"));
-                                        chatInterface.myVideoChat();
+                                        chatInterface.talkVideoChat();
                                     });
                                     close.setOnAction((event) -> {
                                         alert.close();

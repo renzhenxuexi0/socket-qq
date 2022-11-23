@@ -10,9 +10,9 @@ socket:
   port: 8080
 
 client:
-  port: 8082
+  port: 8083
   udp:
-    port: 8082
+    port: 8084
 
 
 logging:

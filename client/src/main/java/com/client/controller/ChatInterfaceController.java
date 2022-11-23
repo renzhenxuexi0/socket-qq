@@ -47,6 +47,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
 import javax.imageio.ImageIO;
+import javax.sound.sampled.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -114,8 +115,6 @@ public class ChatInterfaceController implements Initializable {
     private Button sendButton;
 
     private FileChooser fileChooser;
-
-    private Thread sendVideoThread;
 
     private Image headImage;
 
@@ -354,21 +353,39 @@ public class ChatInterfaceController implements Initializable {
             alert.setContent(jfxDialogLayout);
             alert.initModality(Modality.NONE);
 
-            sendVideoThread = new Thread(() -> {
+            Thread sendVideoThread = new Thread(() -> {
                 try (DatagramSocket datagramSocket = new DatagramSocket()) {
-                    while (Thread.currentThread().isInterrupted()) {
-                        BufferedImage image = webcam.getImage();
-                        if (image != null) {
-                            BufferedImage bufferedImage = Thumbnails.of(image).scale(0.5).asBufferedImage();
-                            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                            ImageIO.write(bufferedImage, "JPEG", byteArrayOutputStream);
-                            byte[] bytes = byteArrayOutputStream.toByteArray();
-                            DatagramPacket packet = new DatagramPacket(bytes, bytes.length, InetAddress.getByName(UserMemory.talkUser.getIp()), clientUdpPort);
-                            datagramSocket.send(packet);
-                        }
-                    }
+                    log.info(UserMemory.myUser.getUsername() + "发送视频");
+                    sendVideo(webcam, datagramSocket);
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    log.error(e.toString());
+                }
+            });
+
+            Thread sendAudioThread = new Thread(() -> {
+                try (DatagramSocket datagramSocket = new DatagramSocket()) {
+                    log.info(UserMemory.myUser.getUsername() + "发送音频");
+                    sendAudio(datagramSocket);
+                } catch (Exception e) {
+                    log.error(e.toString());
+                }
+            });
+
+            Thread receiveVideoThread = new Thread(() -> {
+                try (DatagramSocket datagramSocket = new DatagramSocket(clientUdpPort)) {
+                    log.info(UserMemory.myUser.getUsername() + "接收到视频");
+                    receiveVideo(talkVideoPane, datagramSocket);
+                } catch (IOException e) {
+                    log.error(e.toString());
+                }
+            });
+
+            Thread receiveAudioThread = new Thread(() -> {
+                try (DatagramSocket datagramSocket = new DatagramSocket(clientUdpPort)) {
+                    log.info(UserMemory.myUser.getUsername() + "接收到音频");
+                    receiveAudio(datagramSocket);
+                } catch (Exception e) {
+                    log.error(e.toString());
                 }
             });
 
@@ -379,6 +396,9 @@ public class ChatInterfaceController implements Initializable {
                 Result result2 = userService.videoChat(result, UserMemory.talkUser.getIp(), clientPort);
                 if (Code.CONSENT_VIDEO_CHAT.equals(result2.getCode())) {
                     sendVideoThread.start();
+                    sendAudioThread.start();
+                    receiveVideoThread.start();
+                    receiveAudioThread.start();
                 } else {
                     Platform.runLater(() -> {
                         Alert alert1 = new Alert(Alert.AlertType.ERROR, "对方拒绝和你视频");
@@ -390,6 +410,9 @@ public class ChatInterfaceController implements Initializable {
             alert.setOnCloseRequest(event1 -> {
                 webcam.close();
                 sendVideoThread.interrupt();
+                sendAudioThread.interrupt();
+                receiveAudioThread.interrupt();
+                receiveVideoThread.interrupt();
             });
 
             hangUpButton.setOnAction(event2 -> alert.close());
@@ -400,7 +423,7 @@ public class ChatInterfaceController implements Initializable {
         }
     }
 
-    public void myVideoChat() {
+    public void talkVideoChat() {
         try {
             Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("fxml/videoChat.fxml")));
 
@@ -440,50 +463,52 @@ public class ChatInterfaceController implements Initializable {
             alert.setContent(jfxDialogLayout);
             alert.initModality(Modality.NONE);
 
-            Thread mySendThread = new Thread(() -> {
+            Thread sendVideoThread = new Thread(() -> {
+                log.info(UserMemory.myUser.getUsername() + "发送视频");
                 try (DatagramSocket datagramSocket = new DatagramSocket()) {
-                    while (Thread.currentThread().isInterrupted()) {
-                        BufferedImage image = webcam.getImage();
-                        if (image != null) {
-                            BufferedImage bufferedImage = Thumbnails.of(image).scale(0.5).asBufferedImage();
-                            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                            ImageIO.write(bufferedImage, "JPEG", byteArrayOutputStream);
-                            byte[] bytes = byteArrayOutputStream.toByteArray();
-                            DatagramPacket packet = new DatagramPacket(bytes, bytes.length, InetAddress.getByName(UserMemory.talkUser.getIp()), clientUdpPort);
-                            datagramSocket.send(packet);
-                        }
-                    }
+                    sendVideo(webcam, datagramSocket);
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    log.error(e.toString());
                 }
             });
-            mySendThread.start();
 
-            Thread receiveThread = new Thread(() -> {
+            Thread sendAudioThread = new Thread(() -> {
+                log.info(UserMemory.myUser.getUsername() + "发送音频");
+                try (DatagramSocket datagramSocket = new DatagramSocket()) {
+                    sendAudio(datagramSocket);
+                } catch (Exception e) {
+                    log.error(e.toString());
+                }
+            });
+
+            sendVideoThread.start();
+            sendAudioThread.start();
+
+            Thread receiveVideoThread = new Thread(() -> {
                 try (DatagramSocket datagramSocket = new DatagramSocket(clientUdpPort)) {
-                    ImageView imageView = new ImageView();
-                    WritableImage writableImage = new WritableImage(640, 480);
-                    imageView.setImage(writableImage);
-                    talkVideoPane.getChildren().add(imageView);
-                    while (Thread.currentThread().isInterrupted()) {
-                        byte[] bytes = new byte[1024 * 64];
-                        DatagramPacket packet = new DatagramPacket(bytes, bytes.length);
-                        datagramSocket.receive(packet);
-                        BufferedImage image = ImageIO.read(new ByteArrayInputStream(bytes, 0, packet.getLength()));
-                        SwingFXUtils.toFXImage(image, writableImage);
-                        Platform.runLater(() -> imageView.setImage(writableImage));
-                    }
+                    log.info(UserMemory.myUser.getUsername() + "接收到视频");
+                    receiveVideo(talkVideoPane, datagramSocket);
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    log.error(e.toString());
                 }
             });
-            receiveThread.start();
 
+            Thread receiveAudioThread = new Thread(() -> {
+                try (DatagramSocket datagramSocket = new DatagramSocket(clientUdpPort)) {
+                    log.info(UserMemory.myUser.getUsername() + "接收到音频");
+                    receiveAudio(datagramSocket);
+                } catch (Exception e) {
+                    log.error(e.toString());
+                }
+            });
+
+            receiveVideoThread.start();
+            receiveAudioThread.start();
 
             alert.setOnCloseRequest(event1 -> {
                 webcam.close();
-                mySendThread.interrupt();
-                receiveThread.interrupt();
+                sendVideoThread.interrupt();
+                receiveVideoThread.interrupt();
             });
 
             hangUpButton.setOnAction(event2 -> alert.close());
@@ -491,6 +516,67 @@ public class ChatInterfaceController implements Initializable {
             alert.showAndWait();
         } catch (IOException e) {
             log.error(e.toString());
+        }
+    }
+
+    private void sendVideo(Webcam webcam, DatagramSocket datagramSocket) throws IOException {
+        while (Thread.currentThread().isInterrupted()) {
+            BufferedImage image = webcam.getImage();
+            if (image != null) {
+                BufferedImage bufferedImage = Thumbnails.of(image).scale(0.5).asBufferedImage();
+                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                ImageIO.write(bufferedImage, "JPEG", byteArrayOutputStream);
+                byte[] bytes = byteArrayOutputStream.toByteArray();
+                DatagramPacket packet = new DatagramPacket(bytes, bytes.length, InetAddress.getByName(UserMemory.talkUser.getIp()), clientUdpPort);
+                datagramSocket.send(packet);
+            }
+        }
+    }
+
+    private void receiveAudio(DatagramSocket datagramSocket) throws LineUnavailableException, IOException {
+        datagramSocket.setSoTimeout(5000);
+        AudioFormat format = new AudioFormat(22050, 16, 1, true, false);
+        SourceDataLine sourceDataLine = AudioSystem.getSourceDataLine(format);
+        sourceDataLine.open(format);
+        sourceDataLine.start();
+        byte[] bytes = new byte[1024];
+        while (Thread.currentThread().isInterrupted()) {
+            DatagramPacket packet = new DatagramPacket(bytes, 0, bytes.length);
+            datagramSocket.receive(packet);
+            if (packet.getLength() != -1) {
+                sourceDataLine.write(bytes, 0, bytes.length);
+            }
+        }
+    }
+
+    private void receiveVideo(AnchorPane talkVideoPane, DatagramSocket datagramSocket) throws IOException {
+        datagramSocket.setSoTimeout(5000);
+        ImageView imageView = new ImageView();
+        WritableImage writableImage = new WritableImage(640, 480);
+        imageView.setImage(writableImage);
+        talkVideoPane.getChildren().add(imageView);
+        while (Thread.currentThread().isInterrupted()) {
+            byte[] bytes = new byte[1024 * 64];
+            DatagramPacket packet = new DatagramPacket(bytes, bytes.length);
+            datagramSocket.receive(packet);
+            BufferedImage image = ImageIO.read(new ByteArrayInputStream(bytes, 0, packet.getLength()));
+            SwingFXUtils.toFXImage(image, writableImage);
+            Platform.runLater(() -> imageView.setImage(writableImage));
+        }
+    }
+
+    private void sendAudio(DatagramSocket datagramSocket) throws LineUnavailableException, IOException {
+        AudioFormat format = new AudioFormat(22050, 16, 1, true, false);
+        TargetDataLine targetDataLine = AudioSystem.getTargetDataLine(format);
+        targetDataLine.open(format);
+        targetDataLine.start();
+        byte[] bytes = new byte[1024];
+        while (Thread.currentThread().isInterrupted()) {
+            int read = targetDataLine.read(bytes, 0, bytes.length);
+            if (read != -1) {
+                DatagramPacket packet = new DatagramPacket(bytes, bytes.length, InetAddress.getByName(UserMemory.talkUser.getIp()), clientUdpPort);
+                datagramSocket.send(packet);
+            }
         }
     }
 }
