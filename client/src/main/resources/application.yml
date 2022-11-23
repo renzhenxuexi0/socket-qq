@@ -6,7 +6,7 @@ threadPool:
 
 # 服务端的ip地址和端口
 socket:
-  ip: 127.0.0.1
+  ip: 192.168.137.105
   port: 8080
 
 client:
