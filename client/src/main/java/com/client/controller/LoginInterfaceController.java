@@ -37,6 +37,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
+import java.net.InetAddress;
 import java.net.URL;
 import java.nio.file.Files;
 import java.util.*;
@@ -100,6 +101,7 @@ public class LoginInterfaceController implements Initializable {
                         Result result2 = poolExecutor.submit(() -> {
                             user.setAccount(account);
                             user.setPassword(password);
+                            user.setIp(InetAddress.getLocalHost().getHostAddress());
                             result.setObject(user);
                             Result result3 = null;
                             try {

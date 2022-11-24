@@ -18,7 +18,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
 import java.io.*;
-import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.URL;
@@ -100,7 +99,7 @@ public class ServerController implements Initializable {
                             ps.println(JSON.toJSONString(register));
                         } else if (Code.USER_LOGIN.equals(code)) {
                             User user = JSON.parseObject(jsonObject.getString("object"), User.class);
-                            Result login = login(user, socket.getInetAddress());
+                            Result login = login(user);
                             ps.println(JSON.toJSONString(login));
                         } else if (Code.GET_ALL_USERS.equals(code)) {
                             Result allUser = getAllUser();
@@ -155,7 +154,7 @@ public class ServerController implements Initializable {
         return result;
     }
 
-    Result login(User user, InetAddress inetAddress) {
+    Result login(User user) {
         User user2 = userService.userLogin(user);
         //判断是否成功
         Result result = new Result();
@@ -167,7 +166,8 @@ public class ServerController implements Initializable {
                 UserMemory.users = userService.selectAllUser();
                 // 设置登录状态
                 userService.updateLogin(user2.getId(), 1);
-                userService.updateIp(user2.getId(), inetAddress.getHostAddress());
+
+                userService.updateIp(user2.getId(), user.getIp());
 
                 //返回数据给客户端
                 result.setCode(Code.LOGIN_SUCCESS);
