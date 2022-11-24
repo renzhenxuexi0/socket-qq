@@ -402,9 +402,9 @@ public class ChatInterfaceController implements Initializable {
                     Result result2 = userService.videoChat(result, UserMemory.talkUser.getIp(), clientPort);
                     if (Code.CONSENT_VIDEO_CHAT.equals(result2.getCode())) {
                         sendVideoThread.start();
-//                        sendAudioThread.start();
+                        sendAudioThread.start();
                         receiveVideoThread.start();
-//                        receiveAudioThread.start();
+                        receiveAudioThread.start();
                     } else {
                         Platform.runLater(() -> {
                             Alert alert1 = new Alert(Alert.AlertType.ERROR, "对方拒绝和你视频");
@@ -493,7 +493,7 @@ public class ChatInterfaceController implements Initializable {
             });
 
             sendVideoThread.start();
-//            sendAudioThread.start();
+            sendAudioThread.start();
 
             Thread receiveVideoThread = new Thread(() -> {
                 try (DatagramSocket datagramSocket = new DatagramSocket(clientUdpVideoPort)) {
@@ -514,7 +514,7 @@ public class ChatInterfaceController implements Initializable {
             });
 
             receiveVideoThread.start();
-//            receiveAudioThread.start();
+            receiveAudioThread.start();
 
             alert.setOnCloseRequest(event1 -> {
                 webcam.close();
