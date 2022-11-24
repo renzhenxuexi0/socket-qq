@@ -384,7 +384,7 @@ public class ChatInterfaceController implements Initializable {
             });
 
             Thread receiveAudioThread = new Thread(() -> {
-                try (DatagramSocket datagramSocket = new DatagramSocket(clientUdpVideoPort)) {
+                try (DatagramSocket datagramSocket = new DatagramSocket(clientUdpAudioPort)) {
                     log.info(UserMemory.myUser.getUsername() + "接收到音频");
                     receiveAudio(datagramSocket);
                 } catch (Exception e) {
@@ -497,7 +497,7 @@ public class ChatInterfaceController implements Initializable {
             });
 
             Thread receiveAudioThread = new Thread(() -> {
-                try (DatagramSocket datagramSocket = new DatagramSocket(clientUdpVideoPort)) {
+                try (DatagramSocket datagramSocket = new DatagramSocket(clientUdpAudioPort)) {
                     log.info(UserMemory.myUser.getUsername() + "接收到音频");
                     receiveAudio(datagramSocket);
                 } catch (Exception e) {
