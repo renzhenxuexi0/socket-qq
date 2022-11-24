@@ -533,7 +533,7 @@ public class ChatInterfaceController implements Initializable {
     }
 
     private void sendVideo(Webcam webcam, DatagramSocket datagramSocket) throws IOException {
-        while (Thread.currentThread().isInterrupted()) {
+        while (!Thread.currentThread().isInterrupted()) {
             BufferedImage image = webcam.getImage();
             if (image != null) {
                 BufferedImage bufferedImage = Thumbnails.of(image).scale(0.5).asBufferedImage();
@@ -553,7 +553,7 @@ public class ChatInterfaceController implements Initializable {
         sourceDataLine.open(format);
         sourceDataLine.start();
         byte[] bytes = new byte[1024];
-        while (Thread.currentThread().isInterrupted()) {
+        while (!Thread.currentThread().isInterrupted()) {
             DatagramPacket packet = new DatagramPacket(bytes, 0, bytes.length);
             datagramSocket.receive(packet);
             if (packet.getLength() != -1) {
@@ -566,7 +566,7 @@ public class ChatInterfaceController implements Initializable {
     private void receiveVideo(DatagramSocket datagramSocket, ImageView imageView) throws IOException {
         datagramSocket.setSoTimeout(5000);
         WritableImage writableImage = new WritableImage(640, 480);
-        while (Thread.currentThread().isInterrupted()) {
+        while (!Thread.currentThread().isInterrupted()) {
             byte[] bytes = new byte[1024 * 64];
             DatagramPacket packet = new DatagramPacket(bytes, bytes.length);
             datagramSocket.receive(packet);
@@ -584,7 +584,7 @@ public class ChatInterfaceController implements Initializable {
         targetDataLine.open(format);
         targetDataLine.start();
         byte[] bytes = new byte[1024];
-        while (Thread.currentThread().isInterrupted()) {
+        while (!Thread.currentThread().isInterrupted()) {
             int read = targetDataLine.read(bytes, 0, bytes.length);
             if (read != -1) {
                 DatagramPacket packet = new DatagramPacket(bytes, bytes.length, InetAddress.getByName(UserMemory.talkUser.getIp()), clientUdpAudioPort);
