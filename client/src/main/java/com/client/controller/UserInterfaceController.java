@@ -104,9 +104,6 @@ public class UserInterfaceController implements Initializable, ApplicationContex
     @Value("${client.port}")
     private Integer clientPort;
 
-    @Value("${client.udp.port}")
-    private Integer clientUdpPort;
-
     @FXML
     private Label userName;
     @FXML
