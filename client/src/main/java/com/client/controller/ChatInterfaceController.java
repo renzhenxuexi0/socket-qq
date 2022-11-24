@@ -326,6 +326,8 @@ public class ChatInterfaceController implements Initializable {
                 Label myUsernameLabel = (Label) root.lookup("#myUsernameLabel");
                 AnchorPane myVideoPane = (AnchorPane) root.lookup("#myVideoPane");
                 JFXButton hangUpButton = (JFXButton) root.lookup("#hangUpButton");
+                ImageView imageView = new ImageView();
+                talkVideoPane.getChildren().add(imageView);
 
                 FontIcon fontIcon = new FontIcon(FontAwesome.PHONE);
                 fontIcon.setIconColor(Color.RED);
@@ -378,7 +380,7 @@ public class ChatInterfaceController implements Initializable {
                 Thread receiveVideoThread = new Thread(() -> {
                     try (DatagramSocket datagramSocket = new DatagramSocket(clientUdpVideoPort)) {
                         log.info(UserMemory.myUser.getUsername() + "接收到视频");
-                        receiveVideo(talkVideoPane, datagramSocket);
+                        receiveVideo(datagramSocket, imageView);
                     } catch (IOException e) {
                         log.error(e.toString());
                     }
@@ -439,6 +441,8 @@ public class ChatInterfaceController implements Initializable {
             Label myUsernameLabel = (Label) root.lookup("#myUsernameLabel");
             AnchorPane myVideoPane = (AnchorPane) root.lookup("#myVideoPane");
             JFXButton hangUpButton = (JFXButton) root.lookup("#hangUpButton");
+            ImageView imageView = new ImageView();
+            talkVideoPane.getChildren().add(imageView);
 
             FontIcon fontIcon = new FontIcon(FontAwesome.PHONE);
             fontIcon.setIconColor(Color.RED);
@@ -494,7 +498,7 @@ public class ChatInterfaceController implements Initializable {
             Thread receiveVideoThread = new Thread(() -> {
                 try (DatagramSocket datagramSocket = new DatagramSocket(clientUdpVideoPort)) {
                     log.info(UserMemory.myUser.getUsername() + "接收到视频");
-                    receiveVideo(talkVideoPane, datagramSocket);
+                    receiveVideo(datagramSocket, imageView);
                 } catch (IOException e) {
                     log.error(e.toString());
                 }
@@ -554,18 +558,14 @@ public class ChatInterfaceController implements Initializable {
             datagramSocket.receive(packet);
             if (packet.getLength() != -1) {
                 sourceDataLine.write(bytes, 0, bytes.length);
+                log.info("收到了音频");
             }
         }
     }
 
-    private void receiveVideo(AnchorPane talkVideoPane, DatagramSocket datagramSocket) throws IOException {
+    private void receiveVideo(DatagramSocket datagramSocket, ImageView imageView) throws IOException {
         datagramSocket.setSoTimeout(5000);
-        ImageView imageView = new ImageView();
         WritableImage writableImage = new WritableImage(640, 480);
-        Platform.runLater(() -> {
-            imageView.setImage(writableImage);
-            talkVideoPane.getChildren().add(imageView);
-        });
         while (Thread.currentThread().isInterrupted()) {
             byte[] bytes = new byte[1024 * 64];
             DatagramPacket packet = new DatagramPacket(bytes, bytes.length);
@@ -574,6 +574,7 @@ public class ChatInterfaceController implements Initializable {
             log.info(image.toString());
             SwingFXUtils.toFXImage(image, writableImage);
             Platform.runLater(() -> imageView.setImage(writableImage));
+            log.info("收到了图片");
         }
     }
 
