@@ -318,109 +318,113 @@ public class ChatInterfaceController implements Initializable {
 
     public void startVideoChat(ActionEvent event) {
         try {
-            Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("fxml/videoChat.fxml")));
+            if (UserMemory.talkUser.getLogin().equals(1)) {
+                Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("fxml/videoChat.fxml")));
 
-            AnchorPane talkVideoPane = (AnchorPane) root.lookup("#talkVideoPane");
-            Label talkUsernameLabel = (Label) root.lookup("#talkUsernameLabel");
-            Label myUsernameLabel = (Label) root.lookup("#myUsernameLabel");
-            AnchorPane myVideoPane = (AnchorPane) root.lookup("#myVideoPane");
-            JFXButton hangUpButton = (JFXButton) root.lookup("#hangUpButton");
+                AnchorPane talkVideoPane = (AnchorPane) root.lookup("#talkVideoPane");
+                Label talkUsernameLabel = (Label) root.lookup("#talkUsernameLabel");
+                Label myUsernameLabel = (Label) root.lookup("#myUsernameLabel");
+                AnchorPane myVideoPane = (AnchorPane) root.lookup("#myVideoPane");
+                JFXButton hangUpButton = (JFXButton) root.lookup("#hangUpButton");
 
-            FontIcon fontIcon = new FontIcon(FontAwesome.PHONE);
-            fontIcon.setIconColor(Color.RED);
-            fontIcon.setIconSize(30);
-            hangUpButton.setGraphic(fontIcon);
+                FontIcon fontIcon = new FontIcon(FontAwesome.PHONE);
+                fontIcon.setIconColor(Color.RED);
+                fontIcon.setIconSize(30);
+                hangUpButton.setGraphic(fontIcon);
 
-            Webcam webcam = Webcam.getDefault();
-            webcam.setViewSize(WebcamResolution.VGA.getSize());
+                Webcam webcam = Webcam.getDefault();
+                webcam.setViewSize(WebcamResolution.VGA.getSize());
 
-            WebcamPanel panel = new WebcamPanel(webcam);
-            panel.setFPSDisplayed(true);
-            panel.setDisplayDebugInfo(true);
-            panel.setImageSizeDisplayed(true);
-            panel.setMirrored(true);
+                WebcamPanel panel = new WebcamPanel(webcam);
+                panel.setFPSDisplayed(true);
+                panel.setDisplayDebugInfo(true);
+                panel.setImageSizeDisplayed(true);
+                panel.setMirrored(true);
 
-            SwingNode swingNode = new SwingNode();
-            myUsernameLabel.setText(UserMemory.myUser.getUsername());
-            talkUsernameLabel.setText(UserMemory.talkUser.getUsername());
-            swingNode.setContent(panel);
-            myVideoPane.getChildren().add(swingNode);
+                SwingNode swingNode = new SwingNode();
+                myUsernameLabel.setText(UserMemory.myUser.getUsername());
+                talkUsernameLabel.setText(UserMemory.talkUser.getUsername());
+                swingNode.setContent(panel);
+                myVideoPane.getChildren().add(swingNode);
 
-            JFXDialogLayout jfxDialogLayout = new JFXDialogLayout();
-            jfxDialogLayout.setBody(root);
-            JFXAlert<Void> alert = new JFXAlert<>();
-            alert.setOverlayClose(true);
-            alert.setAnimation(JFXAlertAnimation.NO_ANIMATION);
-            alert.setSize(1280, 680);
-            alert.setTitle("视频通话");
-            alert.setContent(jfxDialogLayout);
-            alert.initModality(Modality.NONE);
+                JFXDialogLayout jfxDialogLayout = new JFXDialogLayout();
+                jfxDialogLayout.setBody(root);
+                JFXAlert<Void> alert = new JFXAlert<>();
+                alert.setOverlayClose(true);
+                alert.setAnimation(JFXAlertAnimation.NO_ANIMATION);
+                alert.setSize(1280, 680);
+                alert.setTitle("视频通话");
+                alert.setContent(jfxDialogLayout);
+                alert.initModality(Modality.NONE);
 
-            Thread sendVideoThread = new Thread(() -> {
-                try (DatagramSocket datagramSocket = new DatagramSocket()) {
-                    log.info(UserMemory.myUser.getUsername() + "发送视频");
-                    sendVideo(webcam, datagramSocket);
-                } catch (IOException e) {
-                    log.error(e.toString());
-                }
-            });
+                Thread sendVideoThread = new Thread(() -> {
+                    try (DatagramSocket datagramSocket = new DatagramSocket()) {
+                        log.info(UserMemory.myUser.getUsername() + "发送视频");
+                        sendVideo(webcam, datagramSocket);
+                    } catch (IOException e) {
+                        log.error(e.toString());
+                    }
+                });
 
-            Thread sendAudioThread = new Thread(() -> {
-                try (DatagramSocket datagramSocket = new DatagramSocket()) {
-                    log.info(UserMemory.myUser.getUsername() + "发送音频");
-                    sendAudio(datagramSocket);
-                } catch (Exception e) {
-                    log.error(e.toString());
-                }
-            });
+                Thread sendAudioThread = new Thread(() -> {
+                    try (DatagramSocket datagramSocket = new DatagramSocket()) {
+                        log.info(UserMemory.myUser.getUsername() + "发送音频");
+                        sendAudio(datagramSocket);
+                    } catch (Exception e) {
+                        log.error(e.toString());
+                    }
+                });
 
-            Thread receiveVideoThread = new Thread(() -> {
-                try (DatagramSocket datagramSocket = new DatagramSocket(clientUdpVideoPort)) {
-                    log.info(UserMemory.myUser.getUsername() + "接收到视频");
-                    receiveVideo(talkVideoPane, datagramSocket);
-                } catch (IOException e) {
-                    log.error(e.toString());
-                }
-            });
+                Thread receiveVideoThread = new Thread(() -> {
+                    try (DatagramSocket datagramSocket = new DatagramSocket(clientUdpVideoPort)) {
+                        log.info(UserMemory.myUser.getUsername() + "接收到视频");
+                        receiveVideo(talkVideoPane, datagramSocket);
+                    } catch (IOException e) {
+                        log.error(e.toString());
+                    }
+                });
 
-            Thread receiveAudioThread = new Thread(() -> {
-                try (DatagramSocket datagramSocket = new DatagramSocket(clientUdpAudioPort)) {
-                    log.info(UserMemory.myUser.getUsername() + "接收到音频");
-                    receiveAudio(datagramSocket);
-                } catch (Exception e) {
-                    log.error(e.toString());
-                }
-            });
+                Thread receiveAudioThread = new Thread(() -> {
+                    try (DatagramSocket datagramSocket = new DatagramSocket(clientUdpAudioPort)) {
+                        log.info(UserMemory.myUser.getUsername() + "接收到音频");
+                        receiveAudio(datagramSocket);
+                    } catch (Exception e) {
+                        log.error(e.toString());
+                    }
+                });
 
-            poolExecutor.execute(() -> {
-                Result result = new Result();
-                result.setCode(Code.START_VIDEO_CHAT);
-                result.setObject(UserMemory.myUser.getUsername());
-                Result result2 = userService.videoChat(result, UserMemory.talkUser.getIp(), clientPort);
-                if (Code.CONSENT_VIDEO_CHAT.equals(result2.getCode())) {
-                    sendVideoThread.start();
-                    sendAudioThread.start();
-                    receiveVideoThread.start();
-                    receiveAudioThread.start();
-                } else {
-                    Platform.runLater(() -> {
-                        Alert alert1 = new Alert(Alert.AlertType.ERROR, "对方拒绝和你视频");
-                        alert1.setOnCloseRequest(event2 -> alert.close());
-                    });
-                }
-            });
+                poolExecutor.execute(() -> {
+                    Result result = new Result();
+                    result.setCode(Code.START_VIDEO_CHAT);
+                    result.setObject(UserMemory.myUser.getUsername());
+                    Result result2 = userService.videoChat(result, UserMemory.talkUser.getIp(), clientPort);
+                    if (Code.CONSENT_VIDEO_CHAT.equals(result2.getCode())) {
+                        sendVideoThread.start();
+                        sendAudioThread.start();
+                        receiveVideoThread.start();
+                        receiveAudioThread.start();
+                    } else {
+                        Platform.runLater(() -> {
+                            Alert alert1 = new Alert(Alert.AlertType.ERROR, "对方拒绝和你视频");
+                            alert1.setOnCloseRequest(event2 -> alert.close());
+                        });
+                    }
+                });
 
-            alert.setOnCloseRequest(event1 -> {
-                webcam.close();
-                sendVideoThread.interrupt();
-                sendAudioThread.interrupt();
-                receiveAudioThread.interrupt();
-                receiveVideoThread.interrupt();
-            });
+                alert.setOnCloseRequest(event1 -> {
+                    webcam.close();
+                    sendVideoThread.interrupt();
+                    sendAudioThread.interrupt();
+                    receiveAudioThread.interrupt();
+                    receiveVideoThread.interrupt();
+                });
 
-            hangUpButton.setOnAction(event2 -> alert.close());
+                hangUpButton.setOnAction(event2 -> alert.close());
 
-            alert.showAndWait();
+                alert.showAndWait();
+            } else {
+                new Alert(Alert.AlertType.ERROR, "对方不在线").showAndWait();
+            }
         } catch (IOException e) {
             log.error(e.toString());
         }
@@ -511,7 +515,9 @@ public class ChatInterfaceController implements Initializable {
             alert.setOnCloseRequest(event1 -> {
                 webcam.close();
                 sendVideoThread.interrupt();
+                sendAudioThread.interrupt();
                 receiveVideoThread.interrupt();
+                receiveAudioThread.interrupt();
             });
 
             hangUpButton.setOnAction(event2 -> alert.close());

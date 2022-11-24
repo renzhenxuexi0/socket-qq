@@ -416,6 +416,7 @@ public class UserInterfaceController implements Initializable, ApplicationContex
                                         ps.println(JSON.toJSONString(result));
                                         openChatInterface(image, getClass().getResource("fileImage/unknownFile.png"));
                                         chatInterface.talkVideoChat();
+                                        alert.close();
                                     });
                                     close.setOnAction((event) -> {
                                         alert.close();
