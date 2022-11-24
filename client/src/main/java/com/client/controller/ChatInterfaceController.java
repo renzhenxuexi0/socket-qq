@@ -101,8 +101,11 @@ public class ChatInterfaceController implements Initializable {
     @Autowired
     private SimpleDateFormat simpleDateFormat;
 
-    @Value("${client.udp.port}")
-    private Integer clientUdpPort;
+    @Value("${client.udp.video.port}")
+    private Integer clientUdpVideoPort;
+
+    @Value("${client.udp.audio.port}")
+    private Integer clientUdpAudioPort;
 
     @Autowired
     private UserService userService;
@@ -372,7 +375,7 @@ public class ChatInterfaceController implements Initializable {
             });
 
             Thread receiveVideoThread = new Thread(() -> {
-                try (DatagramSocket datagramSocket = new DatagramSocket(clientUdpPort)) {
+                try (DatagramSocket datagramSocket = new DatagramSocket(clientUdpVideoPort)) {
                     log.info(UserMemory.myUser.getUsername() + "接收到视频");
                     receiveVideo(talkVideoPane, datagramSocket);
                 } catch (IOException e) {
@@ -381,7 +384,7 @@ public class ChatInterfaceController implements Initializable {
             });
 
             Thread receiveAudioThread = new Thread(() -> {
-                try (DatagramSocket datagramSocket = new DatagramSocket(clientUdpPort)) {
+                try (DatagramSocket datagramSocket = new DatagramSocket(clientUdpVideoPort)) {
                     log.info(UserMemory.myUser.getUsername() + "接收到音频");
                     receiveAudio(datagramSocket);
                 } catch (Exception e) {
@@ -485,7 +488,7 @@ public class ChatInterfaceController implements Initializable {
             sendAudioThread.start();
 
             Thread receiveVideoThread = new Thread(() -> {
-                try (DatagramSocket datagramSocket = new DatagramSocket(clientUdpPort)) {
+                try (DatagramSocket datagramSocket = new DatagramSocket(clientUdpVideoPort)) {
                     log.info(UserMemory.myUser.getUsername() + "接收到视频");
                     receiveVideo(talkVideoPane, datagramSocket);
                 } catch (IOException e) {
@@ -494,7 +497,7 @@ public class ChatInterfaceController implements Initializable {
             });
 
             Thread receiveAudioThread = new Thread(() -> {
-                try (DatagramSocket datagramSocket = new DatagramSocket(clientUdpPort)) {
+                try (DatagramSocket datagramSocket = new DatagramSocket(clientUdpVideoPort)) {
                     log.info(UserMemory.myUser.getUsername() + "接收到音频");
                     receiveAudio(datagramSocket);
                 } catch (Exception e) {
@@ -527,7 +530,7 @@ public class ChatInterfaceController implements Initializable {
                 ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
                 ImageIO.write(bufferedImage, "JPEG", byteArrayOutputStream);
                 byte[] bytes = byteArrayOutputStream.toByteArray();
-                DatagramPacket packet = new DatagramPacket(bytes, bytes.length, InetAddress.getByName(UserMemory.talkUser.getIp()), clientUdpPort);
+                DatagramPacket packet = new DatagramPacket(bytes, bytes.length, InetAddress.getByName(UserMemory.talkUser.getIp()), clientUdpVideoPort);
                 datagramSocket.send(packet);
             }
         }
@@ -576,7 +579,7 @@ public class ChatInterfaceController implements Initializable {
         while (Thread.currentThread().isInterrupted()) {
             int read = targetDataLine.read(bytes, 0, bytes.length);
             if (read != -1) {
-                DatagramPacket packet = new DatagramPacket(bytes, bytes.length, InetAddress.getByName(UserMemory.talkUser.getIp()), clientUdpPort);
+                DatagramPacket packet = new DatagramPacket(bytes, bytes.length, InetAddress.getByName(UserMemory.talkUser.getIp()), clientUdpAudioPort);
                 datagramSocket.send(packet);
             }
         }

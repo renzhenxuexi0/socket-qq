@@ -12,7 +12,10 @@ socket:
 client:
   port: 8080
   udp:
-    port: 8081
+    audio:
+      port: 9090
+    video:
+      port: 8081
 
 
 logging:
