@@ -311,6 +311,11 @@ public class UserInterfaceController implements Initializable, ApplicationContex
                 Image image = new Image(String.valueOf(getClass().getResource("headImage/head.gif")));
                 return (EventHandler<MouseEvent>) event -> {
                     if (event.getClickCount() == 2 && event.getButton().name().equals("PRIMARY")) {
+                        chatInterface.inputArea.setText("");
+                        chatInterface.msgVBox.getChildren().clear();
+
+                        UserMemory.talkUser = userListView.getSelectionModel().getSelectedItem();
+                        
                         openChatInterface(image, getClass().getResource("fileImage/unknownFile.png"));
                     }
                 };
@@ -440,12 +445,7 @@ public class UserInterfaceController implements Initializable, ApplicationContex
     }
 
     private void openChatInterface(Image image, URL resource) {
-        chatInterface.inputArea.setText("");
-        chatInterface.msgVBox.getChildren().clear();
-
-        UserMemory.talkUser = userListView.getSelectionModel().getSelectedItem();
-
-        chatInterface.userName.setText(userListView.getSelectionModel().getSelectedItem().getUsername());
+        chatInterface.userName.setText(UserMemory.talkUser.getUsername());
 
         setUpMsgListView(image, resource);
         chatInterface.primaryStage.setTitle("对" + UserMemory.talkUser.getUsername() + "的聊天框");
