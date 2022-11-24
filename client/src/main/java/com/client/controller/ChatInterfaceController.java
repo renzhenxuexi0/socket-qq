@@ -558,7 +558,6 @@ public class ChatInterfaceController implements Initializable {
             datagramSocket.receive(packet);
             if (packet.getLength() != -1) {
                 sourceDataLine.write(bytes, 0, bytes.length);
-                log.info("收到了音频");
             }
         }
     }
@@ -573,7 +572,6 @@ public class ChatInterfaceController implements Initializable {
             BufferedImage image = ImageIO.read(new ByteArrayInputStream(bytes, 0, packet.getLength()));
             SwingFXUtils.toFXImage(image, writableImage);
             Platform.runLater(() -> imageView.setImage(writableImage));
-            log.info("收到了图片");
         }
     }
 
