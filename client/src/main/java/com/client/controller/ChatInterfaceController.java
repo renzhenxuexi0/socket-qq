@@ -544,7 +544,7 @@ public class ChatInterfaceController implements Initializable {
 
     private void receiveAudio(DatagramSocket datagramSocket) throws LineUnavailableException, IOException {
         datagramSocket.setSoTimeout(5000);
-        AudioFormat format = new AudioFormat(22050, 16, 1, true, false);
+        AudioFormat format = new AudioFormat(48000, 24, 1, true, false);
         SourceDataLine sourceDataLine = AudioSystem.getSourceDataLine(format);
         sourceDataLine.open(format);
         sourceDataLine.start();
@@ -571,13 +571,14 @@ public class ChatInterfaceController implements Initializable {
             DatagramPacket packet = new DatagramPacket(bytes, bytes.length);
             datagramSocket.receive(packet);
             BufferedImage image = ImageIO.read(new ByteArrayInputStream(bytes, 0, packet.getLength()));
+            log.info(image.toString());
             SwingFXUtils.toFXImage(image, writableImage);
             Platform.runLater(() -> imageView.setImage(writableImage));
         }
     }
 
     private void sendAudio(DatagramSocket datagramSocket) throws LineUnavailableException, IOException {
-        AudioFormat format = new AudioFormat(22050, 16, 1, true, false);
+        AudioFormat format = new AudioFormat(48000, 24, 1, true, false);
         TargetDataLine targetDataLine = AudioSystem.getTargetDataLine(format);
         targetDataLine.open(format);
         targetDataLine.start();
