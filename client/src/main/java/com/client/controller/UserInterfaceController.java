@@ -424,7 +424,7 @@ public class UserInterfaceController implements Initializable, ApplicationContex
                                         result.setCode(Code.REFUSE_VIDEO_CHAT);
                                         ps.println(JSON.toJSONString(result));
                                     });
-                                    alert.showAndWait();
+                                    alert.show();
                                 });
                             }
                         } catch (IOException e) {
