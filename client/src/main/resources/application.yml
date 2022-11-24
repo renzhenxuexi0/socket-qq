@@ -6,13 +6,13 @@ threadPool:
 
 # 服务端的ip地址和端口
 socket:
-  ip: 192.168.137.105
+  ip: 127.0.0.1
   port: 8080
 
 client:
-  port: 8083
+  port: 8080
   udp:
-    port: 8084
+    port: 8081
 
 
 logging:
