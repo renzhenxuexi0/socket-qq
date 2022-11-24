@@ -553,8 +553,10 @@ public class ChatInterfaceController implements Initializable {
         datagramSocket.setSoTimeout(5000);
         ImageView imageView = new ImageView();
         WritableImage writableImage = new WritableImage(640, 480);
-        imageView.setImage(writableImage);
-        talkVideoPane.getChildren().add(imageView);
+        Platform.runLater(() -> {
+            imageView.setImage(writableImage);
+            talkVideoPane.getChildren().add(imageView);
+        });
         while (Thread.currentThread().isInterrupted()) {
             byte[] bytes = new byte[1024 * 64];
             DatagramPacket packet = new DatagramPacket(bytes, bytes.length);
