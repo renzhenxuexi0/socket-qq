@@ -209,7 +209,7 @@ public class UserInterfaceController implements Initializable, ApplicationContex
                                     }
 
                                     try (RandomAccessFile rw = new RandomAccessFile(file, "rw")) {
-                                        long length = fileMsg.getEndPoint() - fileMsg.getStartPoint();
+                                        long length = fileMsg.getSize();
                                         rw.seek(fileMsg.getStartPoint());
                                         DataInputStream dataInputStream = new DataInputStream(socket.getInputStream());
                                         byte[] bytes = new byte[1024 * 1024];
@@ -220,11 +220,14 @@ public class UserInterfaceController implements Initializable, ApplicationContex
                                             accumulationSize += len;
                                             double schedule = (double) accumulationSize / (double) (length);
                                             Platform.runLater(() -> fileMsgVBox.setProgressBarProgress(schedule));
+                                            if (accumulationSize == length) {
+                                                fileMsgVBox.setProgressBarState("接受完成");
+                                                WritableImage fileIcon = GetFileIcon.getFileIcon(file);
+                                                Platform.runLater(() -> fileMsgVBox.setFileImage(fileIcon));
+                                                break;
+                                            }
                                         }
-
-                                        fileMsgVBox.setProgressBarState("接受完成");
-                                        WritableImage fileIcon = GetFileIcon.getFileIcon(file);
-                                        Platform.runLater(() -> fileMsgVBox.setFileImage(fileIcon));
+                                        socket.close();
                                     } catch (IOException e) {
                                         e.printStackTrace();
                                     }
