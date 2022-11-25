@@ -89,7 +89,7 @@ public class SendFile {
                             // 设置读取的起始位置
                             randomAccessAimFile.seek(pos);
                             // 开始传输文件
-                            byte[] bytes = new byte[(int) (length / 5)];
+                            byte[] bytes = new byte[(int) (fileMsg.getSize() / 5 >= 1 ? fileMsg.getSize() / 5 : 1)];
                             int len = 0;
                             long accumulationSize = pos;
 
@@ -203,7 +203,7 @@ public class SendFile {
                             // 设置读取的起始位置
                             randomAccessAimFile.seek(pos);
                             // 开始传输文件
-                            byte[] bytes = new byte[(int) (length / 5)];
+                            byte[] bytes = new byte[(int) (fileMsgList.get(0).getSize() / 5 >= 1 ? fileMsgList.get(0).getSize() / 5 : 1)];
                             int len = 0;
                             long accumulationSize = pos;
 
@@ -317,7 +317,7 @@ public class SendFile {
                             // 设置读取的起始位置
                             randomAccessAimFile.seek(pos);
                             // 开始传输文件
-                            byte[] bytes = new byte[(int) (length / 5)];
+                            byte[] bytes = new byte[(int) (fileMsg.getSize() / 5 >= 1 ? fileMsg.getSize() / 5 : 1)];
                             int len = 0;
                             long accumulationSize = pos;
                             while ((len = randomAccessAimFile.read(bytes)) != -1) {
@@ -418,7 +418,7 @@ public class SendFile {
                             // 设置读取的起始位置
                             randomAccessAimFile.seek(pos);
                             // 开始传输文件
-                            byte[] bytes = new byte[(int) (length / 5)];
+                            byte[] bytes = new byte[(int) (fileMsg.getSize() / 5 >= 1 ? fileMsg.getSize() / 5 : 1)];
                             int len = 0;
                             long accumulationSize = pos;
                             while ((len = randomAccessAimFile.read(bytes)) != -1) {
@@ -471,8 +471,7 @@ public class SendFile {
         sendContent.setGraphicTextGap(0);
         sendContent.setStyle("-fx-background-color:  #95EC69; -fx-border-radius: 45; -fx-background-radius: 45;");
 
-        fileMsgVBox.setFileImage(new Image(String.valueOf(new File(System.getProperty("user.home") + "\\.socket\\"
-                + UserMemory.myUser.getAccount() + "\\" + fileMsg.getFileName() + ".png").toURI())));
+        fileMsgVBox.setFileImage(new Image(String.valueOf(new File(System.getProperty("user.home") + "\\.socket\\" + UserMemory.myUser.getAccount() + "\\" + fileMsg.getFileName() + ".png").toURI())));
         fileMsgVBox.setProgressBarState("已经发送完信息");
 
         userName.setText(UserMemory.myUser.getUsername());

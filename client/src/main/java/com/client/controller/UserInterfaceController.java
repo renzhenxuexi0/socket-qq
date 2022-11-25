@@ -212,7 +212,7 @@ public class UserInterfaceController implements Initializable, ApplicationContex
                                         long length = fileMsg.getSize();
                                         rw.seek(fileMsg.getStartPoint());
                                         DataInputStream dataInputStream = new DataInputStream(socket.getInputStream());
-                                        byte[] bytes = new byte[1024 * 1024];
+                                        byte[] bytes = new byte[(int) (fileMsg.getSize() / 5 >= 1 ? fileMsg.getSize() / 5 : 1)];
                                         int len;
                                         long accumulationSize = 0L;
                                         while ((len = dataInputStream.read(bytes)) != -1) {
@@ -514,7 +514,7 @@ public class UserInterfaceController implements Initializable, ApplicationContex
             rw.seek(fileMsg.getStartPoint());
             long length = fileMsg.getSize();
             DataInputStream dataInputStream = new DataInputStream(socket.getInputStream());
-            byte[] bytes = new byte[(int) (fileMsg.getSize() / 5)];
+            byte[] bytes = new byte[(int) (fileMsg.getSize() / 5 >= 1 ? fileMsg.getSize() / 5 : 1)];
             int len;
             long accumulationSize = fileMsg.getStartPoint();
             while ((len = dataInputStream.read(bytes)) != -1) {
