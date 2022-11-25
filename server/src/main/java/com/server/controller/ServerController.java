@@ -294,7 +294,7 @@ public class ServerController implements Initializable {
             Long startPoint = fileMsgList.get(0).getStartPoint();
             rw.seek(startPoint);
             BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream);
-            byte[] bytes = new byte[1024 * 10];
+            byte[] bytes = new byte[1024 * 1024];
             int len;
             long accumulationSize = startPoint;
             while ((len = bufferedInputStream.read(bytes)) != -1) {
@@ -316,9 +316,10 @@ public class ServerController implements Initializable {
         File file = new File(fileMsg.getFileAddress());
 
         try (RandomAccessFile rw = new RandomAccessFile(file, "r")) {
+            socket.setTcpNoDelay(true);
             rw.seek(fileMsg.getStartPoint());
             DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
-            byte[] bytes = new byte[1024 * 10];
+            byte[] bytes = new byte[1024 * 1024];
             int len;
             while ((len = rw.read(bytes)) != -1) {
                 dataOutputStream.flush();

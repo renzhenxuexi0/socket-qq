@@ -25,7 +25,9 @@ public class FileMsgService {
      */
     public Socket sendOfflineFileMsg() {
         try {
-            return new Socket(socketIP, socketPort);
+            Socket socket = new Socket(socketIP, socketPort);
+            socket.setTcpNoDelay(true);
+            return socket;
         } catch (Exception e) {
             log.error(e.toString());
         }
@@ -39,7 +41,9 @@ public class FileMsgService {
      */
     public Socket sendOfflineFileMsg(String ip, Integer port) {
         try {
-            return new Socket(ip, port);
+            Socket socket = new Socket(ip, port);
+            socket.setTcpNoDelay(true);
+            return socket;
         } catch (Exception e) {
             log.error(e.toString());
         }
