@@ -297,7 +297,7 @@ public class ServerController implements Initializable {
             byte[] bytes = new byte[1024 * 1024];
             int len;
             long accumulationSize = startPoint;
-            while ((len = bufferedInputStream.read(bytes)) != -1) {
+            while ((len = bufferedInputStream.read(bytes, 0, bytes.length)) != -1) {
                 rw.write(bytes, 0, len);
                 accumulationSize += len;
             }

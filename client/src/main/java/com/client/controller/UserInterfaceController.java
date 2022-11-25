@@ -514,7 +514,7 @@ public class UserInterfaceController implements Initializable, ApplicationContex
             byte[] bytes = new byte[1024 * 1024];
             int len;
             long accumulationSize = fileMsg.getStartPoint();
-            while ((len = bufferedInputStream.read(bytes)) != -1) {
+            while ((len = bufferedInputStream.read(bytes, 0, bytes.length)) != -1) {
                 log.info("接受文件" + len);
                 rw.write(bytes, 0, len);
                 accumulationSize += len;
