@@ -95,8 +95,8 @@ public class SendFile {
 
 
                             while ((len = randomAccessAimFile.read(bytes)) != -1) {
-                                socketOutputStream.write(bytes, 0, len);
                                 socketOutputStream.flush();
+                                socketOutputStream.write(bytes, 0, len);
                                 accumulationSize += len;
                                 double progress = accumulationSize / (double) length;
                                 FileUtils.writeStringToFile(logFile, String.valueOf(accumulationSize), StandardCharsets.UTF_8, false);
@@ -107,6 +107,7 @@ public class SendFile {
                             }
 
                             if (accumulationSize == length) {
+                                socketOutputStream.flush();
                                 Platform.runLater(() -> sendStateLabel.setText("离线文件发送完成"));
                                 CreatFileMsgPane(headImage, msgVBox, logFile, fileMsg);
                                 socket.isOutputShutdown();
@@ -207,14 +208,15 @@ public class SendFile {
 
 
                             while ((len = randomAccessAimFile.read(bytes)) != -1) {
-                                socketOutputStream.write(bytes, 0, len);
                                 socketOutputStream.flush();
+                                socketOutputStream.write(bytes, 0, len);
                                 accumulationSize += len;
                                 double progress = accumulationSize / (double) length;
                                 FileUtils.writeStringToFile(logFile, String.valueOf(accumulationSize), StandardCharsets.UTF_8, false);
                             }
 
                             if (accumulationSize == length) {
+                                socketOutputStream.flush();
                                 socket.isOutputShutdown();
                             }
 
@@ -317,8 +319,8 @@ public class SendFile {
                             int len = 0;
                             long accumulationSize = pos;
                             while ((len = randomAccessAimFile.read(bytes)) != -1) {
-                                socketOutputStream.write(bytes, 0, len);
                                 socketOutputStream.flush();
+                                socketOutputStream.write(bytes, 0, len);
                                 accumulationSize += len;
                                 FileUtils.writeStringToFile(logFile, String.valueOf(accumulationSize), StandardCharsets.UTF_8, false);
                                 double progress = (double) accumulationSize / (double) length;
@@ -329,6 +331,7 @@ public class SendFile {
                             }
 
                             if (accumulationSize == length) {
+                                socketOutputStream.flush();
                                 Platform.runLater(() -> sendStateLabel.setText("在线文件发送完成"));
                                 CreatFileMsgPane(headImage, msgVBox, logFile, fileMsg);
                                 socket.isOutputShutdown();
@@ -355,7 +358,6 @@ public class SendFile {
         }
     }
 
-    // 群发在线
     public static void sendFileMsg(File aimFile, SimpleDateFormat simpleDateFormat, ThreadPoolExecutor poolExecutor, FileMsgService fileMsgService, Integer port, User talkUser) {
         if (aimFile.isFile()) {
 
@@ -417,14 +419,15 @@ public class SendFile {
                             int len = 0;
                             long accumulationSize = pos;
                             while ((len = randomAccessAimFile.read(bytes)) != -1) {
-                                socketOutputStream.write(bytes, 0, len);
                                 socketOutputStream.flush();
+                                socketOutputStream.write(bytes, 0, len);
                                 accumulationSize += len;
                                 FileUtils.writeStringToFile(logFile, String.valueOf(accumulationSize), StandardCharsets.UTF_8, false);
                                 double progress = (double) accumulationSize / (double) length;
                             }
                             if (accumulationSize == length) {
                                 logFile.delete();
+                                socketOutputStream.flush();
                                 socket.isOutputShutdown();
                             }
 
@@ -448,6 +451,7 @@ public class SendFile {
             alert.show();
         }
     }
+    // 群发在线
 
     private static void CreatFileMsgPane(Image headImage, VBox msgVBox, File logFile, FileMsg fileMsg) throws IOException {
         logFile.delete();

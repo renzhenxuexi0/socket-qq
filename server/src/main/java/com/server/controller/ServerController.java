@@ -293,11 +293,11 @@ public class ServerController implements Initializable {
         try (RandomAccessFile rw = new RandomAccessFile(file, "rw")) {
             Long startPoint = fileMsgList.get(0).getStartPoint();
             rw.seek(startPoint);
-            DataInputStream dataInputStream = new DataInputStream(inputStream);
+            BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream);
             byte[] bytes = new byte[1024 * 10];
             int len;
             long accumulationSize = startPoint;
-            while ((len = dataInputStream.read(bytes)) != -1) {
+            while ((len = bufferedInputStream.read(bytes)) != -1) {
                 rw.write(bytes, 0, len);
                 accumulationSize += len;
             }
@@ -321,9 +321,10 @@ public class ServerController implements Initializable {
             byte[] bytes = new byte[1024 * 10];
             int len;
             while ((len = rw.read(bytes)) != -1) {
-                dataOutputStream.write(bytes, 0, len);
                 dataOutputStream.flush();
+                dataOutputStream.write(bytes, 0, len);
             }
+            dataOutputStream.flush();
             socket.isOutputShutdown();
             fileMsgService.updateFileMsgSign(1, fileMsg.getId());
             contentInput.appendText("发送文件" + fileMsg.getFileName() + "成功\n");

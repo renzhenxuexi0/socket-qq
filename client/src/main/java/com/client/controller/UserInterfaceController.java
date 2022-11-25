@@ -510,11 +510,11 @@ public class UserInterfaceController implements Initializable, ApplicationContex
 
             rw.seek(fileMsg.getStartPoint());
             long length = fileMsg.getSize();
-            DataInputStream dataInputStream = new DataInputStream(socket.getInputStream());
+            BufferedInputStream bufferedInputStream = new BufferedInputStream(socket.getInputStream());
             byte[] bytes = new byte[1024 * 10];
             int len;
             long accumulationSize = fileMsg.getStartPoint();
-            while ((len = dataInputStream.read(bytes)) != -1) {
+            while ((len = bufferedInputStream.read(bytes)) != -1) {
                 log.info("接受文件" + len);
                 rw.write(bytes, 0, len);
                 accumulationSize += len;
@@ -522,9 +522,11 @@ public class UserInterfaceController implements Initializable, ApplicationContex
                 Platform.runLater(() -> {
                     fileMsgVBox.setProgressBarProgress(progress);
                 });
+                if (accumulationSize == length) {
+                    fileMsgVBox.setProgressBarState("在线文件发送完成");
+                    break;
+                }
             }
-
-            fileMsgVBox.setProgressBarState("在线文件发送完成");
 
             fileMsg.setSign(1);
             fileMsg.setEndPoint(accumulationSize);
