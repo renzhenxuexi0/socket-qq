@@ -304,7 +304,7 @@ public class ServerController implements Initializable {
             byte[] bytes = new byte[1024 * 1024];
             int len;
             long accumulationSize = startPoint;
-            while ((len = dataInputStream.read(bytes, 0, bytes.length)) != -1) {
+            while ((len = dataInputStream.read(bytes)) != -1) {
                 rw.write(bytes, 0, len);
                 accumulationSize += len;
                 if (accumulationSize == fileMsgList.get(0).getSize()) {
