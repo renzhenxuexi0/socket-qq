@@ -523,11 +523,10 @@ public class UserInterfaceController implements Initializable, ApplicationContex
                     fileMsgVBox.setProgressBarProgress(progress);
                 });
                 if (accumulationSize == length) {
-                    fileMsgVBox.setProgressBarState("在线文件发送完成");
-                    break;
+                    fileMsgVBox.setProgressBarState("在线文件接受完成");
                 }
             }
-
+            socket.close();
             fileMsg.setSign(1);
             fileMsg.setEndPoint(accumulationSize);
             fileMsg.setFileAddress(file.getPath());

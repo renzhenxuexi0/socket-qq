@@ -120,7 +120,7 @@ public class ServerController implements Initializable {
                             sendFileMsg(fileMsg, socket);
                         } else if (Code.SEND_GROUP_OFFLINE_FILE_MSG.equals(code)) {
                             List<FileMsg> fileMsgList = JSON.parseArray(jsonObject.getString("object"), FileMsg.class);
-                            receiveGroupFileMsg(fileMsgList, is);
+                            receiveGroupFileMsg(fileMsgList, socket);
                         } else {
                             Result result = new Result();
                             result.setMsg("未知错误");
@@ -265,9 +265,9 @@ public class ServerController implements Initializable {
                     contentInput.appendText("接受文件" + fileMsg.getFileName() + "成功\n");
                     fileMsg.setEndPoint(accumulationSize);
                     fileMsgService.addFileMsg(fileMsg);
-                    socket.close();
                 }
             }
+            socket.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
