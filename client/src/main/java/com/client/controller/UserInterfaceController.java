@@ -605,7 +605,7 @@ public class UserInterfaceController implements Initializable, ApplicationContex
                                         Result result2 = poolExecutor.submit(() -> {
                                             Result result3 = null;
                                             try {
-                                                result3 = textMsgService.sendTextMsgByClient(result, user.getIp(), 8081);
+                                                result3 = textMsgService.sendTextMsgByClient(result, user.getIp(), clientPort);
                                             } catch (Exception e) {
                                                 e.printStackTrace();
                                             }
