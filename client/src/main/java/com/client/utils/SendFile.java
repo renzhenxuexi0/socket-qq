@@ -109,7 +109,6 @@ public class SendFile {
                             if (accumulationSize == length) {
                                 Platform.runLater(() -> sendStateLabel.setText("离线文件发送完成"));
                                 CreatFileMsgPane(headImage, msgVBox, logFile, fileMsg);
-                                Thread.sleep(3000);
                                 socket.isOutputShutdown();
                             }
 
@@ -216,7 +215,6 @@ public class SendFile {
                             }
 
                             if (accumulationSize == length) {
-                                Thread.sleep(3000);
                                 socket.isOutputShutdown();
                             }
 
@@ -333,7 +331,6 @@ public class SendFile {
                             if (accumulationSize == length) {
                                 Platform.runLater(() -> sendStateLabel.setText("在线文件发送完成"));
                                 CreatFileMsgPane(headImage, msgVBox, logFile, fileMsg);
-                                Thread.sleep(3000);
                                 socket.isOutputShutdown();
                             }
 
@@ -428,7 +425,6 @@ public class SendFile {
                             }
                             if (accumulationSize == length) {
                                 logFile.delete();
-                                Thread.sleep(3000);
                                 socket.isOutputShutdown();
                             }
 

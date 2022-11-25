@@ -221,11 +221,10 @@ public class UserInterfaceController implements Initializable, ApplicationContex
                                             double schedule = (double) accumulationSize / (double) (length);
                                             Platform.runLater(() -> fileMsgVBox.setProgressBarProgress(schedule));
                                         }
-                                        if (accumulationSize == length) {
-                                            fileMsgVBox.setProgressBarState("接受完成");
-                                            WritableImage fileIcon = GetFileIcon.getFileIcon(file);
-                                            Platform.runLater(() -> fileMsgVBox.setFileImage(fileIcon));
-                                        }
+                                        
+                                        fileMsgVBox.setProgressBarState("接受完成");
+                                        WritableImage fileIcon = GetFileIcon.getFileIcon(file);
+                                        Platform.runLater(() -> fileMsgVBox.setFileImage(fileIcon));
                                     } catch (IOException e) {
                                         e.printStackTrace();
                                     }
@@ -520,10 +519,9 @@ public class UserInterfaceController implements Initializable, ApplicationContex
                 Platform.runLater(() -> {
                     fileMsgVBox.setProgressBarProgress(progress);
                 });
-                if (accumulationSize == length) {
-                    fileMsgVBox.setProgressBarState("在线文件发送完成");
-                }
             }
+
+            fileMsgVBox.setProgressBarState("在线文件发送完成");
 
             fileMsg.setSign(1);
             fileMsg.setEndPoint(accumulationSize);

@@ -324,7 +324,6 @@ public class ServerController implements Initializable {
                 dataOutputStream.write(bytes, 0, len);
                 dataOutputStream.flush();
             }
-            Thread.sleep(3000);
             socket.isOutputShutdown();
             fileMsgService.updateFileMsgSign(1, fileMsg.getId());
             contentInput.appendText("发送文件" + fileMsg.getFileName() + "成功\n");
