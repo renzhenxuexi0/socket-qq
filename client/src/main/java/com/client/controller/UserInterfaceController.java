@@ -510,11 +510,11 @@ public class UserInterfaceController implements Initializable, ApplicationContex
 
             rw.seek(fileMsg.getStartPoint());
             long length = fileMsg.getSize();
-            BufferedInputStream bufferedInputStream = new BufferedInputStream(socket.getInputStream());
+            DataInputStream dataInputStream = new DataInputStream(socket.getInputStream());
             byte[] bytes = new byte[1024 * 1024];
             int len;
             long accumulationSize = fileMsg.getStartPoint();
-            while ((len = bufferedInputStream.read(bytes, 0, bytes.length)) != -1) {
+            while ((len = dataInputStream.read(bytes, 0, bytes.length)) != -1) {
                 log.info("接受文件" + len);
                 rw.write(bytes, 0, len);
                 accumulationSize += len;

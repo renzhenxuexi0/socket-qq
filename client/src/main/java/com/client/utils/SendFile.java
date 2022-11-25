@@ -58,7 +58,6 @@ public class SendFile {
                         // 发送文件流，字节缓冲流即可
                         socketOutputStream = new DataOutputStream(socket.getOutputStream());
 
-
                         logFile = new File(System.getProperty("user.home") + "\\.socket\\" + UserMemory.myUser.getAccount() + "\\" + aimFile.getName().split("\\.")[0] + ".log");
                         if (!logFile.exists()) {
                             logFile.createNewFile();
@@ -85,6 +84,7 @@ public class SendFile {
 
                             resultStart.setObject(fileMsg);
                             socketPrintStream.println(JSON.toJSONString(resultStart, SerializerFeature.WriteMapNullValue));
+                            socketPrintStream.flush();
 
                             // 设置读取的起始位置
                             randomAccessAimFile.seek(pos);
@@ -110,7 +110,7 @@ public class SendFile {
                                 socketOutputStream.flush();
                                 Platform.runLater(() -> sendStateLabel.setText("离线文件发送完成"));
                                 CreatFileMsgPane(headImage, msgVBox, logFile, fileMsg);
-                                socket.isOutputShutdown();
+                                socket.shutdownOutput();
                             }
 
 
@@ -198,7 +198,7 @@ public class SendFile {
 
                             resultStart.setObject(fileMsgList);
                             socketPrintStream.println(JSON.toJSONString(resultStart, SerializerFeature.WriteMapNullValue));
-
+                            socketPrintStream.flush();
                             // 设置读取的起始位置
                             randomAccessAimFile.seek(pos);
                             // 开始传输文件
@@ -217,7 +217,7 @@ public class SendFile {
 
                             if (accumulationSize == length) {
                                 socketOutputStream.flush();
-                                socket.isOutputShutdown();
+                                socket.shutdownOutput();
                             }
 
                             for (FileMsg fileMsg : fileMsgList) {
@@ -311,7 +311,7 @@ public class SendFile {
 
                             resultStart.setObject(fileMsg);
                             socketPrintStream.println(JSON.toJSONString(resultStart, SerializerFeature.WriteMapNullValue));
-
+                            socketPrintStream.flush();
                             // 设置读取的起始位置
                             randomAccessAimFile.seek(pos);
                             // 开始传输文件
@@ -334,7 +334,7 @@ public class SendFile {
                                 socketOutputStream.flush();
                                 Platform.runLater(() -> sendStateLabel.setText("在线文件发送完成"));
                                 CreatFileMsgPane(headImage, msgVBox, logFile, fileMsg);
-                                socket.isOutputShutdown();
+                                socket.shutdownOutput();
                             }
 
                             fileMsg.setEndPoint(accumulationSize + pos);
@@ -411,7 +411,7 @@ public class SendFile {
 
                             resultStart.setObject(fileMsg);
                             socketPrintStream.println(JSON.toJSONString(resultStart, SerializerFeature.WriteMapNullValue));
-
+                            socketPrintStream.flush();
                             // 设置读取的起始位置
                             randomAccessAimFile.seek(pos);
                             // 开始传输文件
@@ -429,7 +429,7 @@ public class SendFile {
                             if (accumulationSize == length) {
                                 logFile.delete();
                                 socketOutputStream.flush();
-                                socket.isOutputShutdown();
+                                socket.shutdownOutput();
                             }
 
                             fileMsg.setEndPoint(accumulationSize + pos);

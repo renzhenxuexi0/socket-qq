@@ -255,22 +255,26 @@ public class ServerController implements Initializable {
         try (RandomAccessFile rw = new RandomAccessFile(file, "rw")) {
             rw.seek(fileMsg.getStartPoint());
             DataInputStream dataInputStream = new DataInputStream(socket.getInputStream());
-            byte[] bytes = new byte[1024 * 10];
+            byte[] bytes = new byte[1024 * 1024];
             int len;
             long accumulationSize = fileMsg.getStartPoint();
             while ((len = dataInputStream.read(bytes)) != -1) {
                 rw.write(bytes, 0, len);
                 accumulationSize += len;
+                if (accumulationSize == fileMsg.getSize()) {
+                    contentInput.appendText("接受文件" + fileMsg.getFileName() + "成功\n");
+                    fileMsg.setEndPoint(accumulationSize);
+                    fileMsgService.addFileMsg(fileMsg);
+                    socket.close();
+                }
             }
-            contentInput.appendText("接受文件" + fileMsg.getFileName() + "成功\n");
-            fileMsg.setEndPoint(accumulationSize);
-            fileMsgService.addFileMsg(fileMsg);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    void receiveGroupFileMsg(List<FileMsg> fileMsgList, InputStream inputStream) {
+    void receiveGroupFileMsg(List<FileMsg> fileMsgList, Socket socket) {
+
         String[] split = fileMsgList.get(0).getFileName().split("\\.");
         String nameSuffix = split[split.length - 1];
         File file = new File(System.getProperty("user.home") + "\\.serverSocketFiles\\" + System.currentTimeMillis() + "." + nameSuffix);
@@ -291,17 +295,21 @@ public class ServerController implements Initializable {
         }
 
         try (RandomAccessFile rw = new RandomAccessFile(file, "rw")) {
+            socket.setTcpNoDelay(true);
             Long startPoint = fileMsgList.get(0).getStartPoint();
             rw.seek(startPoint);
-            BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream);
+            DataInputStream dataInputStream = new DataInputStream(socket.getInputStream());
             byte[] bytes = new byte[1024 * 1024];
             int len;
             long accumulationSize = startPoint;
-            while ((len = bufferedInputStream.read(bytes, 0, bytes.length)) != -1) {
+            while ((len = dataInputStream.read(bytes, 0, bytes.length)) != -1) {
                 rw.write(bytes, 0, len);
                 accumulationSize += len;
+                if (accumulationSize == fileMsgList.get(0).getSize()) {
+                    socket.close();
+                    break;
+                }
             }
-            contentInput.appendText("群发文件接受" + fileMsgList.get(0).getFileName() + "成功\n");
             for (FileMsg fileMsg : fileMsgList) {
                 fileMsg.setEndPoint(accumulationSize);
                 fileMsgService.addFileMsg(fileMsg);
