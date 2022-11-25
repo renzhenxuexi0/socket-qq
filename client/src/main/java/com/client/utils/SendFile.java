@@ -89,7 +89,7 @@ public class SendFile {
                             // 设置读取的起始位置
                             randomAccessAimFile.seek(pos);
                             // 开始传输文件
-                            byte[] bytes = new byte[1024 * 1024];
+                            byte[] bytes = new byte[(int) (length / 5)];
                             int len = 0;
                             long accumulationSize = pos;
 
@@ -203,7 +203,7 @@ public class SendFile {
                             // 设置读取的起始位置
                             randomAccessAimFile.seek(pos);
                             // 开始传输文件
-                            byte[] bytes = new byte[1024 * 1024];
+                            byte[] bytes = new byte[(int) (length / 5)];
                             int len = 0;
                             long accumulationSize = pos;
 
@@ -317,7 +317,7 @@ public class SendFile {
                             // 设置读取的起始位置
                             randomAccessAimFile.seek(pos);
                             // 开始传输文件
-                            byte[] bytes = new byte[1024 * 1024];
+                            byte[] bytes = new byte[(int) (length / 5)];
                             int len = 0;
                             long accumulationSize = pos;
                             while ((len = randomAccessAimFile.read(bytes)) != -1) {
@@ -418,7 +418,7 @@ public class SendFile {
                             // 设置读取的起始位置
                             randomAccessAimFile.seek(pos);
                             // 开始传输文件
-                            byte[] bytes = new byte[1024 * 1024];
+                            byte[] bytes = new byte[(int) (length / 5)];
                             int len = 0;
                             long accumulationSize = pos;
                             while ((len = randomAccessAimFile.read(bytes)) != -1) {

@@ -257,7 +257,7 @@ public class ServerController implements Initializable {
         try (RandomAccessFile rw = new RandomAccessFile(file, "rw")) {
             rw.seek(fileMsg.getStartPoint());
             DataInputStream dataInputStream = new DataInputStream(socket.getInputStream());
-            byte[] bytes = new byte[1024 * 1024];
+            byte[] bytes = new byte[(int) (fileMsg.getSize() / 5)];
             int len;
             long accumulationSize = fileMsg.getStartPoint();
             while ((len = dataInputStream.read(bytes)) != -1) {
@@ -301,7 +301,7 @@ public class ServerController implements Initializable {
             Long startPoint = fileMsgList.get(0).getStartPoint();
             rw.seek(startPoint);
             DataInputStream dataInputStream = new DataInputStream(socket.getInputStream());
-            byte[] bytes = new byte[1024 * 1024];
+            byte[] bytes = new byte[(int) (fileMsgList.get(0).getSize() / 5)];
             int len;
             long accumulationSize = startPoint;
             while ((len = dataInputStream.read(bytes)) != -1) {
@@ -329,11 +329,12 @@ public class ServerController implements Initializable {
             socket.setTcpNoDelay(true);
             rw.seek(fileMsg.getStartPoint());
             DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
-            byte[] bytes = new byte[1024 * 1024];
+            byte[] bytes = new byte[(int) (fileMsg.getSize() / 5)];
             int len;
             while ((len = rw.read(bytes)) != -1) {
-                dataOutputStream.flush();
+                Thread.sleep(1000);
                 dataOutputStream.write(bytes, 0, len);
+                dataOutputStream.flush();
             }
             dataOutputStream.flush();
             socket.isOutputShutdown();

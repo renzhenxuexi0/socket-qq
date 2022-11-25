@@ -51,7 +51,7 @@
                     <items>
                         <ScrollPane fx:id="msgScrollPane">
                             <content>
-                                <VBox fx:id="msgVBox" prefHeight="200.0" prefWidth="593.0" />
+                                <VBox fx:id="msgVBox" prefHeight="200.0" prefWidth="593.0" spacing="10.0" />
                             </content>
                         </ScrollPane>
                     </items>

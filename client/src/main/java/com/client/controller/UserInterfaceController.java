@@ -514,7 +514,7 @@ public class UserInterfaceController implements Initializable, ApplicationContex
             rw.seek(fileMsg.getStartPoint());
             long length = fileMsg.getSize();
             DataInputStream dataInputStream = new DataInputStream(socket.getInputStream());
-            byte[] bytes = new byte[1024 * 1024];
+            byte[] bytes = new byte[(int) (fileMsg.getSize() / 5)];
             int len;
             long accumulationSize = fileMsg.getStartPoint();
             while ((len = dataInputStream.read(bytes)) != -1) {
@@ -770,7 +770,7 @@ public class UserInterfaceController implements Initializable, ApplicationContex
             alert.setOverlayClose(true);
             alert.setAnimation(JFXAlertAnimation.NO_ANIMATION);
             alert.setContent(jfxDialogLayout);
-            alert.initModality(Modality.WINDOW_MODAL);
+            alert.initModality(Modality.NONE);
             cancelGroup.setOnAction(event -> alert.close());
             alert.showAndWait();
 
