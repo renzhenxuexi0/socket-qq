@@ -74,6 +74,7 @@ public class ServerController implements Initializable {
 
     void startServer() {
         try (ServerSocket serverSocket = new ServerSocket(8080)) {
+            serverSocket.setSoTimeout(5000);
             // 判读线程是否调用Interrupted，给线程打上中止标记 打上就退出循环
             while (!Thread.currentThread().isInterrupted()) {
                 Socket socket = serverSocket.accept();
@@ -81,6 +82,8 @@ public class ServerController implements Initializable {
                     // 流的封装
                     OutputStream os;//字节输出流抽象类
                     try {
+                        socket.setTcpNoDelay(true);
+                        socket.setSoTimeout(5000);
                         os = socket.getOutputStream();
                         PrintStream ps = new PrintStream(os);
                         InputStream is = socket.getInputStream();//面向字节的输入流抽象类

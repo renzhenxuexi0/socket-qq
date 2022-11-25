@@ -341,6 +341,7 @@ public class UserInterfaceController implements Initializable, ApplicationContex
 
         poolExecutor.execute(() -> {
             try (ServerSocket serverSocket = new ServerSocket(clientPort)) {
+                serverSocket.setSoTimeout(5000);
                 // 判读线程是否调用Interrupted，给线程打上中止标记 打上就退出循环
                 while (!Thread.currentThread().isInterrupted()) {
                     Socket socket = serverSocket.accept();
@@ -349,6 +350,8 @@ public class UserInterfaceController implements Initializable, ApplicationContex
                         // 流的封装
                         OutputStream os;//字节输出流抽象类
                         try {
+                            socket.setTcpNoDelay(true);
+                            socket.setSoTimeout(5000);
                             os = socket.getOutputStream();
                             PrintStream ps = new PrintStream(os);
                             InputStream is = socket.getInputStream();//面向字节的输入流抽象类
@@ -459,8 +462,6 @@ public class UserInterfaceController implements Initializable, ApplicationContex
     }
 
     private void receiveFileMsg(FileMsg fileMsg, Socket socket, URL resource) {
-        String[] split = fileMsg.getFileName().split("\\.");
-        String nameSuffix = split[split.length - 1];
         File file = new File(System.getProperty("user.home") + "\\.socket\\" + "downloadFile\\" + fileMsg.getFileName());
         if (!file.exists()) {
             File parentFile = file.getParentFile();
@@ -525,9 +526,11 @@ public class UserInterfaceController implements Initializable, ApplicationContex
                 Platform.runLater(() -> {
                     fileMsgVBox.setProgressBarProgress(progress);
                 });
-                if (accumulationSize == length) {
-                    fileMsgVBox.setProgressBarState("在线文件接受完成");
-                }
+            }
+            if (accumulationSize == length) {
+                fileMsgVBox.setProgressBarState("在线文件接受完成");
+            } else {
+                fileMsgVBox.setProgressBarState("在线文件接受失败");
             }
             socket.close();
             fileMsg.setSign(1);
