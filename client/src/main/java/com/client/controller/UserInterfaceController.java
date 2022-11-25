@@ -341,7 +341,6 @@ public class UserInterfaceController implements Initializable, ApplicationContex
 
         poolExecutor.execute(() -> {
             try (ServerSocket serverSocket = new ServerSocket(clientPort)) {
-                serverSocket.setSoTimeout(5000);
                 // 判读线程是否调用Interrupted，给线程打上中止标记 打上就退出循环
                 while (!Thread.currentThread().isInterrupted()) {
                     Socket socket = serverSocket.accept();
