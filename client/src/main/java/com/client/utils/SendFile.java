@@ -114,8 +114,6 @@ public class SendFile {
                             fileMsg.setEndPoint(accumulationSize + pos);
                             UserMemory.fileMsgList.add(fileMsg);
 
-                            socket.close();
-
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -218,7 +216,6 @@ public class SendFile {
                             }
 
                             UserMemory.fileMsgList.addAll(fileMsgList);
-                            socket.close();
 
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -331,8 +328,6 @@ public class SendFile {
                             fileMsg.setEndPoint(accumulationSize + pos);
                             UserMemory.fileMsgList.add(fileMsg);
 
-                            socket.close();
-
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -351,6 +346,7 @@ public class SendFile {
         }
     }
 
+    // 群发在线
     public static void sendFileMsg(File aimFile, SimpleDateFormat simpleDateFormat, ThreadPoolExecutor poolExecutor, FileMsgService fileMsgService, Integer port, User talkUser) {
         if (aimFile.isFile()) {
 
@@ -423,8 +419,6 @@ public class SendFile {
 
                             fileMsg.setEndPoint(accumulationSize + pos);
                             UserMemory.fileMsgList.add(fileMsg);
-
-                            socket.close();
 
                         } catch (Exception e) {
                             e.printStackTrace();

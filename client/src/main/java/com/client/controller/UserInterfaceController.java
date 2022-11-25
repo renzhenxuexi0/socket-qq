@@ -385,7 +385,7 @@ public class UserInterfaceController implements Initializable, ApplicationContex
                                     }
                                 });
                                 Platform.runLater(() -> openChatInterface(image, getClass().getResource("fileImage/unknownFile.png")));
-                                receiveFileMsg(fileMsg, is, getClass().getResource("fileImage/unknownFile.png"));
+                                receiveFileMsg(fileMsg, socket, getClass().getResource("fileImage/unknownFile.png"));
                                 log.info("文件传输结束");
 
                                 FileUtils.writeStringToFile(fileMsgLog, JSON.toJSONString(fileMsg) + "\n", StandardCharsets.UTF_8, true);
@@ -454,7 +454,7 @@ public class UserInterfaceController implements Initializable, ApplicationContex
         chatInterface.primaryStage.show();
     }
 
-    private void receiveFileMsg(FileMsg fileMsg, InputStream inputStream, URL resource) {
+    private void receiveFileMsg(FileMsg fileMsg, Socket socket, URL resource) {
         String[] split = fileMsg.getFileName().split("\\.");
         String nameSuffix = split[split.length - 1];
         File file = new File(System.getProperty("user.home") + "\\.socket" + "downloadFile\\" + fileMsg.getFileName());
@@ -509,7 +509,7 @@ public class UserInterfaceController implements Initializable, ApplicationContex
 
             rw.seek(fileMsg.getStartPoint());
             long length = fileMsg.getSize();
-            DataInputStream dataInputStream = new DataInputStream(inputStream);
+            DataInputStream dataInputStream = new DataInputStream(socket.getInputStream());
             byte[] bytes = new byte[1024 * 10];
             int len;
             long accumulationSize = fileMsg.getStartPoint();
@@ -520,9 +520,11 @@ public class UserInterfaceController implements Initializable, ApplicationContex
                 Platform.runLater(() -> {
                     fileMsgVBox.setProgressBarProgress(progress);
                 });
-            }
-            if (accumulationSize == length) {
-                fileMsgVBox.setProgressBarState("在线文件发送完成");
+                if (accumulationSize == length) {
+                    fileMsgVBox.setProgressBarState("在线文件发送完成");
+                    socket.close();
+                    break;
+                }
             }
 
             fileMsg.setSign(1);

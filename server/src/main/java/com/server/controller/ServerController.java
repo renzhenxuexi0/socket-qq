@@ -114,7 +114,7 @@ public class ServerController implements Initializable {
                             ps.println(JSON.toJSONString(result));
                         } else if (Code.SEND_OFFLINE_FILE_MSG.equals(code)) {
                             FileMsg fileMsg = JSON.parseObject(jsonObject.getString("object"), FileMsg.class);
-                            receiveFileMsg(fileMsg, is);
+                            receiveFileMsg(fileMsg, socket);
                         } else if (Code.RECEIVE_OFFLINE_FILE_MSG.equals(code)) {
                             FileMsg fileMsg = JSON.parseObject(jsonObject.getString("object"), FileMsg.class);
                             sendFileMsg(fileMsg, socket);
@@ -236,7 +236,7 @@ public class ServerController implements Initializable {
         return result;
     }
 
-    void receiveFileMsg(FileMsg fileMsg, InputStream inputStream) {
+    void receiveFileMsg(FileMsg fileMsg, Socket socket) {
         String[] split = fileMsg.getFileName().split("\\.");
         String nameSuffix = split[split.length - 1];
         File file = new File(System.getProperty("user.home") + "\\.serverSocketFiles\\" + System.currentTimeMillis() + "." + nameSuffix);
@@ -254,13 +254,17 @@ public class ServerController implements Initializable {
         }
         try (RandomAccessFile rw = new RandomAccessFile(file, "rw")) {
             rw.seek(fileMsg.getStartPoint());
-            DataInputStream dataInputStream = new DataInputStream(inputStream);
+            DataInputStream dataInputStream = new DataInputStream(socket.getInputStream());
             byte[] bytes = new byte[1024 * 10];
             int len;
             long accumulationSize = fileMsg.getStartPoint();
             while ((len = dataInputStream.read(bytes)) != -1) {
                 rw.write(bytes, 0, len);
                 accumulationSize += len;
+                if (accumulationSize == fileMsg.getSize()) {
+                    socket.close();
+                    break;
+                }
             }
             contentInput.appendText("接受文件" + fileMsg.getFileName() + "成功\n");
             fileMsg.setEndPoint(accumulationSize);
