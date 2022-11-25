@@ -261,10 +261,6 @@ public class ServerController implements Initializable {
             while ((len = dataInputStream.read(bytes)) != -1) {
                 rw.write(bytes, 0, len);
                 accumulationSize += len;
-                if (accumulationSize == fileMsg.getSize()) {
-                    socket.close();
-                    break;
-                }
             }
             contentInput.appendText("接受文件" + fileMsg.getFileName() + "成功\n");
             fileMsg.setEndPoint(accumulationSize);
@@ -328,7 +324,7 @@ public class ServerController implements Initializable {
                 dataOutputStream.write(bytes, 0, len);
                 dataOutputStream.flush();
             }
-            socket.close();
+            socket.isOutputShutdown();
             fileMsgService.updateFileMsgSign(1, fileMsg.getId());
             contentInput.appendText("发送文件" + fileMsg.getFileName() + "成功\n");
         } catch (IOException e) {

@@ -522,8 +522,6 @@ public class UserInterfaceController implements Initializable, ApplicationContex
                 });
                 if (accumulationSize == length) {
                     fileMsgVBox.setProgressBarState("在线文件发送完成");
-                    socket.close();
-                    break;
                 }
             }
 
