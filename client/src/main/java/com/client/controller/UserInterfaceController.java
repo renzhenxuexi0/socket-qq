@@ -221,7 +221,7 @@ public class UserInterfaceController implements Initializable, ApplicationContex
                                             double schedule = (double) accumulationSize / (double) (length);
                                             Platform.runLater(() -> fileMsgVBox.setProgressBarProgress(schedule));
                                         }
-                                        
+
                                         fileMsgVBox.setProgressBarState("接受完成");
                                         WritableImage fileIcon = GetFileIcon.getFileIcon(file);
                                         Platform.runLater(() -> fileMsgVBox.setFileImage(fileIcon));
@@ -432,6 +432,8 @@ public class UserInterfaceController implements Initializable, ApplicationContex
                                 });
                             } else if (Code.OFF_VIDEO_CHAT.equals(code)) {
                                 chatInterface.videoAlert.close();
+                                Result result = new Result();
+                                ps.println(JSON.toJSONString(result));
                             }
                         } catch (IOException e) {
                             throw new RuntimeException(e);
@@ -456,7 +458,7 @@ public class UserInterfaceController implements Initializable, ApplicationContex
     private void receiveFileMsg(FileMsg fileMsg, Socket socket, URL resource) {
         String[] split = fileMsg.getFileName().split("\\.");
         String nameSuffix = split[split.length - 1];
-        File file = new File(System.getProperty("user.home") + "\\.socket" + "downloadFile\\" + fileMsg.getFileName());
+        File file = new File(System.getProperty("user.home") + "\\.socket\\" + "downloadFile\\" + fileMsg.getFileName());
         if (!file.exists()) {
             File parentFile = file.getParentFile();
             try {
@@ -513,6 +515,7 @@ public class UserInterfaceController implements Initializable, ApplicationContex
             int len;
             long accumulationSize = fileMsg.getStartPoint();
             while ((len = dataInputStream.read(bytes)) != -1) {
+                log.info("接受文件" + len);
                 rw.write(bytes, 0, len);
                 accumulationSize += len;
                 double progress = (double) accumulationSize / (double) length;
