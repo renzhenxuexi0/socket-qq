@@ -384,7 +384,7 @@ public class UserInterfaceController implements Initializable, ApplicationContex
                                         UserMemory.talkUser = user;
                                     }
                                 });
-                                openChatInterface(image, getClass().getResource("fileImage/unknownFile.png"));
+                                Platform.runLater(() -> openChatInterface(image, getClass().getResource("fileImage/unknownFile.png")));
                                 receiveFileMsg(fileMsg, is, getClass().getResource("fileImage/unknownFile.png"));
                                 log.info("文件传输结束");
 
