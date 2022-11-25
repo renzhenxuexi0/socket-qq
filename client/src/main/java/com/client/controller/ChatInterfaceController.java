@@ -83,12 +83,11 @@ public class ChatInterfaceController implements Initializable {
     public ScrollPane msgScrollPane;
     @FXML
     public JFXButton videoChatButton;
+    public JFXAlert<Void> videoAlert;
     @FXML
     private JFXButton fileChoiceButton;
-
     @Value("${client.port}")
     private Integer clientPort;
-
     @Autowired
     private FileMsgService fileMsgService;
     @Autowired
@@ -97,28 +96,21 @@ public class ChatInterfaceController implements Initializable {
     private ThreadPoolExecutor poolExecutor;
     @Autowired
     private ProgressStageConfig progressStageConfig;
-
     @Autowired
     private SimpleDateFormat simpleDateFormat;
-
     @Value("${client.udp.video.port}")
     private Integer clientUdpVideoPort;
-
     @Value("${client.udp.audio.port}")
     private Integer clientUdpAudioPort;
-
     @Autowired
     private UserService userService;
-
     @FXML
     private Button minWindow;
     @FXML
     private Button closeWindow;
     @FXML
     private Button sendButton;
-
     private FileChooser fileChooser;
-
     private Image headImage;
 
     @Override
@@ -351,13 +343,13 @@ public class ChatInterfaceController implements Initializable {
 
                 JFXDialogLayout jfxDialogLayout = new JFXDialogLayout();
                 jfxDialogLayout.setBody(root);
-                JFXAlert<Void> alert = new JFXAlert<>();
-                alert.setOverlayClose(true);
-                alert.setAnimation(JFXAlertAnimation.NO_ANIMATION);
-                alert.setSize(1280, 680);
-                alert.setTitle("视频通话");
-                alert.setContent(jfxDialogLayout);
-                alert.initModality(Modality.NONE);
+                videoAlert = new JFXAlert<>();
+                videoAlert.setOverlayClose(true);
+                videoAlert.setAnimation(JFXAlertAnimation.NO_ANIMATION);
+                videoAlert.setSize(1280, 680);
+                videoAlert.setTitle("视频通话");
+                videoAlert.setContent(jfxDialogLayout);
+                videoAlert.initModality(Modality.NONE);
 
                 Thread sendVideoThread = new Thread(() -> {
                     try (DatagramSocket datagramSocket = new DatagramSocket()) {
@@ -407,23 +399,16 @@ public class ChatInterfaceController implements Initializable {
                         receiveAudioThread.start();
                     } else {
                         Platform.runLater(() -> {
+                            videoAlert.close();
                             Alert alert1 = new Alert(Alert.AlertType.ERROR, "对方拒绝和你视频");
-                            alert1.setOnCloseRequest(event2 -> alert.close());
+                            alert1.setOnCloseRequest(event2 -> videoAlert.close());
                         });
                     }
                 });
 
-                alert.setOnCloseRequest(event1 -> {
-                    webcam.close();
-                    sendVideoThread.interrupt();
-                    sendAudioThread.interrupt();
-                    receiveAudioThread.interrupt();
-                    receiveVideoThread.interrupt();
-                });
+                closeVideoAndAudio(hangUpButton, webcam, sendVideoThread, sendAudioThread, receiveAudioThread, receiveVideoThread);
 
-                hangUpButton.setOnAction(event2 -> alert.close());
-
-                alert.showAndWait();
+                videoAlert.show();
             } else {
                 new Alert(Alert.AlertType.ERROR, "对方不在线").showAndWait();
             }
@@ -466,13 +451,13 @@ public class ChatInterfaceController implements Initializable {
 
             JFXDialogLayout jfxDialogLayout = new JFXDialogLayout();
             jfxDialogLayout.setBody(root);
-            JFXAlert<Void> alert = new JFXAlert<>();
-            alert.setOverlayClose(true);
-            alert.setAnimation(JFXAlertAnimation.NO_ANIMATION);
-            alert.setSize(1280, 680);
-            alert.setTitle("视频通话");
-            alert.setContent(jfxDialogLayout);
-            alert.initModality(Modality.NONE);
+            videoAlert = new JFXAlert<>();
+            videoAlert.setOverlayClose(true);
+            videoAlert.setAnimation(JFXAlertAnimation.NO_ANIMATION);
+            videoAlert.setSize(1280, 680);
+            videoAlert.setTitle("视频通话");
+            videoAlert.setContent(jfxDialogLayout);
+            videoAlert.initModality(Modality.NONE);
 
             Thread sendVideoThread = new Thread(() -> {
                 log.info(UserMemory.myUser.getUsername() + "发送视频");
@@ -516,20 +501,27 @@ public class ChatInterfaceController implements Initializable {
             receiveVideoThread.start();
             receiveAudioThread.start();
 
-            alert.setOnCloseRequest(event1 -> {
-                webcam.close();
-                sendVideoThread.interrupt();
-                sendAudioThread.interrupt();
-                receiveVideoThread.interrupt();
-                receiveAudioThread.interrupt();
-            });
+            closeVideoAndAudio(hangUpButton, webcam, sendVideoThread, sendAudioThread, receiveVideoThread, receiveAudioThread);
 
-            hangUpButton.setOnAction(event2 -> alert.close());
-
-            alert.showAndWait();
+            videoAlert.showAndWait();
         } catch (IOException e) {
             log.error(e.toString());
         }
+    }
+
+    private void closeVideoAndAudio(JFXButton hangUpButton, Webcam webcam, Thread sendVideoThread, Thread sendAudioThread, Thread receiveVideoThread, Thread receiveAudioThread) {
+        videoAlert.setOnCloseRequest(event1 -> {
+            webcam.close();
+            sendVideoThread.interrupt();
+            sendAudioThread.interrupt();
+            receiveVideoThread.interrupt();
+            receiveAudioThread.interrupt();
+            Result result = new Result();
+            result.setCode(Code.OFF_VIDEO_CHAT);
+            userService.videoChat(result, UserMemory.talkUser.getIp(), clientPort);
+        });
+
+        hangUpButton.setOnAction(event2 -> videoAlert.close());
     }
 
     private void sendVideo(Webcam webcam, DatagramSocket datagramSocket) throws IOException {

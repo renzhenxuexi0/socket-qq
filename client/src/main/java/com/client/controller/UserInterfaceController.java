@@ -315,7 +315,7 @@ public class UserInterfaceController implements Initializable, ApplicationContex
                         chatInterface.msgVBox.getChildren().clear();
 
                         UserMemory.talkUser = userListView.getSelectionModel().getSelectedItem();
-                        
+
                         openChatInterface(image, getClass().getResource("fileImage/unknownFile.png"));
                     }
                 };
@@ -431,6 +431,8 @@ public class UserInterfaceController implements Initializable, ApplicationContex
                                     });
                                     alert.show();
                                 });
+                            } else if (Code.OFF_VIDEO_CHAT.equals(code)) {
+                                chatInterface.videoAlert.close();
                             }
                         } catch (IOException e) {
                             throw new RuntimeException(e);

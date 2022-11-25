@@ -50,6 +50,9 @@ public class Code {
     public static final Integer CONSENT_VIDEO_CHAT = 7002;
     // 拒绝视频通话
     public static final Integer REFUSE_VIDEO_CHAT = 7003;
+    // 挂断视频通话
+    public static final Integer OFF_VIDEO_CHAT = 7004;
+
 
     // 获取所有用户信息
     public static final Integer GET_ALL_USERS = 8001;
