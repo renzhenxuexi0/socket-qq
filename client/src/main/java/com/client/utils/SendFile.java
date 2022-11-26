@@ -97,7 +97,7 @@ public class SendFile {
                             while ((len = randomAccessAimFile.read(bytes)) != -1) {
                                 socketOutputStream.write(bytes, 0, len);
                                 socketOutputStream.flush();
-                                Thread.sleep(1000);
+                                Thread.sleep(2000);
                                 accumulationSize += len;
                                 double progress = accumulationSize / (double) length;
                                 FileUtils.writeStringToFile(logFile, String.valueOf(accumulationSize), StandardCharsets.UTF_8, false);
@@ -211,7 +211,7 @@ public class SendFile {
                             while ((len = randomAccessAimFile.read(bytes)) != -1) {
                                 socketOutputStream.write(bytes, 0, len);
                                 socketOutputStream.flush();
-                                Thread.sleep(1000);
+                                Thread.sleep(2000);
                                 accumulationSize += len;
                                 double progress = accumulationSize / (double) length;
                                 FileUtils.writeStringToFile(logFile, String.valueOf(accumulationSize), StandardCharsets.UTF_8, false);
@@ -323,7 +323,7 @@ public class SendFile {
                             while ((len = randomAccessAimFile.read(bytes)) != -1) {
                                 socketOutputStream.write(bytes, 0, len);
                                 socketOutputStream.flush();
-                                Thread.sleep(1000);
+                                Thread.sleep(2000);
                                 accumulationSize += len;
                                 FileUtils.writeStringToFile(logFile, String.valueOf(accumulationSize), StandardCharsets.UTF_8, false);
                                 double progress = (double) accumulationSize / (double) length;
@@ -424,7 +424,7 @@ public class SendFile {
                             while ((len = randomAccessAimFile.read(bytes)) != -1) {
                                 socketOutputStream.write(bytes, 0, len);
                                 socketOutputStream.flush();
-                                Thread.sleep(1000);
+                                Thread.sleep(2000);
                                 accumulationSize += len;
                                 FileUtils.writeStringToFile(logFile, String.valueOf(accumulationSize), StandardCharsets.UTF_8, false);
                                 double progress = (double) accumulationSize / (double) length;
